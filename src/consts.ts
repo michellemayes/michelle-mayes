@@ -9,7 +9,7 @@ export const GITHUB_USERNAME = 'michelle-mayes'; // Update with your actual GitH
 export const SOCIAL_LINKS = {
   github: 'https://github.com/michellemayes', // Update with your actual GitHub URL
   twitter: 'https://twitter.com/michellejmayes', // Update with your actual Twitter/X URL
-  linkedin: 'https://linkedin.com/in/michellemayes', // Update with your actual LinkedIn URL
+  linkedin: 'https://linkedin.com/in/michellejmayes', // Update with your actual LinkedIn URL
   email: 'mailto:michellejanemayes@gmail.com', // Update with your actual email
 };
 

@@ -11,6 +11,31 @@ const posts = allPosts.sort((a, b) => {
   const dateB = new Date(b.data.pubDate);
   return dateB.valueOf() - dateA.valueOf();
 });
+
+// Group posts by year and month
+const postsByYear = posts.reduce((acc, post) => {
+  const date = new Date(post.data.pubDate);
+  const year = date.getFullYear();
+  const month = date.toLocaleDateString('en-US', { month: 'long' });
+  const day = date.getDate();
+  
+  if (!acc[year]) {
+    acc[year] = {};
+  }
+  if (!acc[year][month]) {
+    acc[year][month] = [];
+  }
+  
+  acc[year][month].push({ ...post, day });
+  return acc;
+}, {});
+
+// Calculate reading time (rough estimate: 200 words per minute)
+function calculateReadingTime(content: string): number {
+  const wordsPerMinute = 200;
+  const wordCount = content.split(/\s+/).length;
+  return Math.ceil(wordCount / wordsPerMinute);
+}
 ---
 
 <!doctype html>
@@ -22,35 +47,47 @@ const posts = allPosts.sort((a, b) => {
 		<Header />
 		<main>
 			<div class="section-header">
-				<h1>Blog</h1>
-				<p>Thoughts, insights, and tutorials on software development.</p>
+				<h1>All Posts</h1>
+				<p>Browse all blog posts by year and month</p>
 			</div>
 
 			{posts.length > 0 ? (
-				<div class="blog-posts-grid">
-					{posts.map((post, index) => (
-						<article class={`blog-post-card ${index === 0 ? 'featured' : ''}`}>
-							<a href={`/blog/${post.slug}/`} class="blog-post-link">
-								{post.data.heroImage && (
-									<div class="blog-post-image">
-										<img 
-											src={post.data.heroImage.src} 
-											alt={post.data.title}
-										/>
-									</div>
-								)}
-								<div class="blog-post-content">
-									<h2>{post.data.title}</h2>
-									<p class="blog-post-description">{post.data.description}</p>
-									<div class="blog-post-meta">
-										<time>{new Date(post.data.pubDate).toLocaleDateString()}</time>
-										{post.data.tags && post.data.tags.length > 0 && (
-											<span>• {post.data.tags.join(', ')}</span>
-										)}
-									</div>
+				<div class="blog-posts-list">
+					{Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a)).map(year => (
+						<div class="year-section">
+							<h2 class="year-header">{year}</h2>
+							{Object.keys(postsByYear[year]).sort((a, b) => {
+								const monthOrder = ['January', 'February', 'March', 'April', 'May', 'June', 
+									'July', 'August', 'September', 'October', 'November', 'December'];
+								return monthOrder.indexOf(b) - monthOrder.indexOf(a);
+							}).map(month => (
+								<div class="month-section">
+									<h3 class="month-header">{month}</h3>
+									{postsByYear[year][month].map(post => {
+										const readingTime = calculateReadingTime(post.body);
+										return (
+											<article class="blog-post-item">
+												<div class="post-date">
+													{post.day}
+												</div>
+												<div class="post-content">
+													<h4 class="post-title">
+														<a href={`/blog/${post.slug}/`}>{post.data.title}</a>
+													</h4>
+													{post.data.description && (
+														<p class="post-description">{post.data.description}</p>
+													)}
+													<div class="post-meta">
+														<span class="published-date">Published: {new Date(post.data.pubDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+														<span class="reading-time">• {readingTime} min read</span>
+													</div>
+												</div>
+											</article>
+										);
+									})}
 								</div>
-							</a>
-						</article>
+							))}
+						</div>
 					))}
 				</div>
 			) : (
@@ -89,81 +126,112 @@ const posts = allPosts.sort((a, b) => {
 		margin: 0 auto;
 	}
 
-	.blog-posts-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-		gap: 1.5rem;
+	.blog-posts-list {
+		max-width: 800px;
+		margin: 0 auto;
 	}
 
-	.blog-post-card.featured {
-		grid-column: 1 / -1;
+	.year-section {
+		margin-bottom: 3rem;
 	}
 
-	.blog-post-card {
-		background: var(--card-bg);
-		border: 1px solid var(--card-border);
-		border-radius: 12px;
-		overflow: hidden;
-		transition: all 0.3s ease;
+	.year-header {
+		font-size: 2rem;
+		color: var(--accent);
+		margin-bottom: 1.5rem;
+		border-bottom: 2px solid var(--accent-100);
+		padding-bottom: 0.5rem;
 	}
 
-	.blog-post-card:hover {
-		box-shadow: var(--card-hover-shadow);
-		transform: translateY(-2px);
+	.month-section {
+		margin-bottom: 2rem;
 	}
 
-	.blog-post-link {
-		display: block;
+	.month-header {
+		font-size: 1.3rem;
+		color: rgb(var(--black));
+		margin-bottom: 1rem;
+		font-weight: 600;
+	}
+
+	.blog-post-item {
+		display: flex;
+		align-items: flex-start;
+		gap: 1rem;
+		padding: 1rem 0;
+		border-bottom: 1px solid var(--card-border);
+		transition: all 0.2s ease;
+	}
+
+	.blog-post-item:hover {
+		background: var(--accent-50);
+		margin: 0 -1rem;
+		padding: 1rem;
+		border-radius: 8px;
+	}
+
+	.blog-post-item:last-child {
+		border-bottom: none;
+	}
+
+	.post-date {
+		font-size: 1.1rem;
+		font-weight: 600;
+		color: var(--accent);
+		min-width: 2rem;
+		text-align: center;
+	}
+
+	.post-content {
+		flex: 1;
+	}
+
+	.post-title {
+		margin: 0 0 0.5rem 0;
+		font-size: 1.1rem;
+		line-height: 1.4;
+	}
+
+	.post-title a {
+		color: rgb(var(--black));
 		text-decoration: none;
-		color: inherit;
+		transition: color 0.2s ease;
 	}
 
-	.blog-post-image {
-		height: 200px;
-		overflow: hidden;
-	}
-
-	.blog-post-card.featured .blog-post-image {
-		height: 300px;
-	}
-
-	.blog-post-image img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		transition: transform 0.3s ease;
-	}
-
-	.blog-post-card:hover .blog-post-image img {
-		transform: scale(1.05);
-	}
-
-	.blog-post-content {
-		padding: 1.5rem;
-	}
-
-	.blog-post-content h2 {
-		font-size: 1.5rem;
-		margin-bottom: 0.75rem;
+	.post-title a:hover {
 		color: var(--accent);
 	}
 
-	.blog-post-card.featured .blog-post-content h2 {
-		font-size: 2rem;
-	}
-
-	.blog-post-description {
+	.post-description {
+		margin: 0.5rem 0 0.75rem 0;
 		color: rgb(var(--gray-dark));
-		margin-bottom: 1rem;
-		line-height: 1.6;
+		font-size: 0.9rem;
+		line-height: 1.4;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
 	}
 
-	.blog-post-meta {
+	.post-meta {
 		display: flex;
-		justify-content: space-between;
 		align-items: center;
-		font-size: 0.9rem;
+		gap: 0.5rem;
+		font-size: 0.85rem;
 		color: rgb(var(--gray));
+	}
+
+	.published-date {
+		font-weight: 500;
+	}
+
+	.reading-time {
+		background: var(--accent-100);
+		color: var(--accent-dark);
+		padding: 0.2rem 0.5rem;
+		border-radius: 4px;
+		font-size: 0.75rem;
+		font-weight: 600;
 	}
 
 	@media (max-width: 768px) {
@@ -175,20 +243,32 @@ const posts = allPosts.sort((a, b) => {
 			font-size: 2rem;
 		}
 
-		.blog-posts-grid {
-			grid-template-columns: 1fr;
+		.blog-posts-list {
+			max-width: 100%;
 		}
 
-		.blog-post-card.featured {
-			grid-column: 1;
+		.year-header {
+			font-size: 1.5rem;
 		}
 
-		.blog-post-image {
-			height: 150px;
+		.month-header {
+			font-size: 1.1rem;
 		}
 
-		.blog-post-card.featured .blog-post-image {
-			height: 200px;
+		.blog-post-item {
+			flex-direction: column;
+			gap: 0.5rem;
+		}
+
+		.post-date {
+			text-align: left;
+			min-width: auto;
+		}
+
+		.post-meta {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 0.25rem;
 		}
 	}
 </style>
