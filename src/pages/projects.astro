@@ -19,19 +19,25 @@ const repositories = await fetchRepositories('michellemayes');
 		<main>
 			<div class="section-header">
 				<h1>My Projects</h1>
-				<p>Here are some of the projects I've been working on. You can find more on my GitHub profile.</p>
+				<p>Here are some the projects I've been working on. You can find more on my GitHub.</p>
 			</div>
 
 			<div class="projects-grid">
 				{repositories.map((repo) => (
 					<div class="project-card-small">
-						<div class="project-card-content">
+						<div class="project-card-header">
 							<h3>
 								<a href={repo.html_url} target="_blank" rel="noopener noreferrer">
 									{repo.name}
 								</a>
 							</h3>
-							
+							<div class="project-stats">
+								<span>⭐ {repo.stargazers_count}</span>
+								<span>🍴 {repo.forks_count}</span>
+							</div>
+						</div>
+						
+						<div class="project-card-content">
 							{repo.description && (
 								<p class="project-description">{repo.description}</p>
 							)}
@@ -42,12 +48,8 @@ const repositories = await fetchRepositories('michellemayes');
 								)}
 								<span class="update-date">Updated {new Date(repo.updated_at).toLocaleDateString()}</span>
 							</div>
-
-							<div class="project-stats">
-								<span>⭐ {repo.stargazers_count}</span>
-								<span>🍴 {repo.forks_count}</span>
-							</div>
 						</div>
+						
 						<div class="project-card-footer">
 							<a href={repo.html_url} class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
 								View on GitHub
@@ -69,6 +71,12 @@ const repositories = await fetchRepositories('michellemayes');
 </html>
 
 <style>
+	main {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 2rem;
+	}
+
 	.section-header {
 		text-align: center;
 		margin-bottom: 3rem;
@@ -109,14 +117,17 @@ const repositories = await fetchRepositories('michellemayes');
 		transform: translateY(-2px);
 	}
 
-	.project-card-content {
-		flex: 1;
+	.project-card-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
 		margin-bottom: 1rem;
 	}
 
 	.project-card-small h3 {
-		margin: 0 0 0.75rem 0;
+		margin: 0;
 		font-size: 1.2rem;
+		flex: 1;
 	}
 
 	.project-card-small h3 a {
@@ -126,6 +137,19 @@ const repositories = await fetchRepositories('michellemayes');
 
 	.project-card-small h3 a:hover {
 		text-decoration: underline;
+	}
+
+	.project-stats {
+		display: flex;
+		gap: 0.75rem;
+		font-size: 0.8rem;
+		color: rgb(var(--gray));
+		flex-shrink: 0;
+	}
+
+	.project-card-content {
+		flex: 1;
+		margin-bottom: 1rem;
 	}
 
 	.project-description {
@@ -156,14 +180,6 @@ const repositories = await fetchRepositories('michellemayes');
 		color: rgb(var(--gray));
 	}
 
-	.project-stats {
-		display: flex;
-		gap: 1rem;
-		font-size: 0.85rem;
-		color: rgb(var(--gray));
-		margin-bottom: 1rem;
-	}
-
 	.project-card-footer {
 		margin-top: auto;
 	}
@@ -174,12 +190,26 @@ const repositories = await fetchRepositories('michellemayes');
 	}
 
 	@media (max-width: 768px) {
+		main {
+			padding: 1rem;
+		}
+
 		.projects-grid {
 			grid-template-columns: 1fr;
 		}
 
 		.section-header h1 {
 			font-size: 2rem;
+		}
+
+		.project-card-header {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 0.5rem;
+		}
+
+		.project-stats {
+			align-self: flex-end;
 		}
 	}
 </style>

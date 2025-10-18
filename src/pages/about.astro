@@ -18,78 +18,186 @@ import { SITE_DESCRIPTION, SITE_TITLE, SOCIAL_LINKS } from '../consts';
 				<p>Get to know me better and learn about my journey in tech</p>
 			</div>
 
-			<div class="card" style="margin-bottom: 2rem;">
-				<div style="display: flex; align-items: center; margin-bottom: 2rem;">
-					<div style="width: 120px; height: 120px; background: var(--accent-100); border-radius: 50%; margin-right: 2rem; display: flex; align-items: center; justify-content: center; font-size: 3rem;">
-						👩‍💻
-					</div>
-					<div>
-						<h2 style="margin-top: 0;">Hi, I'm Michelle!</h2>
-						<p style="font-size: 1.1rem; color: rgb(var(--gray)); margin-bottom: 0;">
-							Passionate developer, problem solver, and lifelong learner
+			<div class="about-card">
+				<div class="about-card-header">
+					<img src="/about-photo.jpg" alt="Michelle Mayes" class="about-photo" />
+					<div class="about-info">
+						<p>
+							Learning everyday. Vibe-coding constantly. Exploring all of the new AI tech.
+						</p>
+						<p>
+							After years working in Data Science and Advertising Tech, I am expanding my skillset to develop for the modern web and build full-stack applications with AI using my Product Management background. 
+						</p>
+						<p>
+							I'm looking for opportunities to share my learnings at conferences across the globe!
+						</p>
+						<p>
+							Based in Austin, TX.
 						</p>
 					</div>
 				</div>
 			</div>
 
-			<div class="grid grid-2" style="margin-bottom: 3rem;">
-				<div class="card">
-					<h3>Background</h3>
-					<p>
-						I'm a passionate developer with a love for creating meaningful solutions through code. 
-						My journey in technology began with curiosity and has evolved into a career focused on 
-						building user-centric applications and contributing to open source projects.
-					</p>
-					<p>
-						I believe in the power of technology to solve real-world problems and am always excited 
-						to learn new technologies and methodologies that can help me become a better developer.
-					</p>
-				</div>
-
-				<div class="card">
-					<h3>Current Focus</h3>
-					<p>
-						Currently, I'm focused on full-stack development, with particular interest in modern 
-						web technologies, cloud computing, and developer experience improvements.
-					</p>
-					<p>
-						I enjoy working on projects that have a positive impact and am always looking for 
-						opportunities to collaborate with other developers and contribute to meaningful initiatives.
-					</p>
-				</div>
-			</div>
-
-			<div class="card" style="margin-bottom: 3rem;">
-				<h3>Skills & Technologies</h3>
-				<div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
-					<span class="language-badge">JavaScript</span>
-					<span class="language-badge">TypeScript</span>
-					<span class="language-badge">React</span>
-					<span class="language-badge">Node.js</span>
-					<span class="language-badge">Python</span>
-					<span class="language-badge">Git</span>
-					<span class="language-badge">AWS</span>
-					<span class="language-badge">Docker</span>
-				</div>
-				<p style="color: rgb(var(--gray)); font-size: 0.9em; margin: 0;">
-					Always learning and expanding my skill set with new technologies and best practices.
-				</p>
-			</div>
-
-			<div class="card" style="text-align: center; padding: 2rem;">
-				<h3>Let's Connect</h3>
-				<p>
-					I'm always interested in meeting new people and discussing technology, 
-					career opportunities, or just having a friendly chat!
-				</p>
-				<div style="margin-top: 2rem;">
-					<a href={SOCIAL_LINKS.email} class="btn">Send me an email</a>
-					<a href={SOCIAL_LINKS.linkedin} class="btn btn-secondary" style="margin-left: 1rem;" target="_blank" rel="noopener noreferrer">
-						Connect on LinkedIn
-					</a>
+			<div class="github-activity-section">
+				<h3>My GitHub Activity</h3>
+				<div class="github-calendar-container">
+					<img src="https://ghchart.rshah.org/michellemayes" alt="Michelle Mayes GitHub Activity" class="github-calendar" />
 				</div>
 			</div>
 		</main>
 		<Footer />
 	</body>
 </html>
+
+<style>
+	main {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 2rem;
+	}
+
+	.section-header {
+		text-align: center;
+		margin-bottom: 3rem;
+	}
+
+	.section-header h1 {
+		font-size: 2.5rem;
+		margin-bottom: 1rem;
+		color: var(--accent);
+	}
+
+	.section-header p {
+		font-size: 1.1rem;
+		color: rgb(var(--gray));
+		max-width: 500px;
+		margin: 0 auto;
+	}
+
+	.about-card {
+		max-width: 800px;
+		margin: 0 auto 3rem auto;
+		background: var(--card-bg);
+		border: 1px solid var(--card-border);
+		border-radius: 16px;
+		padding: 2rem;
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+	}
+
+	.about-card-header {
+		display: flex;
+		align-items: flex-start;
+		gap: 1.5rem;
+	}
+
+	.about-photo {
+		width: 120px;
+		height: 120px;
+		border-radius: 50%;
+		object-fit: cover;
+		border: 3px solid var(--accent);
+		flex-shrink: 0;
+	}
+
+	.about-info {
+		flex: 1;
+	}
+
+	.about-info h2 {
+		margin: 0 0 1rem 0;
+		font-size: 1.5rem;
+		color: rgb(var(--black));
+	}
+
+	.about-info p {
+		margin-bottom: 1rem;
+		color: rgb(var(--gray-dark));
+		line-height: 1.6;
+	}
+
+	.about-info p:last-child {
+		margin-bottom: 0;
+	}
+
+	.github-activity-section {
+		margin: 3rem 0;
+		text-align: center;
+	}
+
+	.github-activity-section h3 {
+		font-size: 1.5rem;
+		color: var(--accent);
+		margin-bottom: 2rem;
+	}
+
+	.github-calendar-container {
+		background: var(--card-bg);
+		border: 1px solid var(--card-border);
+		border-radius: 12px;
+		padding: 1.5rem;
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+		display: inline-block;
+	}
+
+	.github-calendar {
+		width: 100%;
+		max-width: 800px;
+		height: auto;
+		border-radius: 8px;
+	}
+
+	.card {
+		background: var(--card-bg);
+		border: 1px solid var(--card-border);
+		border-radius: 12px;
+		padding: 1.5rem;
+		transition: all 0.3s ease;
+	}
+
+	.card:hover {
+		box-shadow: var(--card-hover-shadow);
+		transform: translateY(-2px);
+	}
+
+	.card h3 {
+		margin: 0 0 1rem 0;
+		font-size: 1.3rem;
+		color: var(--accent);
+	}
+
+	.card p {
+		margin-bottom: 1rem;
+		color: rgb(var(--gray-dark));
+		line-height: 1.6;
+	}
+
+	.card p:last-child {
+		margin-bottom: 0;
+	}
+
+
+	@media (max-width: 768px) {
+		main {
+			padding: 1rem;
+		}
+
+		.section-header h1 {
+			font-size: 2rem;
+		}
+
+		.about-card-header {
+			flex-direction: column;
+			text-align: center;
+			gap: 1rem;
+		}
+
+		.about-photo {
+			width: 100px;
+			height: 100px;
+		}
+
+		.github-calendar {
+			max-width: 100%;
+		}
+	}
+</style>

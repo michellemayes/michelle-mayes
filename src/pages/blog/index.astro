@@ -21,80 +21,78 @@ const posts = allPosts.sort((a, b) => {
 	<body>
 		<Header />
 		<main>
-			<div class="blog-page">
-				<header class="blog-page-header">
-					<h1>Blog</h1>
-					<p>Thoughts, insights, and tutorials on software development.</p>
-				</header>
-
-				{posts.length > 0 ? (
-					<div class="blog-posts-grid">
-						{posts.map((post, index) => (
-							<article class={`blog-post-card ${index === 0 ? 'featured' : ''}`}>
-								<a href={`/blog/${post.slug}/`} class="blog-post-link">
-									{post.data.heroImage && (
-										<div class="blog-post-image">
-											<img 
-												src={post.data.heroImage.src} 
-												alt={post.data.title}
-											/>
-										</div>
-									)}
-									<div class="blog-post-content">
-										<h2>{post.data.title}</h2>
-										<p class="blog-post-description">{post.data.description}</p>
-										<div class="blog-post-meta">
-											<time>{new Date(post.data.pubDate).toLocaleDateString()}</time>
-											{post.data.tags && post.data.tags.length > 0 && (
-												<span>• {post.data.tags.join(', ')}</span>
-											)}
-										</div>
-									</div>
-								</a>
-							</article>
-						))}
-					</div>
-				) : (
-					<div class="no-posts">
-						<h3>No articles yet</h3>
-						<p>Check back soon for new blog posts!</p>
-					</div>
-				)}
+			<div class="section-header">
+				<h1>Blog</h1>
+				<p>Thoughts, insights, and tutorials on software development.</p>
 			</div>
+
+			{posts.length > 0 ? (
+				<div class="blog-posts-grid">
+					{posts.map((post, index) => (
+						<article class={`blog-post-card ${index === 0 ? 'featured' : ''}`}>
+							<a href={`/blog/${post.slug}/`} class="blog-post-link">
+								{post.data.heroImage && (
+									<div class="blog-post-image">
+										<img 
+											src={post.data.heroImage.src} 
+											alt={post.data.title}
+										/>
+									</div>
+								)}
+								<div class="blog-post-content">
+									<h2>{post.data.title}</h2>
+									<p class="blog-post-description">{post.data.description}</p>
+									<div class="blog-post-meta">
+										<time>{new Date(post.data.pubDate).toLocaleDateString()}</time>
+										{post.data.tags && post.data.tags.length > 0 && (
+											<span>• {post.data.tags.join(', ')}</span>
+										)}
+									</div>
+								</div>
+							</a>
+						</article>
+					))}
+				</div>
+			) : (
+				<div class="card" style="text-align: center; padding: 3rem;">
+					<h3>No articles yet</h3>
+					<p>Check back soon for new blog posts!</p>
+				</div>
+			)}
 		</main>
 		<Footer />
 	</body>
 </html>
 
 <style>
-	.blog-page {
+	main {
 		max-width: 1200px;
 		margin: 0 auto;
 		padding: 2rem;
 	}
 
-	.blog-page-header {
+	.section-header {
 		text-align: center;
 		margin-bottom: 3rem;
 	}
 
-	.blog-page-header h1 {
-		font-size: 3rem;
+	.section-header h1 {
+		font-size: 2.5rem;
 		margin-bottom: 1rem;
 		color: var(--accent);
 	}
 
-	.blog-page-header p {
-		font-size: 1.2rem;
+	.section-header p {
+		font-size: 1.1rem;
 		color: rgb(var(--gray));
-		max-width: 600px;
+		max-width: 500px;
 		margin: 0 auto;
 	}
 
 	.blog-posts-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-		gap: 2rem;
+		gap: 1.5rem;
 	}
 
 	.blog-post-card.featured {
@@ -102,16 +100,16 @@ const posts = allPosts.sort((a, b) => {
 	}
 
 	.blog-post-card {
+		background: var(--card-bg);
 		border: 1px solid var(--card-border);
 		border-radius: 12px;
-		background: var(--card-bg);
 		overflow: hidden;
 		transition: all 0.3s ease;
 	}
 
 	.blog-post-card:hover {
 		box-shadow: var(--card-hover-shadow);
-		transform: translateY(-4px);
+		transform: translateY(-2px);
 	}
 
 	.blog-post-link {
@@ -168,28 +166,12 @@ const posts = allPosts.sort((a, b) => {
 		color: rgb(var(--gray));
 	}
 
-	.no-posts {
-		text-align: center;
-		padding: 4rem 2rem;
-	}
-
-	.no-posts h3 {
-		font-size: 1.5rem;
-		margin-bottom: 1rem;
-		color: rgb(var(--black));
-	}
-
-	.no-posts p {
-		color: rgb(var(--gray));
-		font-size: 1.1rem;
-	}
-
 	@media (max-width: 768px) {
-		.blog-page {
+		main {
 			padding: 1rem;
 		}
 
-		.blog-page-header h1 {
+		.section-header h1 {
 			font-size: 2rem;
 		}
 
