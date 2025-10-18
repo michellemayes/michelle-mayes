@@ -1,0 +1,346 @@
+/*
+  The CSS in this style tag is based off of Bear Blog's default CSS.
+  https://github.com/HermanMartinus/bearblog/blob/297026a877bc2ab2b3bdfbd6b9f7961c350917dd/templates/styles/blog/default.css
+  License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
+ */
+
+:root {
+	/* Purple accent colors */
+	--accent: #8B5CF6;
+	--accent-dark: #7C3AED;
+	--accent-light: #A78BFA;
+	--accent-50: #F5F3FF;
+	--accent-100: #EDE9FE;
+	--accent-200: #DDD6FE;
+	
+	/* Neutral colors */
+	--black: 15, 18, 25;
+	--gray: 96, 115, 159;
+	--gray-light: 229, 233, 240;
+	--gray-dark: 34, 41, 57;
+	--gray-gradient: rgba(var(--gray-light), 50%), #fff;
+	
+	/* Enhanced shadows with purple tint */
+	--box-shadow:
+		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px
+		rgba(var(--gray), 33%);
+	--purple-shadow:
+		0 4px 14px 0 rgba(139, 92, 246, 0.15), 0 2px 4px 0 rgba(139, 92, 246, 0.1);
+	
+	/* Card styles */
+	--card-bg: #ffffff;
+	--card-border: rgba(139, 92, 246, 0.1);
+	--card-hover-shadow: 0 10px 25px rgba(139, 92, 246, 0.1);
+}
+@font-face {
+	font-family: "Atkinson";
+	src: url("/fonts/atkinson-regular.woff") format("woff");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: "Atkinson";
+	src: url("/fonts/atkinson-bold.woff") format("woff");
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+body {
+	font-family: "Atkinson", sans-serif;
+	margin: 0;
+	padding: 0;
+	text-align: left;
+	background: linear-gradient(var(--gray-gradient)) no-repeat;
+	background-size: 100% 600px;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	color: rgb(var(--gray-dark));
+	font-size: 20px;
+	line-height: 1.7;
+}
+main {
+	width: 720px;
+	max-width: calc(100% - 2em);
+	margin: auto;
+	padding: 3em 1em;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	margin: 0 0 0.5rem 0;
+	color: rgb(var(--black));
+	line-height: 1.2;
+}
+h1 {
+	font-size: 3.052em;
+}
+h2 {
+	font-size: 2.441em;
+}
+h3 {
+	font-size: 1.953em;
+}
+h4 {
+	font-size: 1.563em;
+}
+h5 {
+	font-size: 1.25em;
+}
+strong,
+b {
+	font-weight: 700;
+}
+a {
+	color: var(--accent);
+}
+a:hover {
+	color: var(--accent);
+}
+p {
+	margin-bottom: 1em;
+}
+.prose p {
+	margin-bottom: 2em;
+}
+textarea {
+	width: 100%;
+	font-size: 16px;
+}
+input {
+	font-size: 16px;
+}
+table {
+	width: 100%;
+}
+img {
+	max-width: 100%;
+	height: auto;
+	border-radius: 8px;
+}
+code {
+	padding: 2px 5px;
+	background-color: rgb(var(--gray-light));
+	border-radius: 2px;
+}
+pre {
+	padding: 1.5em;
+	border-radius: 8px;
+}
+pre > code {
+	all: unset;
+}
+blockquote {
+	border-left: 4px solid var(--accent);
+	padding: 0 0 0 20px;
+	margin: 0px;
+	font-size: 1.333em;
+}
+hr {
+	border: none;
+	border-top: 1px solid rgb(var(--gray-light));
+}
+@media (max-width: 720px) {
+	body {
+		font-size: 18px;
+	}
+	main {
+		padding: 1em;
+	}
+}
+
+.sr-only {
+	border: 0;
+	padding: 0;
+	margin: 0;
+	position: absolute !important;
+	height: 1px;
+	width: 1px;
+	overflow: hidden;
+	/* IE6, IE7 - a 0 height clip, off to the bottom right of the visible 1px box */
+	clip: rect(1px 1px 1px 1px);
+	/* maybe deprecated but we need to support legacy browsers */
+	clip: rect(1px, 1px, 1px, 1px);
+	/* modern browsers, clip-path works inwards from each corner */
+	clip-path: inset(50%);
+	/* added line to stop words getting smushed together (as they go onto separate lines and some screen readers do not understand line feeds as a space */
+	white-space: nowrap;
+}
+
+/* Card styles for projects and blog posts */
+.card {
+	background: var(--card-bg);
+	border: 1px solid var(--card-border);
+	border-radius: 12px;
+	padding: 1.5rem;
+	margin-bottom: 1.5rem;
+	box-shadow: var(--box-shadow);
+	transition: all 0.3s ease;
+}
+
+.card:hover {
+	box-shadow: var(--card-hover-shadow);
+	transform: translateY(-2px);
+}
+
+.card h3 {
+	margin-top: 0;
+	color: var(--accent);
+}
+
+.card-meta {
+	color: rgb(var(--gray));
+	font-size: 0.9em;
+	margin-bottom: 1rem;
+}
+
+.card-meta span {
+	margin-right: 1rem;
+}
+
+/* Project cards specific styles */
+.project-card {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.project-card .card-footer {
+	margin-top: auto;
+	padding-top: 1rem;
+	border-top: 1px solid var(--card-border);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.project-stats {
+	display: flex;
+	gap: 1rem;
+	font-size: 0.9em;
+	color: rgb(var(--gray));
+}
+
+.project-stats span {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+/* Language badges */
+.language-badge {
+	display: inline-block;
+	padding: 0.25rem 0.5rem;
+	background: var(--accent-100);
+	color: var(--accent-dark);
+	border-radius: 6px;
+	font-size: 0.8em;
+	font-weight: 600;
+}
+
+/* Button styles */
+.btn {
+	display: inline-block;
+	padding: 0.75rem 1.5rem;
+	background: var(--accent);
+	color: white;
+	text-decoration: none;
+	border-radius: 8px;
+	font-weight: 600;
+	transition: all 0.3s ease;
+	border: none;
+	cursor: pointer;
+}
+
+.btn:hover {
+	background: var(--accent-dark);
+	transform: translateY(-1px);
+	box-shadow: var(--purple-shadow);
+}
+
+.btn-secondary {
+	background: transparent;
+	color: var(--accent);
+	border: 2px solid var(--accent);
+}
+
+.btn-secondary:hover {
+	background: var(--accent);
+	color: white;
+}
+
+/* Grid layouts */
+.grid {
+	display: grid;
+	gap: 1.5rem;
+}
+
+.grid-2 {
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.grid-3 {
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+/* Hero section */
+.hero {
+	text-align: center;
+	padding: 3rem 0;
+	margin-bottom: 3rem;
+}
+
+.hero h1 {
+	font-size: 3.5rem;
+	margin-bottom: 1rem;
+	background: linear-gradient(135deg, var(--accent), var(--accent-light));
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+.hero p {
+	font-size: 1.25rem;
+	color: rgb(var(--gray));
+	max-width: 600px;
+	margin: 0 auto 2rem;
+}
+
+/* Section headers */
+.section-header {
+	text-align: center;
+	margin-bottom: 3rem;
+}
+
+.section-header h2 {
+	font-size: 2.5rem;
+	margin-bottom: 1rem;
+	color: rgb(var(--black));
+}
+
+.section-header p {
+	font-size: 1.1rem;
+	color: rgb(var(--gray));
+	max-width: 500px;
+	margin: 0 auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+	.hero h1 {
+		font-size: 2.5rem;
+	}
+	
+	.grid-2,
+	.grid-3 {
+		grid-template-columns: 1fr;
+	}
+	
+	.project-stats {
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+}

@@ -1,0 +1,65 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Resume - ${SITE_TITLE}`} description="Michelle Mayes - Resume and CV" />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<div class="section-header">
+				<h1>Resume</h1>
+				<p>Download my resume or view it online below.</p>
+			</div>
+
+			<div class="card" style="text-align: center; padding: 2rem;">
+				<div style="margin-bottom: 2rem;">
+					<a href="/resume.pdf" class="btn" download="Michelle_Mayes_Resume.pdf">
+						📄 Download PDF
+					</a>
+				</div>
+
+				<div class="resume-container">
+					<iframe 
+						src="/resume.pdf" 
+						width="100%" 
+						height="800px"
+						style="border: 1px solid var(--card-border); border-radius: 8px;"
+						title="Resume PDF"
+					>
+						<p>
+							Your browser doesn't support PDFs. 
+							<a href="/resume.pdf" download="Michelle_Mayes_Resume.pdf">Download the PDF instead</a>.
+						</p>
+					</iframe>
+				</div>
+
+				<div style="margin-top: 1rem; color: rgb(var(--gray)); font-size: 0.9em;">
+					<p>Having trouble viewing the PDF? <a href="/resume.pdf" download="Michelle_Mayes_Resume.pdf">Download it here</a>.</p>
+				</div>
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.resume-container {
+		position: relative;
+		width: 100%;
+		max-width: 800px;
+		margin: 0 auto;
+	}
+
+	@media (max-width: 768px) {
+		.resume-container iframe {
+			height: 600px;
+		}
+	}
+</style>

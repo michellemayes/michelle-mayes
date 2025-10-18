@@ -1,0 +1,95 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_DESCRIPTION, SITE_TITLE, SOCIAL_LINKS } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`About - ${SITE_TITLE}`} description="Learn more about Michelle Mayes" />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<div class="section-header">
+				<h1>About Me</h1>
+				<p>Get to know me better and learn about my journey in tech</p>
+			</div>
+
+			<div class="card" style="margin-bottom: 2rem;">
+				<div style="display: flex; align-items: center; margin-bottom: 2rem;">
+					<div style="width: 120px; height: 120px; background: var(--accent-100); border-radius: 50%; margin-right: 2rem; display: flex; align-items: center; justify-content: center; font-size: 3rem;">
+						👩‍💻
+					</div>
+					<div>
+						<h2 style="margin-top: 0;">Hi, I'm Michelle!</h2>
+						<p style="font-size: 1.1rem; color: rgb(var(--gray)); margin-bottom: 0;">
+							Passionate developer, problem solver, and lifelong learner
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="grid grid-2" style="margin-bottom: 3rem;">
+				<div class="card">
+					<h3>Background</h3>
+					<p>
+						I'm a passionate developer with a love for creating meaningful solutions through code. 
+						My journey in technology began with curiosity and has evolved into a career focused on 
+						building user-centric applications and contributing to open source projects.
+					</p>
+					<p>
+						I believe in the power of technology to solve real-world problems and am always excited 
+						to learn new technologies and methodologies that can help me become a better developer.
+					</p>
+				</div>
+
+				<div class="card">
+					<h3>Current Focus</h3>
+					<p>
+						Currently, I'm focused on full-stack development, with particular interest in modern 
+						web technologies, cloud computing, and developer experience improvements.
+					</p>
+					<p>
+						I enjoy working on projects that have a positive impact and am always looking for 
+						opportunities to collaborate with other developers and contribute to meaningful initiatives.
+					</p>
+				</div>
+			</div>
+
+			<div class="card" style="margin-bottom: 3rem;">
+				<h3>Skills & Technologies</h3>
+				<div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
+					<span class="language-badge">JavaScript</span>
+					<span class="language-badge">TypeScript</span>
+					<span class="language-badge">React</span>
+					<span class="language-badge">Node.js</span>
+					<span class="language-badge">Python</span>
+					<span class="language-badge">Git</span>
+					<span class="language-badge">AWS</span>
+					<span class="language-badge">Docker</span>
+				</div>
+				<p style="color: rgb(var(--gray)); font-size: 0.9em; margin: 0;">
+					Always learning and expanding my skill set with new technologies and best practices.
+				</p>
+			</div>
+
+			<div class="card" style="text-align: center; padding: 2rem;">
+				<h3>Let's Connect</h3>
+				<p>
+					I'm always interested in meeting new people and discussing technology, 
+					career opportunities, or just having a friendly chat!
+				</p>
+				<div style="margin-top: 2rem;">
+					<a href={SOCIAL_LINKS.email} class="btn">Send me an email</a>
+					<a href={SOCIAL_LINKS.linkedin} class="btn btn-secondary" style="margin-left: 1rem;" target="_blank" rel="noopener noreferrer">
+						Connect on LinkedIn
+					</a>
+				</div>
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>

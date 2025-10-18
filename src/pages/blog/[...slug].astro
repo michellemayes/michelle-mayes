@@ -1,0 +1,161 @@
+---
+import { type CollectionEntry, getCollection, render } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import { SITE_TITLE } from '../../consts';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog');
+	return posts.map((post) => ({
+		params: { slug: post.slug },
+		props: post,
+	}));
+}
+type Props = CollectionEntry<'blog'>;
+
+const post = Astro.props;
+const { Content } = await render(post);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`${post.data.title} - ${SITE_TITLE}`} description={post.data.description} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<article class="blog-post">
+				<header class="blog-post-header">
+					<h1>{post.data.title}</h1>
+					<div class="blog-post-meta">
+						<time>{new Date(post.data.pubDate).toLocaleDateString()}</time>
+						{post.data.tags && post.data.tags.length > 0 && (
+							<span>• {post.data.tags.join(', ')}</span>
+						)}
+					</div>
+					{post.data.description && (
+						<p class="blog-post-description">{post.data.description}</p>
+					)}
+				</header>
+
+				<div class="blog-post-content">
+					<Content />
+				</div>
+			</article>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.blog-post {
+		max-width: 800px;
+		margin: 0 auto;
+		padding: 2rem;
+	}
+
+	.blog-post-header {
+		margin-bottom: 3rem;
+		text-align: center;
+	}
+
+	.blog-post-header h1 {
+		font-size: 2.5rem;
+		margin-bottom: 1rem;
+		color: var(--accent);
+	}
+
+	.blog-post-meta {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 1rem;
+		margin-bottom: 1.5rem;
+		color: rgb(var(--gray));
+		font-size: 0.9rem;
+	}
+
+	.blog-post-description {
+		font-size: 1.1rem;
+		color: rgb(var(--gray-dark));
+		font-style: italic;
+		max-width: 600px;
+		margin: 0 auto;
+	}
+
+	.blog-post-content {
+		line-height: 1.8;
+		color: rgb(var(--gray-dark));
+	}
+
+	.blog-post-content h2 {
+		color: var(--accent);
+		margin-top: 2rem;
+		margin-bottom: 1rem;
+	}
+
+	.blog-post-content h3 {
+		color: rgb(var(--black));
+		margin-top: 1.5rem;
+		margin-bottom: 0.75rem;
+	}
+
+	.blog-post-content p {
+		margin-bottom: 1.5rem;
+	}
+
+	.blog-post-content ul, .blog-post-content ol {
+		margin-bottom: 1.5rem;
+		padding-left: 2rem;
+	}
+
+	.blog-post-content li {
+		margin-bottom: 0.5rem;
+	}
+
+	.blog-post-content code {
+		background: var(--accent-100);
+		padding: 0.2rem 0.4rem;
+		border-radius: 4px;
+		font-family: 'Courier New', monospace;
+		font-size: 0.9rem;
+	}
+
+	.blog-post-content pre {
+		background: var(--accent-100);
+		padding: 1rem;
+		border-radius: 8px;
+		overflow-x: auto;
+		margin-bottom: 1.5rem;
+	}
+
+	.blog-post-content pre code {
+		background: none;
+		padding: 0;
+	}
+
+	.blog-post-content blockquote {
+		border-left: 4px solid var(--accent);
+		padding-left: 1rem;
+		margin: 1.5rem 0;
+		font-style: italic;
+		color: rgb(var(--gray-dark));
+	}
+
+	@media (max-width: 768px) {
+		.blog-post {
+			padding: 1rem;
+		}
+
+		.blog-post-header h1 {
+			font-size: 2rem;
+		}
+
+		.blog-post-meta {
+			flex-direction: column;
+			gap: 0.5rem;
+		}
+	}
+</style>

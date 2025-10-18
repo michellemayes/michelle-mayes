@@ -1,0 +1,212 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import { SITE_TITLE } from '../../consts';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog');
+const posts = allPosts.sort((a, b) => {
+  const dateA = new Date(a.data.pubDate);
+  const dateB = new Date(b.data.pubDate);
+  return dateB.valueOf() - dateA.valueOf();
+});
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Blog - ${SITE_TITLE}`} description="Thoughts, insights, and tutorials on software development." />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<div class="blog-page">
+				<header class="blog-page-header">
+					<h1>Blog</h1>
+					<p>Thoughts, insights, and tutorials on software development.</p>
+				</header>
+
+				{posts.length > 0 ? (
+					<div class="blog-posts-grid">
+						{posts.map((post, index) => (
+							<article class={`blog-post-card ${index === 0 ? 'featured' : ''}`}>
+								<a href={`/blog/${post.slug}/`} class="blog-post-link">
+									{post.data.heroImage && (
+										<div class="blog-post-image">
+											<img 
+												src={post.data.heroImage.src} 
+												alt={post.data.title}
+											/>
+										</div>
+									)}
+									<div class="blog-post-content">
+										<h2>{post.data.title}</h2>
+										<p class="blog-post-description">{post.data.description}</p>
+										<div class="blog-post-meta">
+											<time>{new Date(post.data.pubDate).toLocaleDateString()}</time>
+											{post.data.tags && post.data.tags.length > 0 && (
+												<span>• {post.data.tags.join(', ')}</span>
+											)}
+										</div>
+									</div>
+								</a>
+							</article>
+						))}
+					</div>
+				) : (
+					<div class="no-posts">
+						<h3>No articles yet</h3>
+						<p>Check back soon for new blog posts!</p>
+					</div>
+				)}
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.blog-page {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 2rem;
+	}
+
+	.blog-page-header {
+		text-align: center;
+		margin-bottom: 3rem;
+	}
+
+	.blog-page-header h1 {
+		font-size: 3rem;
+		margin-bottom: 1rem;
+		color: var(--accent);
+	}
+
+	.blog-page-header p {
+		font-size: 1.2rem;
+		color: rgb(var(--gray));
+		max-width: 600px;
+		margin: 0 auto;
+	}
+
+	.blog-posts-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		gap: 2rem;
+	}
+
+	.blog-post-card.featured {
+		grid-column: 1 / -1;
+	}
+
+	.blog-post-card {
+		border: 1px solid var(--card-border);
+		border-radius: 12px;
+		background: var(--card-bg);
+		overflow: hidden;
+		transition: all 0.3s ease;
+	}
+
+	.blog-post-card:hover {
+		box-shadow: var(--card-hover-shadow);
+		transform: translateY(-4px);
+	}
+
+	.blog-post-link {
+		display: block;
+		text-decoration: none;
+		color: inherit;
+	}
+
+	.blog-post-image {
+		height: 200px;
+		overflow: hidden;
+	}
+
+	.blog-post-card.featured .blog-post-image {
+		height: 300px;
+	}
+
+	.blog-post-image img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 0.3s ease;
+	}
+
+	.blog-post-card:hover .blog-post-image img {
+		transform: scale(1.05);
+	}
+
+	.blog-post-content {
+		padding: 1.5rem;
+	}
+
+	.blog-post-content h2 {
+		font-size: 1.5rem;
+		margin-bottom: 0.75rem;
+		color: var(--accent);
+	}
+
+	.blog-post-card.featured .blog-post-content h2 {
+		font-size: 2rem;
+	}
+
+	.blog-post-description {
+		color: rgb(var(--gray-dark));
+		margin-bottom: 1rem;
+		line-height: 1.6;
+	}
+
+	.blog-post-meta {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		font-size: 0.9rem;
+		color: rgb(var(--gray));
+	}
+
+	.no-posts {
+		text-align: center;
+		padding: 4rem 2rem;
+	}
+
+	.no-posts h3 {
+		font-size: 1.5rem;
+		margin-bottom: 1rem;
+		color: rgb(var(--black));
+	}
+
+	.no-posts p {
+		color: rgb(var(--gray));
+		font-size: 1.1rem;
+	}
+
+	@media (max-width: 768px) {
+		.blog-page {
+			padding: 1rem;
+		}
+
+		.blog-page-header h1 {
+			font-size: 2rem;
+		}
+
+		.blog-posts-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.blog-post-card.featured {
+			grid-column: 1;
+		}
+
+		.blog-post-image {
+			height: 150px;
+		}
+
+		.blog-post-card.featured .blog-post-image {
+			height: 200px;
+		}
+	}
+</style>

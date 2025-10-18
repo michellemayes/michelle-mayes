@@ -1,0 +1,185 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { fetchRepositories, type GitHubRepository } from '../lib/github';
+
+// Fetch repositories at build time
+const repositories = await fetchRepositories('michellemayes');
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Projects - ${SITE_TITLE}`} description="My GitHub projects and repositories" />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<div class="section-header">
+				<h1>My Projects</h1>
+				<p>Here are some of the projects I've been working on. You can find more on my GitHub profile.</p>
+			</div>
+
+			<div class="projects-grid">
+				{repositories.map((repo) => (
+					<div class="project-card-small">
+						<div class="project-card-content">
+							<h3>
+								<a href={repo.html_url} target="_blank" rel="noopener noreferrer">
+									{repo.name}
+								</a>
+							</h3>
+							
+							{repo.description && (
+								<p class="project-description">{repo.description}</p>
+							)}
+							
+							<div class="project-meta">
+								{repo.language && (
+									<span class="language-badge">{repo.language}</span>
+								)}
+								<span class="update-date">Updated {new Date(repo.updated_at).toLocaleDateString()}</span>
+							</div>
+
+							<div class="project-stats">
+								<span>⭐ {repo.stargazers_count}</span>
+								<span>🍴 {repo.forks_count}</span>
+							</div>
+						</div>
+						<div class="project-card-footer">
+							<a href={repo.html_url} class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
+								View on GitHub
+							</a>
+						</div>
+					</div>
+				))}
+			</div>
+
+			{repositories.length === 0 && (
+				<div class="card" style="text-align: center; padding: 3rem;">
+					<h3>No projects found</h3>
+					<p>Unable to load projects from GitHub. Please try again later.</p>
+				</div>
+			)}
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.section-header {
+		text-align: center;
+		margin-bottom: 3rem;
+	}
+
+	.section-header h1 {
+		font-size: 2.5rem;
+		margin-bottom: 1rem;
+		color: var(--accent);
+	}
+
+	.section-header p {
+		font-size: 1.1rem;
+		color: rgb(var(--gray));
+		max-width: 600px;
+		margin: 0 auto;
+	}
+
+	.projects-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		gap: 1.5rem;
+		margin-bottom: 2rem;
+	}
+
+	.project-card-small {
+		background: var(--card-bg);
+		border: 1px solid var(--card-border);
+		border-radius: 12px;
+		padding: 1.5rem;
+		transition: all 0.3s ease;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.project-card-small:hover {
+		box-shadow: var(--card-hover-shadow);
+		transform: translateY(-2px);
+	}
+
+	.project-card-content {
+		flex: 1;
+		margin-bottom: 1rem;
+	}
+
+	.project-card-small h3 {
+		margin: 0 0 0.75rem 0;
+		font-size: 1.2rem;
+	}
+
+	.project-card-small h3 a {
+		color: var(--accent);
+		text-decoration: none;
+	}
+
+	.project-card-small h3 a:hover {
+		text-decoration: underline;
+	}
+
+	.project-description {
+		margin: 0 0 1rem 0;
+		color: rgb(var(--gray-dark));
+		line-height: 1.5;
+		font-size: 0.9rem;
+	}
+
+	.project-meta {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		margin-bottom: 1rem;
+		font-size: 0.85rem;
+	}
+
+	.language-badge {
+		background: var(--accent-100);
+		color: var(--accent-dark);
+		padding: 0.2rem 0.5rem;
+		border-radius: 4px;
+		font-size: 0.75rem;
+		font-weight: 600;
+	}
+
+	.update-date {
+		color: rgb(var(--gray));
+	}
+
+	.project-stats {
+		display: flex;
+		gap: 1rem;
+		font-size: 0.85rem;
+		color: rgb(var(--gray));
+		margin-bottom: 1rem;
+	}
+
+	.project-card-footer {
+		margin-top: auto;
+	}
+
+	.project-card-footer .btn {
+		padding: 0.4rem 0.8rem;
+		font-size: 0.8rem;
+	}
+
+	@media (max-width: 768px) {
+		.projects-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.section-header h1 {
+			font-size: 2rem;
+		}
+	}
+</style>
