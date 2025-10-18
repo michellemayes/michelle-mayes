@@ -123,6 +123,19 @@ import HeaderLink from './HeaderLink.astro';
 		box-shadow: 0 2px 8px rgba(var(--black), 5%);
 		position: relative;
 		z-index: 1000;
+		opacity: 0;
+		animation: slideInDown 0.1s ease forwards;
+	}
+
+	@keyframes slideInDown {
+		from {
+			opacity: 0;
+			transform: translateY(-2px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 
 	nav {

@@ -66,21 +66,23 @@ function calculateReadingTime(content: string): number {
 										const readingTime = calculateReadingTime(post.body);
 										return (
 											<article class="blog-post-item">
-												<div class="post-date">
-													{post.day}
-												</div>
-												<div class="post-content">
-													<h4 class="post-title">
-														<a href={`/blog/${post.slug}/`}>{post.data.title}</a>
-													</h4>
-													{post.data.description && (
-														<p class="post-description">{post.data.description}</p>
-													)}
-													<div class="post-meta">
-														<span class="published-date">Published: {new Date(post.data.pubDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-														<span class="reading-time">• {readingTime} min read</span>
+												<a href={`/blog/${post.slug}/`} class="blog-post-link">
+													<div class="post-date">
+														{post.day}
 													</div>
-												</div>
+													<div class="post-content">
+														<h4 class="post-title">
+															{post.data.title}
+														</h4>
+														{post.data.description && (
+															<p class="post-description">{post.data.description}</p>
+														)}
+														<div class="post-meta">
+															<span class="published-date">Published: {new Date(post.data.pubDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+															<span class="reading-time">• {readingTime} min read</span>
+														</div>
+													</div>
+												</a>
 											</article>
 										);
 									})}
@@ -156,23 +158,34 @@ function calculateReadingTime(content: string): number {
 	}
 
 	.blog-post-item {
-		display: flex;
-		align-items: flex-start;
-		gap: 1rem;
-		padding: 1rem 0;
-		border-bottom: 1px solid var(--card-border);
-		transition: all 0.2s ease;
+		background: var(--card-bg);
+		border: 1px solid var(--card-border);
+		border-radius: 12px;
+		margin-bottom: 1rem;
+		overflow: hidden;
+		transition: all 0.3s ease;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 	}
 
 	.blog-post-item:hover {
-		background: var(--accent-50);
-		margin: 0 -1rem;
-		padding: 1rem;
-		border-radius: 8px;
+		box-shadow: var(--purple-shadow);
+		transform: translateY(-2px);
 	}
 
-	.blog-post-item:last-child {
-		border-bottom: none;
+	.blog-post-link {
+		display: flex;
+		align-items: flex-start;
+		gap: 1rem;
+		padding: 1.5rem;
+		text-decoration: none;
+		color: inherit;
+		width: 100%;
+		height: 100%;
+		box-sizing: border-box;
+	}
+
+	.blog-post-link:hover {
+		text-decoration: none;
 	}
 
 	.post-date {
@@ -191,15 +204,11 @@ function calculateReadingTime(content: string): number {
 		margin: 0 0 0.5rem 0;
 		font-size: 1.1rem;
 		line-height: 1.4;
-	}
-
-	.post-title a {
 		color: rgb(var(--black));
-		text-decoration: none;
 		transition: color 0.2s ease;
 	}
 
-	.post-title a:hover {
+	.blog-post-item:hover .post-title {
 		color: var(--accent);
 	}
 
@@ -268,16 +277,17 @@ function calculateReadingTime(content: string): number {
 			font-size: 1.1rem;
 		}
 
-		.blog-post-item {
+		.blog-post-link {
 			flex-direction: column;
-			gap: 0.5rem;
-			padding: 0.75rem 0;
+			gap: 0.75rem;
+			padding: 1rem;
 		}
 
 		.post-date {
 			text-align: left;
 			min-width: auto;
 			font-size: 1rem;
+			align-self: flex-start;
 		}
 
 		.post-title {
@@ -312,8 +322,8 @@ function calculateReadingTime(content: string): number {
 			font-size: 1rem;
 		}
 
-		.blog-post-item {
-			padding: 0.5rem 0;
+		.blog-post-link {
+			padding: 0.75rem;
 		}
 
 		.post-date {

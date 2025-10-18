@@ -38,6 +38,48 @@ html {
 	overflow-x: hidden;
 }
 
+/* ===== LOADING ANIMATION ===== */
+.loading-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(255, 255, 255, 0.95);
+	z-index: 9999;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.05s ease, visibility 0.05s ease;
+}
+
+.loading-overlay.active {
+	opacity: 1;
+	visibility: visible;
+}
+
+/* ===== PAGE TRANSITIONS ===== */
+.page-enter {
+	opacity: 0;
+	transform: translateY(20px);
+}
+
+.page-enter-active {
+	opacity: 1;
+	transform: translateY(0);
+	transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.page-exit {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+.page-exit-active {
+	opacity: 0;
+	transform: translateY(-20px);
+	transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
 body {
 	font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 	margin: 0;
@@ -51,6 +93,19 @@ body {
 	font-size: 20px;
 	line-height: 1.7;
 	overflow-x: hidden;
+	opacity: 0;
+	animation: fadeIn 0.1s ease forwards;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(2px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 main {
@@ -61,6 +116,19 @@ main {
 	position: relative;
 	z-index: 1;
 	box-sizing: border-box;
+	opacity: 0;
+	animation: slideInUp 0.1s ease 0.05s forwards;
+}
+
+@keyframes slideInUp {
+	from {
+		opacity: 0;
+		transform: translateY(2px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 @media (max-width: 768px) {
