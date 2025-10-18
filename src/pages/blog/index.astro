@@ -102,9 +102,11 @@ function calculateReadingTime(content: string): number {
 
 <style>
 	main {
+		width: 100%;
 		max-width: 1200px;
 		margin: 0 auto;
 		padding: 2rem;
+		box-sizing: border-box;
 	}
 
 	.section-header {
@@ -242,12 +244,24 @@ function calculateReadingTime(content: string): number {
 			font-size: 2rem;
 		}
 
+		.section-header p {
+			font-size: 1rem;
+		}
+
 		.blog-posts-list {
 			max-width: 100%;
 		}
 
+		.year-section {
+			margin-bottom: 2rem;
+		}
+
 		.year-header {
 			font-size: 1.5rem;
+		}
+
+		.month-section {
+			margin-bottom: 1.5rem;
 		}
 
 		.month-header {
@@ -257,17 +271,65 @@ function calculateReadingTime(content: string): number {
 		.blog-post-item {
 			flex-direction: column;
 			gap: 0.5rem;
+			padding: 0.75rem 0;
 		}
 
 		.post-date {
 			text-align: left;
 			min-width: auto;
+			font-size: 1rem;
+		}
+
+		.post-title {
+			font-size: 1rem;
+		}
+
+		.post-description {
+			font-size: 0.85rem;
 		}
 
 		.post-meta {
 			flex-direction: column;
 			align-items: flex-start;
 			gap: 0.25rem;
+		}
+	}
+
+	@media (max-width: 480px) {
+		main {
+			padding: 0.75rem;
+		}
+
+		.section-header h1 {
+			font-size: 1.75rem;
+		}
+
+		.year-header {
+			font-size: 1.3rem;
+		}
+
+		.month-header {
+			font-size: 1rem;
+		}
+
+		.blog-post-item {
+			padding: 0.5rem 0;
+		}
+
+		.post-date {
+			font-size: 0.9rem;
+		}
+
+		.post-title {
+			font-size: 0.95rem;
+		}
+
+		.post-description {
+			font-size: 0.8rem;
+		}
+
+		.post-meta {
+			font-size: 0.8rem;
 		}
 	}
 </style>

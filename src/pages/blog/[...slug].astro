@@ -57,9 +57,11 @@ const { Content } = await render(post);
 
 <style>
 	main {
+		width: 100%;
 		max-width: 1200px;
 		margin: 0 auto;
 		padding: 2rem;
+		box-sizing: border-box;
 	}
 
 	.blog-navigation {
@@ -213,9 +215,17 @@ const { Content } = await render(post);
 			font-size: 1.5rem;
 		}
 
+		.blog-post-description {
+			font-size: 0.95rem;
+		}
+
 		.blog-post-meta {
 			flex-direction: column;
 			gap: 0.5rem;
+		}
+
+		.blog-post-content {
+			font-size: 0.9rem;
 		}
 
 		.blog-post-content h2 {
@@ -224,6 +234,45 @@ const { Content } = await render(post);
 
 		.blog-post-content h3 {
 			font-size: 0.9rem !important;
+		}
+
+		.blog-post-content p {
+			margin-bottom: 1rem;
+		}
+	}
+
+	@media (max-width: 480px) {
+		main {
+			padding: 0.75rem;
+		}
+
+		.blog-post {
+			padding: 1rem;
+		}
+
+		.blog-post-header h1 {
+			font-size: 1.3rem;
+		}
+
+		.blog-post-description {
+			font-size: 0.9rem;
+		}
+
+		.blog-post-content {
+			font-size: 0.85rem;
+		}
+
+		.blog-post-content h2 {
+			font-size: 0.95rem !important;
+		}
+
+		.blog-post-content h3 {
+			font-size: 0.85rem !important;
+		}
+
+		.back-to-posts-btn {
+			padding: 0.35rem 0.7rem;
+			font-size: 0.8rem;
 		}
 	}
 </style>
