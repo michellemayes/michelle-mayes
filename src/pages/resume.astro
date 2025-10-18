@@ -50,9 +50,11 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
 <style>
 	main {
+		width: 100%;
 		max-width: 1200px;
 		margin: 0 auto;
 		padding: 2rem;
+		box-sizing: border-box;
 	}
 
 	.section-header {
@@ -138,8 +140,47 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 			font-size: 2rem;
 		}
 
+		.section-header p {
+			font-size: 1rem;
+		}
+
+		.resume-card {
+			padding: 1.5rem;
+		}
+
 		.resume-container iframe {
 			height: 600px;
+		}
+
+		.resume-fallback {
+			font-size: 0.85rem;
+		}
+	}
+
+	@media (max-width: 480px) {
+		main {
+			padding: 0.75rem;
+		}
+
+		.section-header h1 {
+			font-size: 1.75rem;
+		}
+
+		.resume-card {
+			padding: 1rem;
+		}
+
+		.resume-container iframe {
+			height: 500px;
+		}
+
+		.btn {
+			padding: 0.6rem 1rem;
+			font-size: 0.85rem;
+		}
+
+		.resume-fallback {
+			font-size: 0.8rem;
 		}
 	}
 </style>

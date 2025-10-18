@@ -50,9 +50,11 @@ import { SITE_DESCRIPTION, SITE_TITLE, SOCIAL_LINKS } from '../consts';
 
 <style>
 	main {
+		width: 100%;
 		max-width: 1200px;
 		margin: 0 auto;
 		padding: 2rem;
+		box-sizing: border-box;
 	}
 
 	.section-header {
@@ -184,6 +186,14 @@ import { SITE_DESCRIPTION, SITE_TITLE, SOCIAL_LINKS } from '../consts';
 			font-size: 2rem;
 		}
 
+		.section-header p {
+			font-size: 1rem;
+		}
+
+		.about-card {
+			padding: 1.5rem;
+		}
+
 		.about-card-header {
 			flex-direction: column;
 			text-align: center;
@@ -195,8 +205,59 @@ import { SITE_DESCRIPTION, SITE_TITLE, SOCIAL_LINKS } from '../consts';
 			height: 100px;
 		}
 
+		.about-info h2 {
+			font-size: 1.3rem;
+		}
+
+		.about-info p {
+			font-size: 0.95rem;
+		}
+
+		.github-activity-section h3 {
+			font-size: 1.3rem;
+		}
+
+		.github-calendar-container {
+			padding: 1rem;
+		}
+
 		.github-calendar {
 			max-width: 100%;
+		}
+	}
+
+	@media (max-width: 480px) {
+		main {
+			padding: 0.75rem;
+		}
+
+		.section-header h1 {
+			font-size: 1.75rem;
+		}
+
+		.about-card {
+			padding: 1rem;
+		}
+
+		.about-photo {
+			width: 80px;
+			height: 80px;
+		}
+
+		.about-info h2 {
+			font-size: 1.2rem;
+		}
+
+		.about-info p {
+			font-size: 0.9rem;
+		}
+
+		.github-activity-section h3 {
+			font-size: 1.2rem;
+		}
+
+		.github-calendar-container {
+			padding: 0.75rem;
 		}
 	}
 </style>

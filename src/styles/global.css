@@ -30,6 +30,14 @@
 }
 
 /* ===== BASE STYLES ===== */
+* {
+	box-sizing: border-box;
+}
+
+html {
+	overflow-x: hidden;
+}
+
 body {
 	font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 	margin: 0;
@@ -42,13 +50,29 @@ body {
 	color: rgb(var(--gray-dark));
 	font-size: 20px;
 	line-height: 1.7;
+	overflow-x: hidden;
 }
 
 main {
-	width: 720px;
-	max-width: calc(100% - 2em);
-	margin: auto;
+	width: 100%;
+	max-width: 1200px;
+	margin: 0 auto;
 	padding: 3em 1em;
+	position: relative;
+	z-index: 1;
+	box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+	main {
+		padding: 2em 1em;
+	}
+}
+
+@media (max-width: 480px) {
+	main {
+		padding: 1.5em 0.75em;
+	}
 }
 
 /* ===== TYPOGRAPHY ===== */
@@ -56,6 +80,8 @@ h1, h2, h3, h4, h5, h6 {
 	margin: 0 0 0.5rem 0;
 	color: rgb(var(--black));
 	line-height: 1.2;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 }
 
 h1 { font-size: 3.052em; }
@@ -63,6 +89,22 @@ h2 { font-size: 2.441em; }
 h3 { font-size: 1.953em; }
 h4 { font-size: 1.563em; }
 h5 { font-size: 1.25em; }
+
+@media (max-width: 768px) {
+	h1 { font-size: 2.5em; }
+	h2 { font-size: 2em; }
+	h3 { font-size: 1.5em; }
+	h4 { font-size: 1.25em; }
+	h5 { font-size: 1.1em; }
+}
+
+@media (max-width: 480px) {
+	h1 { font-size: 2em; }
+	h2 { font-size: 1.75em; }
+	h3 { font-size: 1.3em; }
+	h4 { font-size: 1.1em; }
+	h5 { font-size: 1em; }
+}
 
 strong, b {
 	font-weight: 700;
@@ -105,6 +147,26 @@ img {
 	max-width: 100%;
 	height: auto;
 	border-radius: 8px;
+	display: block;
+}
+
+/* ===== RESPONSIVE CONTAINERS ===== */
+.container, .card, .section, .grid, .flex {
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+/* Prevent horizontal overflow */
+* {
+	max-width: 100%;
+}
+
+/* Ensure text doesn't overflow */
+p, span, div, a {
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	hyphens: auto;
 }
 
 /* ===== CODE ===== */
@@ -203,6 +265,9 @@ hr {
 .grid {
 	display: grid;
 	gap: 1.5rem;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
 }
 
 .grid-2 {
@@ -211,6 +276,13 @@ hr {
 
 .grid-3 {
 	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+@media (max-width: 768px) {
+	.grid-2, .grid-3 {
+		grid-template-columns: 1fr;
+		gap: 1rem;
+	}
 }
 
 /* ===== PROJECT CARDS ===== */
