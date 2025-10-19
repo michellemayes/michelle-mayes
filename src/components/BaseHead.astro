@@ -65,6 +65,7 @@ const { title, description, image } = Astro.props;
 	// Fast, subtle loading animation for page transitions
 	document.addEventListener('DOMContentLoaded', function() {
 		const loadingOverlay = document.getElementById('loading-overlay');
+		if (!loadingOverlay) return;
 		
 		// Show loading on page load
 		loadingOverlay.classList.add('active');
@@ -78,7 +79,8 @@ const { title, description, image } = Astro.props;
 		
 		// Show loading on navigation
 		document.addEventListener('click', function(e) {
-			const link = e.target.closest('a[href]');
+			const target = e.target as HTMLElement | null;
+			const link = target?.closest('a[href]') as HTMLAnchorElement | null;
 			if (link && link.hostname === window.location.hostname) {
 				loadingOverlay.classList.add('active');
 			}

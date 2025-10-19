@@ -411,7 +411,7 @@ import HeaderLink from './HeaderLink.astro';
 			mobileMenuToggle.addEventListener('click', function() {
 				const isExpanded = mobileMenuToggle.getAttribute('aria-expanded') === 'true';
 				
-				mobileMenuToggle.setAttribute('aria-expanded', !isExpanded);
+				mobileMenuToggle.setAttribute('aria-expanded', String(!isExpanded));
 				mobileMenu.classList.toggle('open');
 				
 				// Prevent body scroll when menu is open
@@ -430,7 +430,8 @@ import HeaderLink from './HeaderLink.astro';
 
 			// Close menu when clicking outside
 			document.addEventListener('click', function(event) {
-				if (!mobileMenuToggle.contains(event.target) && !mobileMenu.contains(event.target)) {
+				const target = event.target as Node | null;
+				if (target && !mobileMenuToggle.contains(target) && !mobileMenu.contains(target)) {
 					mobileMenuToggle.setAttribute('aria-expanded', 'false');
 					mobileMenu.classList.remove('open');
 					document.body.style.overflow = '';
