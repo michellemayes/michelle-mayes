@@ -5,7 +5,7 @@ export const SITE_TITLE = 'Michelle Mayes';
 export const SITE_DESCRIPTION = 'Personal website showcasing my projects, blog posts, and professional experience.';
 
 // Social media links
-export const GITHUB_USERNAME = 'michelle-mayes'; // Update with your actual GitHub username
+export const GITHUB_USERNAME = 'michellemayes'; // Update with your actual GitHub username
 export const SOCIAL_LINKS = {
   github: 'https://github.com/michellemayes', // Update with your actual GitHub URL
   twitter: 'https://twitter.com/michellejmayes', // Update with your actual Twitter/X URL

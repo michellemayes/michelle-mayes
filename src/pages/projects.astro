@@ -2,11 +2,14 @@
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { SITE_DESCRIPTION, SITE_TITLE, GITHUB_USERNAME } from '../consts';
 import { fetchRepositories, type GitHubRepository } from '../lib/github';
 
-// Fetch repositories at build time
-const repositories = await fetchRepositories('michellemayes');
+// Enable SSR for this page to fetch repositories on each request
+export const prerender = false;
+
+// Fetch repositories from GitHub (will be fetched on each page load)
+const repositories = await fetchRepositories(GITHUB_USERNAME);
 ---
 
 <!doctype html>

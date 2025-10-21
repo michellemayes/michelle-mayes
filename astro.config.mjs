@@ -11,4 +11,5 @@ export default defineConfig({
   site: 'https://michelle-mayes.vercel.app', // Update with your actual domain
   integrations: [mdx(), sitemap()],
   adapter: vercel(),
+  output: 'hybrid', // Enables SSR for specific pages while keeping others static
 });
