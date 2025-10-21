@@ -3,14 +3,12 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
-import { fetchPinnedRepositories } from '../lib/github';
 import { getCollection } from 'astro:content';
 
-// Enable SSR for this page to fetch featured projects live from GitHub
-export const prerender = false;
+// Prerender this page as static
+export const prerender = true;
 
-// Fetch featured projects and latest blog posts
-const featuredProjects = await fetchPinnedRepositories();
+// Fetch latest blog posts
 const allPosts = await getCollection('blog');
 const latestPosts = allPosts
 	.sort((a, b) => {
@@ -76,48 +74,6 @@ function calculateReadingTime(content: string): number {
 					</div>
 				</div>
 			</div>
-
-			<!-- Featured Projects Section -->
-			{featuredProjects.length > 0 && (
-				<div class="section-header">
-					<h2>Featured Projects</h2>
-					<p>Some of my recent work and open source contributions</p>
-				</div>
-			)}
-
-			{featuredProjects.length > 0 && (
-				<div class="grid grid-3" style="margin-bottom: 4rem;">
-					{featuredProjects.slice(0, 3).map((project) => (
-						<div class="card project-card">
-							<h3>
-								<a href={project.html_url} target="_blank" rel="noopener noreferrer">
-									{project.name}
-								</a>
-							</h3>
-							
-							{project.description && (
-								<p>{project.description}</p>
-							)}
-							
-							<div class="card-meta">
-								{project.language && (
-									<span class="language-badge">{project.language}</span>
-								)}
-							</div>
-
-							<div class="card-footer">
-								<div class="project-stats">
-									<span>⭐ {project.stargazers_count}</span>
-									<span>🍴 {project.forks_count}</span>
-								</div>
-								<a href={project.html_url} class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
-									View Project
-								</a>
-							</div>
-						</div>
-					))}
-				</div>
-			)}
 
 			<!-- Latest Blog Posts Section -->
 			{latestPosts.length > 0 && (
