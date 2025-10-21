@@ -5,6 +5,9 @@ import Header from '../../components/Header.astro';
 import { SITE_TITLE } from '../../consts';
 import { getCollection } from 'astro:content';
 
+// Prerender this page as static
+export const prerender = true;
+
 const allPosts = await getCollection('blog');
 const posts = allPosts.sort((a, b) => {
   const dateA = new Date(a.data.pubDate);

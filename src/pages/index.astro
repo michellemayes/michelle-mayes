@@ -6,6 +6,9 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import { fetchPinnedRepositories } from '../lib/github';
 import { getCollection } from 'astro:content';
 
+// Enable SSR for this page to fetch featured projects live from GitHub
+export const prerender = false;
+
 // Fetch featured projects and latest blog posts
 const featuredProjects = await fetchPinnedRepositories();
 const allPosts = await getCollection('blog');
