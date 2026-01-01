@@ -14,6 +14,7 @@ export interface GitHubRepository {
   created_at: string;
   topics: string[];
   fork: boolean;
+  private: boolean;
   homepage: string | null;
 }
 
@@ -44,18 +45,28 @@ export async function fetchRepositories(
   includeForks: boolean = false
 ): Promise<GitHubRepository[]> {
   try {
-    const url = new URL(`https://api.github.com/users/${username}/repos`);
+    // Use authenticated endpoint to get private repos when token is available
+    const hasToken = !!process.env.GITHUB_TOKEN;
+    const url = hasToken
+      ? new URL('https://api.github.com/user/repos')
+      : new URL(`https://api.github.com/users/${username}/repos`);
+
     url.searchParams.set('per_page', perPage.toString());
     url.searchParams.set('sort', sort);
     url.searchParams.set('direction', direction);
-    url.searchParams.set('type', 'all'); // Include all repo types
+
+    if (hasToken) {
+      // For authenticated endpoint, filter by owner affiliation
+      url.searchParams.set('affiliation', 'owner');
+    } else {
+      url.searchParams.set('type', 'all');
+    }
 
     const response = await fetch(url.toString(), {
       headers: {
         'Accept': 'application/vnd.github.v3+json',
         'User-Agent': 'michelle-mayes-personal-site',
-        // Add Authorization header if GITHUB_TOKEN is available
-        ...(process.env.GITHUB_TOKEN && {
+        ...(hasToken && {
           'Authorization': `token ${process.env.GITHUB_TOKEN}`
         })
       }
@@ -65,13 +76,18 @@ export async function fetchRepositories(
       throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
     }
 
-    const repos: GitHubRepository[] = await response.json();
-    
+    let repos: GitHubRepository[] = await response.json();
+
+    // Filter to only the specified user's repos (for authenticated endpoint)
+    if (hasToken) {
+      repos = repos.filter(repo => repo.full_name.startsWith(`${username}/`));
+    }
+
     // Filter out forks if requested
     if (!includeForks) {
       return repos.filter(repo => !repo.fork);
     }
-    
+
     return repos;
   } catch (error) {
     console.error('Error fetching GitHub repositories:', error);
@@ -114,4 +130,146 @@ export async function fetchPinnedRepositories(username: string = GITHUB_USERNAME
   // For now, return the most starred repositories as "featured"
   const repos = await fetchRepositories(username, 6, 'updated', 'desc', false);
   return repos.slice(0, 6);
+}
+
+/**
+ * Fetch the date of the first PR for a repository
+ * Returns null if no PRs exist or on error
+ */
+export async function fetchFirstPRDate(owner: string, repo: string): Promise<Date | null> {
+  try {
+    const url = new URL(`https://api.github.com/repos/${owner}/${repo}/pulls`);
+    url.searchParams.set('state', 'all');
+    url.searchParams.set('sort', 'created');
+    url.searchParams.set('direction', 'asc');
+    url.searchParams.set('per_page', '1');
+
+    const response = await fetch(url.toString(), {
+      headers: {
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'michelle-mayes-personal-site',
+        ...(process.env.GITHUB_TOKEN && {
+          'Authorization': `token ${process.env.GITHUB_TOKEN}`
+        })
+      }
+    });
+
+    if (!response.ok) return null;
+
+    const prs = await response.json();
+    if (prs.length > 0 && prs[0].created_at) {
+      return new Date(prs[0].created_at);
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Fetch the date of the first commit for a repository
+ * Returns null on error
+ */
+export async function fetchFirstCommitDate(owner: string, repo: string): Promise<Date | null> {
+  try {
+    // First get the default branch's commit count via the repo stats
+    const commitsUrl = new URL(`https://api.github.com/repos/${owner}/${repo}/commits`);
+    commitsUrl.searchParams.set('per_page', '1');
+
+    const response = await fetch(commitsUrl.toString(), {
+      headers: {
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'michelle-mayes-personal-site',
+        ...(process.env.GITHUB_TOKEN && {
+          'Authorization': `token ${process.env.GITHUB_TOKEN}`
+        })
+      }
+    });
+
+    if (!response.ok) return null;
+
+    // Get the last page from Link header to find oldest commit
+    const linkHeader = response.headers.get('Link');
+    if (!linkHeader) {
+      // Only one page of commits, get it directly
+      const commits = await response.json();
+      if (commits.length > 0) {
+        return new Date(commits[0].commit.author.date);
+      }
+      return null;
+    }
+
+    // Parse last page from Link header
+    const lastPageMatch = linkHeader.match(/page=(\d+)>; rel="last"/);
+    if (!lastPageMatch) return null;
+
+    const lastPage = lastPageMatch[1];
+    commitsUrl.searchParams.set('page', lastPage);
+
+    const lastPageResponse = await fetch(commitsUrl.toString(), {
+      headers: {
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'michelle-mayes-personal-site',
+        ...(process.env.GITHUB_TOKEN && {
+          'Authorization': `token ${process.env.GITHUB_TOKEN}`
+        })
+      }
+    });
+
+    if (!lastPageResponse.ok) return null;
+
+    const lastPageCommits = await lastPageResponse.json();
+    if (lastPageCommits.length > 0) {
+      // Last commit on last page is the oldest
+      return new Date(lastPageCommits[lastPageCommits.length - 1].commit.author.date);
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Get the "ship date" for a repo - first PR date, or first commit if no PRs
+ */
+export async function fetchShipDate(owner: string, repo: string): Promise<Date | null> {
+  // Try first PR first
+  const prDate = await fetchFirstPRDate(owner, repo);
+  if (prDate) return prDate;
+
+  // Fall back to first commit
+  return fetchFirstCommitDate(owner, repo);
+}
+
+/**
+ * Fetch weekly commit activity for the last 12 weeks
+ * Returns an array of commit counts per week (most recent last)
+ */
+export async function fetchCommitActivity(owner: string, repo: string): Promise<number[]> {
+  try {
+    const url = `https://api.github.com/repos/${owner}/${repo}/stats/participation`;
+
+    const response = await fetch(url, {
+      headers: {
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'michelle-mayes-personal-site',
+        ...(process.env.GITHUB_TOKEN && {
+          'Authorization': `token ${process.env.GITHUB_TOKEN}`
+        })
+      }
+    });
+
+    // GitHub returns 202 if stats are being computed, treat as empty
+    if (response.status === 202 || !response.ok) {
+      return [];
+    }
+
+    const data = await response.json();
+    // owner array has weekly commits by the owner for the last 52 weeks
+    // Take the last 12 weeks for a compact view
+    const ownerCommits: number[] = data.owner || [];
+    return ownerCommits.slice(-12);
+  } catch {
+    return [];
+  }
 }
