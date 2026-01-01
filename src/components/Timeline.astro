@@ -175,77 +175,59 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
   </div>
 </div>
 
-<script>
-  function initTimeline() {
-    // Expand/collapse functionality with confetti
-    document.querySelectorAll('[data-expandable]').forEach((item) => {
-      const btn = item.querySelector('[data-expand-btn]');
-      const icon = item.querySelector('.expand-icon');
-      const confettiContainer = item.querySelector('.confetti-container');
+<script is:inline>
+  (function() {
+    function createConfetti(container) {
+      var emojis = ['✨', '💜', '🌟', '💫', '⭐', '🎉', '💎', '🔮'];
+      container.innerHTML = '';
 
-      // Remove any existing listeners to prevent duplicates
-      const newBtn = btn?.cloneNode(true);
-      if (btn && newBtn) {
-        btn.parentNode?.replaceChild(newBtn, btn);
+      for (var i = 0; i < 12; i++) {
+        var confetti = document.createElement('span');
+        confetti.className = 'confetti';
+        confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        confetti.style.setProperty('--x', ((Math.random() - 0.5) * 200) + 'px');
+        confetti.style.setProperty('--y', ((-Math.random() * 100 - 50)) + 'px');
+        confetti.style.setProperty('--r', ((Math.random() - 0.5) * 720) + 'deg');
+        confetti.style.setProperty('--delay', (i * 0.02) + 's');
+        confetti.style.left = (Math.random() * 100) + '%';
+        container.appendChild(confetti);
       }
 
-      newBtn?.addEventListener('click', (e) => {
+      setTimeout(function() {
+        container.innerHTML = '';
+      }, 1000);
+    }
+
+    // Use event delegation on the timeline wrapper
+    var wrapper = document.querySelector('.timeline-wrapper');
+    if (wrapper) {
+      wrapper.addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-expand-btn]');
+        if (!btn) return;
+
         e.stopPropagation();
-        const isExpanding = !item.classList.contains('expanded');
+        var item = btn.closest('[data-expandable]');
+        if (!item) return;
+
+        var isExpanding = !item.classList.contains('expanded');
         item.classList.toggle('expanded');
 
         // Update icon
-        const currentIcon = item.querySelector('.expand-icon');
-        if (currentIcon) {
-          currentIcon.textContent = item.classList.contains('expanded') ? '✕' : '✦';
+        var icon = item.querySelector('.expand-icon');
+        if (icon) {
+          icon.textContent = item.classList.contains('expanded') ? '✕' : '✦';
         }
 
         // Confetti on expand
-        if (isExpanding && confettiContainer) {
-          createConfetti(confettiContainer as HTMLElement);
+        if (isExpanding) {
+          var confettiContainer = item.querySelector('.confetti-container');
+          if (confettiContainer) {
+            createConfetti(confettiContainer);
+          }
         }
       });
-    });
-
-    // Add wiggle on hover for detail icons
-    document.querySelectorAll('.detail-icon').forEach((icon) => {
-      icon.addEventListener('mouseenter', () => {
-        icon.classList.add('wiggle');
-        setTimeout(() => icon.classList.remove('wiggle'), 500);
-      });
-    });
-  }
-
-  function createConfetti(container: HTMLElement) {
-    const emojis = ['✨', '💜', '🌟', '💫', '⭐', '🎉', '💎', '🔮'];
-    container.innerHTML = '';
-
-    for (let i = 0; i < 12; i++) {
-      const confetti = document.createElement('span');
-      confetti.className = 'confetti';
-      confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-      confetti.style.setProperty('--x', `${(Math.random() - 0.5) * 200}px`);
-      confetti.style.setProperty('--y', `${-Math.random() * 100 - 50}px`);
-      confetti.style.setProperty('--r', `${(Math.random() - 0.5) * 720}deg`);
-      confetti.style.setProperty('--delay', `${i * 0.02}s`);
-      confetti.style.left = `${Math.random() * 100}%`;
-      container.appendChild(confetti);
     }
-
-    setTimeout(() => {
-      container.innerHTML = '';
-    }, 1000);
-  }
-
-  // Initialize on DOM ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initTimeline);
-  } else {
-    initTimeline();
-  }
-
-  // Re-initialize on Astro view transitions
-  document.addEventListener('astro:page-load', initTimeline);
+  })();
 </script>
 
 <style>
