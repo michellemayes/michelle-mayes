@@ -2,188 +2,119 @@
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
-// Prerender this page as static
 export const prerender = true;
 ---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<BaseHead title={`Resume - ${SITE_TITLE}`} description="Michelle Mayes - Resume and CV" />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<div class="section-header">
-				<h1>Resume</h1>
-				<p>Download my resume or view it online below.</p>
-			</div>
-
-			<div class="resume-card">
-				<div class="resume-download">
-					<a href="/resume.pdf" class="btn" download="Michelle_Mayes_Resume.pdf">
-						📄 Download PDF
-					</a>
-				</div>
-
-				<div class="resume-container">
-					<iframe 
-						src="/resume.pdf" 
-						width="100%" 
-						height="800px"
-						title="Resume PDF"
-					>
-						<p>
-							Your browser doesn't support PDFs. 
-							<a href="/resume.pdf" download="Michelle_Mayes_Resume.pdf">Download the PDF instead</a>.
-						</p>
-					</iframe>
-				</div>
-
-				<div class="resume-fallback">
-					<p>Having trouble viewing the PDF? <a href="/resume.pdf" download="Michelle_Mayes_Resume.pdf">Download it here</a>.</p>
-				</div>
-			</div>
-		</main>
-		<Footer />
-	</body>
+  <head>
+    <BaseHead title={`Resume | ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <div class="resume-header">
+        <h1>Resume</h1>
+        <div class="resume-actions">
+          <a href="#viewer" class="action-link active">View</a>
+          <a href="/resume.pdf" download class="action-link">Download PDF</a>
+        </div>
+      </div>
+      <div id="viewer" class="resume-viewer">
+        <iframe src="/resume.pdf" title="Michelle Mayes Resume"></iframe>
+      </div>
+    </main>
+    <Footer />
+  </body>
 </html>
 
 <style>
-	main {
-		width: 100%;
-		max-width: 1200px;
-		margin: 0 auto;
-		padding: 2rem;
-		box-sizing: border-box;
-	}
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--space-xl);
+  }
 
-	.section-header {
-		text-align: center;
-		margin-bottom: 3rem;
-	}
+  .resume-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-2xl);
+  }
 
-	.section-header h1 {
-		font-size: 2.5rem;
-		margin-bottom: 1rem;
-		color: var(--accent);
-	}
+  h1 {
+    font-family: var(--font-serif);
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+  }
 
-	.section-header p {
-		font-size: 1.1rem;
-		color: rgb(var(--gray));
-		max-width: 500px;
-		margin: 0 auto;
-	}
+  .resume-actions {
+    display: flex;
+    gap: var(--space-md);
+  }
 
-	.resume-card {
-		background: var(--card-bg);
-		border: 1px solid var(--card-border);
-		border-radius: 12px;
-		padding: 2rem;
-		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-		text-align: center;
-	}
+  .action-link {
+    padding: var(--space-sm) var(--space-lg);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    color: var(--text-muted);
+    border: 1px solid var(--accent-100);
+  }
 
-	.resume-download {
-		margin-bottom: 2rem;
-	}
+  .action-link:hover,
+  .action-link.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
 
-	.btn {
-		display: inline-block;
-		padding: 0.5rem 1rem;
-		background: var(--accent);
-		color: white;
-		text-decoration: none;
-		border-radius: 6px;
-		font-weight: 600;
-		transition: all 0.3s ease;
-		font-size: 0.9rem;
-	}
+  .resume-viewer {
+    background: var(--bg-card);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+  }
 
-	.btn:hover {
-		background: var(--accent-dark);
-		transform: translateY(-1px);
-	}
+  iframe {
+    width: 100%;
+    height: 80vh;
+    border: none;
+  }
 
-	.resume-container {
-		margin: 2rem 0;
-	}
+  @media (max-width: 768px) {
+    main {
+      padding: var(--space-lg);
+    }
 
-	.resume-container iframe {
-		border: 1px solid var(--card-border);
-		border-radius: 8px;
-		width: 100%;
-		height: 800px;
-	}
+    .resume-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-md);
+    }
 
-	.resume-fallback {
-		margin-top: 1rem;
-		color: rgb(var(--gray));
-		font-size: 0.9rem;
-	}
+    h1 {
+      font-size: 2rem;
+    }
 
-	.resume-fallback a {
-		color: var(--accent);
-		text-decoration: none;
-	}
+    iframe {
+      height: 60vh;
+    }
+  }
 
-	.resume-fallback a:hover {
-		text-decoration: underline;
-	}
+  @media (max-width: 480px) {
+    main {
+      padding: var(--space-md);
+    }
 
-	@media (max-width: 768px) {
-		main {
-			padding: 1rem;
-		}
-
-		.section-header h1 {
-			font-size: 2rem;
-		}
-
-		.section-header p {
-			font-size: 1rem;
-		}
-
-		.resume-card {
-			padding: 1.5rem;
-		}
-
-		.resume-container iframe {
-			height: 600px;
-		}
-
-		.resume-fallback {
-			font-size: 0.85rem;
-		}
-	}
-
-	@media (max-width: 480px) {
-		main {
-			padding: 0.75rem;
-		}
-
-		.section-header h1 {
-			font-size: 1.75rem;
-		}
-
-		.resume-card {
-			padding: 1rem;
-		}
-
-		.resume-container iframe {
-			height: 500px;
-		}
-
-		.btn {
-			padding: 0.6rem 1rem;
-			font-size: 0.85rem;
-		}
-
-		.resume-fallback {
-			font-size: 0.8rem;
-		}
-	}
+    h1 {
+      font-size: 1.75rem;
+    }
+  }
 </style>
