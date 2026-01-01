@@ -63,7 +63,7 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
                       <span class="link-arrow">→</span>
                     </a>
                   )}
-                  <button class="expand-btn" aria-label="Expand details" onclick="this.closest('.timeline-item').classList.toggle('expanded'); this.querySelector('.expand-icon').textContent = this.closest('.timeline-item').classList.contains('expanded') ? '✕' : '✦';">
+                  <button class="expand-btn" aria-label="Expand details" data-expand-btn>
                     <span class="expand-icon">✦</span>
                   </button>
                 </div>
@@ -820,3 +820,20 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
     }
   }
 </style>
+
+<script is:inline>
+  // Handle expand button clicks using event delegation
+  document.addEventListener('click', function(e) {
+    const btn = e.target.closest('[data-expand-btn]');
+    if (btn) {
+      const item = btn.closest('.timeline-item');
+      if (item) {
+        item.classList.toggle('expanded');
+        const icon = btn.querySelector('.expand-icon');
+        if (icon) {
+          icon.textContent = item.classList.contains('expanded') ? '✕' : '✦';
+        }
+      }
+    }
+  });
+</script>
