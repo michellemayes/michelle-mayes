@@ -41,6 +41,7 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
             <div
               class={`timeline-item ${item.isHighlight ? 'highlight' : ''} ${item.isPrivate ? 'private' : ''}`}
               style={`--item-index: ${itemIndex}; --hue: ${(itemIndex * 30) % 360}`}
+              data-expandable
             >
               <!-- Decorative blob -->
               <div class="card-blob"></div>
@@ -63,7 +64,7 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
                       <span class="link-arrow">→</span>
                     </a>
                   )}
-                  <button class="expand-btn" aria-label="Expand details" data-expand-btn>
+                  <button class="expand-btn" aria-label="Expand details">
                     <span class="expand-icon">✦</span>
                   </button>
                 </div>
@@ -821,19 +822,17 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
   }
 </style>
 
-<script is:inline>
-  // Handle expand button clicks using event delegation
-  document.addEventListener('click', function(e) {
-    const btn = e.target.closest('[data-expand-btn]');
-    if (btn) {
-      const item = btn.closest('.timeline-item');
-      if (item) {
-        item.classList.toggle('expanded');
-        const icon = btn.querySelector('.expand-icon');
-        if (icon) {
-          icon.textContent = item.classList.contains('expanded') ? '✕' : '✦';
-        }
+<script>
+  document.querySelectorAll('[data-expandable]').forEach((item) => {
+    const btn = item.querySelector('.expand-btn');
+    const icon = item.querySelector('.expand-icon');
+
+    btn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      item.classList.toggle('expanded');
+      if (icon) {
+        icon.textContent = item.classList.contains('expanded') ? '✕' : '✦';
       }
-    }
+    });
   });
 </script>
