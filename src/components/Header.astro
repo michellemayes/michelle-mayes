@@ -1,443 +1,88 @@
 ---
 import { SITE_TITLE, SOCIAL_LINKS } from '../consts';
-import HeaderLink from './HeaderLink.astro';
+
+const currentPath = Astro.url.pathname;
+
+const navLinks = [
+  { href: '/blog', label: 'Blog' },
+  { href: '/resume', label: 'Resume' },
+];
 ---
 
 <header>
-	<nav>
-		<div class="nav-brand">
-			<h2><a href="/">{SITE_TITLE}</a></h2>
-		</div>
-		
-		<!-- Mobile menu button -->
-		<button class="mobile-menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
-			<span class="hamburger-line"></span>
-			<span class="hamburger-line"></span>
-			<span class="hamburger-line"></span>
-		</button>
-
-		<!-- Desktop navigation -->
-		<div class="desktop-nav">
-			<div class="internal-links">
-				<HeaderLink href="/">Home</HeaderLink>
-				<HeaderLink href="/blog">Blog</HeaderLink>
-				<HeaderLink href="/projects">Projects</HeaderLink>
-				<HeaderLink href="/about">About</HeaderLink>
-				<HeaderLink href="/resume">Resume</HeaderLink>
-			</div>
-			<div class="social-links">
-				<a href={SOCIAL_LINKS.github} target="_blank" rel="noopener noreferrer">
-					<span class="sr-only">GitHub</span>
-					<svg viewBox="0 0 16 16" aria-hidden="true" width="20" height="20"
-						><path
-							fill="currentColor"
-							d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"
-						></path></svg
-					>
-				</a>
-				<a href={SOCIAL_LINKS.twitter} target="_blank" rel="noopener noreferrer">
-					<span class="sr-only">Twitter/X</span>
-					<svg viewBox="0 0 16 16" aria-hidden="true" width="20" height="20"
-						><path
-							fill="currentColor"
-							d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"
-						></path></svg
-					>
-				</a>
-				<a href={SOCIAL_LINKS.linkedin} target="_blank" rel="noopener noreferrer">
-					<span class="sr-only">LinkedIn</span>
-					<svg viewBox="0 0 16 16" aria-hidden="true" width="20" height="20"
-						><path
-							fill="currentColor"
-							d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z"
-						></path></svg
-					>
-				</a>
-				<a href={SOCIAL_LINKS.email} target="_blank" rel="noopener noreferrer">
-					<span class="sr-only">Email</span>
-					<svg viewBox="0 0 16 16" aria-hidden="true" width="20" height="20"
-						><path
-							fill="currentColor"
-							d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383-4.708 2.825L15 11.105V5.383zm-.034 6.876-5.64-3.471L8 9.583l-5.326 3.13A.5.5 0 0 0 2 13h12a.5.5 0 0 0 .966-.741zM1 11.105l4.708-2.897L1 5.383v5.722z"
-						></path></svg
-					>
-				</a>
-			</div>
-		</div>
-
-		<!-- Mobile dropdown menu -->
-		<div class="mobile-menu">
-			<div class="mobile-nav-links">
-				<HeaderLink href="/">Home</HeaderLink>
-				<HeaderLink href="/blog">Blog</HeaderLink>
-				<HeaderLink href="/projects">Projects</HeaderLink>
-				<HeaderLink href="/about">About</HeaderLink>
-				<HeaderLink href="/resume">Resume</HeaderLink>
-			</div>
-			<div class="mobile-social-links">
-				<a href={SOCIAL_LINKS.github} target="_blank" rel="noopener noreferrer">
-					<span class="sr-only">GitHub</span>
-					<svg viewBox="0 0 16 16" aria-hidden="true" width="24" height="24"
-						><path
-							fill="currentColor"
-							d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"
-						></path></svg
-					>
-				</a>
-				<a href={SOCIAL_LINKS.twitter} target="_blank" rel="noopener noreferrer">
-					<span class="sr-only">Twitter/X</span>
-					<svg viewBox="0 0 16 16" aria-hidden="true" width="24" height="24"
-						><path
-							fill="currentColor"
-							d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"
-						></path></svg
-					>
-				</a>
-				<a href={SOCIAL_LINKS.linkedin} target="_blank" rel="noopener noreferrer">
-					<span class="sr-only">LinkedIn</span>
-					<svg viewBox="0 0 16 16" aria-hidden="true" width="24" height="24"
-						><path
-							fill="currentColor"
-							d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z"
-						></path></svg
-					>
-				</a>
-				<a href={SOCIAL_LINKS.email} target="_blank" rel="noopener noreferrer">
-					<span class="sr-only">Email</span>
-					<svg viewBox="0 0 16 16" aria-hidden="true" width="24" height="24"
-						><path
-							fill="currentColor"
-							d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383-4.708 2.825L15 11.105V5.383zm-.034 6.876-5.64-3.471L8 9.583l-5.326 3.13A.5.5 0 0 0 2 13h12a.5.5 0 0 0 .966-.741zM1 11.105l4.708-2.897L1 5.383v5.722z"
-						></path></svg
-					>
-				</a>
-			</div>
-		</div>
-	</nav>
+  <nav>
+    <a href="/" class="site-title">{SITE_TITLE}</a>
+    <div class="nav-links">
+      {navLinks.map(({ href, label }) => (
+        <a
+          href={href}
+          class={currentPath.startsWith(href) ? 'active' : ''}
+        >
+          {label}
+        </a>
+      ))}
+    </div>
+  </nav>
 </header>
+
 <style>
-	header {
-		margin: 0;
-		padding: 0;
-		background: white;
-		box-shadow: 0 2px 8px rgba(var(--black), 5%);
-		position: relative;
-		z-index: 1000;
-		opacity: 0;
-		animation: slideInDown 0.1s ease forwards;
-	}
+  header {
+    padding: var(--space-lg) var(--space-xl);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
 
-	@keyframes slideInDown {
-		from {
-			opacity: 0;
-			transform: translateY(-2px);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
-	}
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-	nav {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 1rem 1.5rem;
-		max-width: 1200px;
-		margin: 0 auto;
-		position: relative;
-	}
+  .site-title {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+  }
 
-	.nav-brand {
-		position: absolute;
-		left: 1.5rem;
-		top: 50%;
-		transform: translateY(-50%);
-	}
+  .site-title:hover {
+    color: var(--accent);
+  }
 
-	.nav-brand h2 {
-		margin: 0;
-		font-size: 1.2rem;
-		font-weight: 700;
-	}
+  .nav-links {
+    display: flex;
+    gap: var(--space-xl);
+  }
 
-	.nav-brand a {
-		color: var(--accent);
-		text-decoration: none;
-		transition: color 0.3s ease;
-	}
+  .nav-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
 
-	.nav-brand a:hover {
-		color: var(--accent-dark);
-	}
+  .nav-links a:hover,
+  .nav-links a.active {
+    color: var(--accent);
+  }
 
-	/* Mobile menu button */
-	.mobile-menu-toggle {
-		display: none;
-		flex-direction: column;
-		justify-content: space-around;
-		width: 2rem;
-		height: 2rem;
-		background: transparent;
-		border: none;
-		cursor: pointer;
-		padding: 0;
-		z-index: 10;
-	}
+  @media (max-width: 480px) {
+    header {
+      padding: var(--space-md);
+    }
 
-	.hamburger-line {
-		width: 2rem;
-		height: 0.25rem;
-		background: var(--accent);
-		border-radius: 10px;
-		transition: all 0.3s linear;
-		position: relative;
-		transform-origin: 1px;
-	}
+    .site-title {
+      font-size: 1.25rem;
+    }
 
-	.mobile-menu-toggle[aria-expanded="true"] .hamburger-line:first-child {
-		transform: rotate(45deg);
-	}
+    .nav-links {
+      gap: var(--space-lg);
+    }
 
-	.mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(2) {
-		opacity: 0;
-		transform: translateX(20px);
-	}
-
-	.mobile-menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(3) {
-		transform: rotate(-45deg);
-	}
-
-	/* Desktop navigation */
-	.desktop-nav {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 100%;
-	}
-
-	.internal-links {
-		display: flex;
-		gap: 0.5rem;
-	}
-
-	.internal-links a {
-		padding: 1em 0.5em;
-		color: var(--black);
-		border-bottom: 4px solid transparent;
-		text-decoration: none;
-		transition: all 0.3s ease;
-		font-weight: 500;
-		font-size: 0.9rem;
-	}
-
-	.internal-links a:hover {
-		color: var(--accent);
-		border-bottom-color: var(--accent);
-	}
-
-	.internal-links a.active {
-		color: var(--accent);
-		border-bottom-color: var(--accent);
-	}
-
-	.social-links {
-		display: flex;
-		gap: 0.5rem;
-		position: absolute;
-		right: 1.5rem;
-		top: 50%;
-		transform: translateY(-50%);
-	}
-
-	.social-links a {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 0.5rem;
-		border-radius: 6px;
-		transition: all 0.2s ease;
-		color: var(--black);
-	}
-
-	.social-links a:hover {
-		background: var(--accent-100);
-		color: var(--accent);
-		transform: translateY(-1px);
-	}
-
-	/* Mobile menu */
-	.mobile-menu {
-		display: none;
-		position: absolute;
-		top: 100%;
-		left: 0;
-		right: 0;
-		background: white;
-		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-		border-top: 1px solid var(--card-border);
-		z-index: 999;
-	}
-
-	.mobile-menu.open {
-		display: block;
-	}
-
-	.mobile-nav-links {
-		padding: 1.5rem;
-		border-bottom: 1px solid var(--card-border);
-	}
-
-	.mobile-nav-links a {
-		display: block;
-		padding: 1rem 0;
-		color: var(--black);
-		text-decoration: none;
-		font-weight: 500;
-		font-size: 1.1rem;
-		border-bottom: 1px solid var(--accent-100);
-		transition: all 0.3s ease;
-	}
-
-	.mobile-nav-links a:last-child {
-		border-bottom: none;
-	}
-
-	.mobile-nav-links a:hover,
-	.mobile-nav-links a.active {
-		color: var(--accent);
-	}
-
-	.mobile-social-links {
-		padding: 1.5rem;
-		display: flex;
-		justify-content: center;
-		gap: 1rem;
-	}
-
-	.mobile-social-links a {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 0.75rem;
-		border-radius: 8px;
-		transition: all 0.2s ease;
-		color: var(--black);
-		background: var(--accent-50);
-	}
-
-	.mobile-social-links a:hover {
-		background: var(--accent);
-		color: white;
-		transform: translateY(-2px);
-	}
-
-	.sr-only {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		padding: 0;
-		margin: -1px;
-		overflow: hidden;
-		clip: rect(0, 0, 0, 0);
-		white-space: nowrap;
-		border: 0;
-	}
-
-	/* Responsive breakpoints */
-	@media (max-width: 768px) {
-		nav {
-			padding: 1rem;
-			justify-content: space-between;
-		}
-
-		.nav-brand {
-			position: static;
-			transform: none;
-		}
-
-		.desktop-nav {
-			display: none;
-		}
-
-		.social-links {
-			display: none;
-		}
-
-		.mobile-menu-toggle {
-			display: flex;
-		}
-
-		.nav-brand h2 {
-			font-size: 1.1rem;
-		}
-	}
-
-	@media (max-width: 480px) {
-		nav {
-			padding: 0.75rem;
-		}
-
-		.nav-brand h2 {
-			font-size: 1rem;
-		}
-
-		.mobile-nav-links {
-			padding: 1rem;
-		}
-
-		.mobile-nav-links a {
-			font-size: 1rem;
-			padding: 0.75rem 0;
-		}
-
-		.mobile-social-links {
-			padding: 1rem;
-			gap: 0.75rem;
-		}
-
-		.mobile-social-links a {
-			padding: 0.5rem;
-		}
-	}
+    .nav-links a {
+      font-size: 0.9rem;
+    }
+  }
 </style>
-
-<script>
-	// Mobile menu toggle functionality
-	document.addEventListener('DOMContentLoaded', function() {
-		const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-		const mobileMenu = document.querySelector('.mobile-menu');
-		
-		if (mobileMenuToggle && mobileMenu) {
-			mobileMenuToggle.addEventListener('click', function() {
-				const isExpanded = mobileMenuToggle.getAttribute('aria-expanded') === 'true';
-				
-				mobileMenuToggle.setAttribute('aria-expanded', String(!isExpanded));
-				mobileMenu.classList.toggle('open');
-				
-				// Prevent body scroll when menu is open
-				document.body.style.overflow = !isExpanded ? 'hidden' : '';
-			});
-
-			// Close menu when clicking on a link
-			const mobileLinks = mobileMenu.querySelectorAll('a');
-			mobileLinks.forEach(link => {
-				link.addEventListener('click', function() {
-					mobileMenuToggle.setAttribute('aria-expanded', 'false');
-					mobileMenu.classList.remove('open');
-					document.body.style.overflow = '';
-				});
-			});
-
-			// Close menu when clicking outside
-			document.addEventListener('click', function(event) {
-				const target = event.target as Node | null;
-				if (target && !mobileMenuToggle.contains(target) && !mobileMenu.contains(target)) {
-					mobileMenuToggle.setAttribute('aria-expanded', 'false');
-					mobileMenu.classList.remove('open');
-					document.body.style.overflow = '';
-				}
-			});
-		}
-	});
-</script>
