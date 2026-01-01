@@ -26,8 +26,15 @@ const timelineItems = await generateTimelineHighlights(activities);
     <main>
       <!-- Hero -->
       <section class="hero">
+        <div class="avatar-wrapper">
+          <div class="avatar-glow"></div>
+          <img src="/avatar.jpg" alt="Michelle Mayes" class="avatar" />
+          <span class="avatar-sparkle sparkle-1">✨</span>
+          <span class="avatar-sparkle sparkle-2">💜</span>
+          <span class="avatar-sparkle sparkle-3">⭐</span>
+        </div>
         <h1>Michelle Mayes</h1>
-        <p class="tagline">I ship AI products fast.</p>
+        <p class="tagline">I ship fast. AI keeps up. ⚡</p>
       </section>
 
       <!-- Stats -->
@@ -53,6 +60,77 @@ const timelineItems = await generateTimelineHighlights(activities);
   .hero {
     text-align: center;
     margin-bottom: var(--space-3xl);
+  }
+
+  .avatar-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-bottom: var(--space-lg);
+  }
+
+  .avatar-glow {
+    position: absolute;
+    inset: -8px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa, #c4b5fd, var(--accent));
+    background-size: 300% 300%;
+    border-radius: 50%;
+    animation: glow-rotate 4s ease-in-out infinite;
+    z-index: 0;
+  }
+
+  @keyframes glow-rotate {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .avatar {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--bg);
+    z-index: 1;
+    transition: transform 0.3s ease;
+  }
+
+  .avatar-wrapper:hover .avatar {
+    transform: scale(1.05) rotate(3deg);
+  }
+
+  .avatar-wrapper:hover .avatar-glow {
+    animation-duration: 2s;
+  }
+
+  .avatar-sparkle {
+    position: absolute;
+    font-size: 1.2rem;
+    z-index: 2;
+    pointer-events: none;
+    animation: float-sparkle 3s ease-in-out infinite;
+  }
+
+  .sparkle-1 {
+    top: -5px;
+    right: -5px;
+    animation-delay: 0s;
+  }
+
+  .sparkle-2 {
+    bottom: 10px;
+    left: -10px;
+    animation-delay: 1s;
+  }
+
+  .sparkle-3 {
+    top: 30%;
+    right: -15px;
+    animation-delay: 2s;
+  }
+
+  @keyframes float-sparkle {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 1; }
+    50% { transform: translateY(-8px) scale(1.2); opacity: 0.7; }
   }
 
   .hero h1 {
@@ -87,6 +165,11 @@ const timelineItems = await generateTimelineHighlights(activities);
       padding: var(--space-lg);
     }
 
+    .avatar {
+      width: 120px;
+      height: 120px;
+    }
+
     .hero h1 {
       font-size: 2.5rem;
     }
@@ -105,12 +188,32 @@ const timelineItems = await generateTimelineHighlights(activities);
       padding: var(--space-md);
     }
 
+    .avatar {
+      width: 100px;
+      height: 100px;
+    }
+
+    .avatar-sparkle {
+      font-size: 1rem;
+    }
+
     .hero h1 {
       font-size: 2rem;
     }
 
     .tagline {
       font-size: 1rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .avatar-glow,
+    .avatar-sparkle {
+      animation: none;
+    }
+
+    .avatar-wrapper:hover .avatar {
+      transform: scale(1.02);
     }
   }
 </style>

@@ -45,18 +45,28 @@ export async function fetchRepositories(
   includeForks: boolean = false
 ): Promise<GitHubRepository[]> {
   try {
-    const url = new URL(`https://api.github.com/users/${username}/repos`);
+    // Use authenticated endpoint to get private repos when token is available
+    const hasToken = !!process.env.GITHUB_TOKEN;
+    const url = hasToken
+      ? new URL('https://api.github.com/user/repos')
+      : new URL(`https://api.github.com/users/${username}/repos`);
+
     url.searchParams.set('per_page', perPage.toString());
     url.searchParams.set('sort', sort);
     url.searchParams.set('direction', direction);
-    url.searchParams.set('type', 'all'); // Include all repo types
+
+    if (hasToken) {
+      // For authenticated endpoint, filter by owner affiliation
+      url.searchParams.set('affiliation', 'owner');
+    } else {
+      url.searchParams.set('type', 'all');
+    }
 
     const response = await fetch(url.toString(), {
       headers: {
         'Accept': 'application/vnd.github.v3+json',
         'User-Agent': 'michelle-mayes-personal-site',
-        // Add Authorization header if GITHUB_TOKEN is available
-        ...(process.env.GITHUB_TOKEN && {
+        ...(hasToken && {
           'Authorization': `token ${process.env.GITHUB_TOKEN}`
         })
       }
@@ -66,13 +76,18 @@ export async function fetchRepositories(
       throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
     }
 
-    const repos: GitHubRepository[] = await response.json();
-    
+    let repos: GitHubRepository[] = await response.json();
+
+    // Filter to only the specified user's repos (for authenticated endpoint)
+    if (hasToken) {
+      repos = repos.filter(repo => repo.full_name.startsWith(`${username}/`));
+    }
+
     // Filter out forks if requested
     if (!includeForks) {
       return repos.filter(repo => !repo.fork);
     }
-    
+
     return repos;
   } catch (error) {
     console.error('Error fetching GitHub repositories:', error);

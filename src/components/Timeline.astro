@@ -176,27 +176,45 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
 </div>
 
 <script>
-  // Expand/collapse functionality with confetti
-  document.querySelectorAll('[data-expandable]').forEach((item) => {
-    const btn = item.querySelector('[data-expand-btn]');
-    const icon = item.querySelector('.expand-icon');
-    const confettiContainer = item.querySelector('.confetti-container');
+  function initTimeline() {
+    // Expand/collapse functionality with confetti
+    document.querySelectorAll('[data-expandable]').forEach((item) => {
+      const btn = item.querySelector('[data-expand-btn]');
+      const icon = item.querySelector('.expand-icon');
+      const confettiContainer = item.querySelector('.confetti-container');
 
-    btn?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isExpanding = !item.classList.contains('expanded');
-      item.classList.toggle('expanded');
-
-      if (icon) {
-        icon.textContent = item.classList.contains('expanded') ? '✕' : '✦';
+      // Remove any existing listeners to prevent duplicates
+      const newBtn = btn?.cloneNode(true);
+      if (btn && newBtn) {
+        btn.parentNode?.replaceChild(newBtn, btn);
       }
 
-      // Confetti on expand
-      if (isExpanding && confettiContainer) {
-        createConfetti(confettiContainer as HTMLElement);
-      }
+      newBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isExpanding = !item.classList.contains('expanded');
+        item.classList.toggle('expanded');
+
+        // Update icon
+        const currentIcon = item.querySelector('.expand-icon');
+        if (currentIcon) {
+          currentIcon.textContent = item.classList.contains('expanded') ? '✕' : '✦';
+        }
+
+        // Confetti on expand
+        if (isExpanding && confettiContainer) {
+          createConfetti(confettiContainer as HTMLElement);
+        }
+      });
     });
-  });
+
+    // Add wiggle on hover for detail icons
+    document.querySelectorAll('.detail-icon').forEach((icon) => {
+      icon.addEventListener('mouseenter', () => {
+        icon.classList.add('wiggle');
+        setTimeout(() => icon.classList.remove('wiggle'), 500);
+      });
+    });
+  }
 
   function createConfetti(container: HTMLElement) {
     const emojis = ['✨', '💜', '🌟', '💫', '⭐', '🎉', '💎', '🔮'];
@@ -219,13 +237,15 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
     }, 1000);
   }
 
-  // Add wiggle on hover for detail icons
-  document.querySelectorAll('.detail-icon').forEach((icon) => {
-    icon.addEventListener('mouseenter', () => {
-      icon.classList.add('wiggle');
-      setTimeout(() => icon.classList.remove('wiggle'), 500);
-    });
-  });
+  // Initialize on DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTimeline);
+  } else {
+    initTimeline();
+  }
+
+  // Re-initialize on Astro view transitions
+  document.addEventListener('astro:page-load', initTimeline);
 </script>
 
 <style>
