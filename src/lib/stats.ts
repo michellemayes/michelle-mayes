@@ -25,7 +25,11 @@ export interface RepoActivity {
  * Calculate comprehensive GitHub stats
  */
 export async function calculateStats(username: string = GITHUB_USERNAME): Promise<GitHubStats> {
-  const repos = await fetchRepositories(username, 100, 'updated', 'desc', false);
+  const allRepos = await fetchRepositories(username, 100, 'updated', 'desc', false);
+
+  // Only include repos created in 2025 or later
+  const startOf2025 = new Date('2025-01-01').getTime();
+  const repos = allRepos.filter(repo => new Date(repo.created_at).getTime() >= startOf2025);
 
   if (repos.length === 0) {
     return {
@@ -96,7 +100,12 @@ export async function calculateStats(username: string = GITHUB_USERNAME): Promis
  * Get repo activity details for timeline
  */
 export async function getRepoActivity(username: string = GITHUB_USERNAME): Promise<RepoActivity[]> {
-  const repos = await fetchRepositories(username, 50, 'updated', 'desc', false);
+  const allRepos = await fetchRepositories(username, 50, 'updated', 'desc', false);
+
+  // Only include repos created in 2025 or later
+  const startOf2025 = new Date('2025-01-01').getTime();
+  const repos = allRepos.filter(repo => new Date(repo.created_at).getTime() >= startOf2025);
+
   const now = Date.now();
   const thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000;
 
