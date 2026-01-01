@@ -2,436 +2,115 @@
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
+import StatsBar from '../components/StatsBar.astro';
+import Timeline from '../components/Timeline.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
-import { getCollection } from 'astro:content';
+import { calculateStats, getRepoActivity } from '../lib/stats';
+import { generateTimelineHighlights } from '../lib/openrouter';
 
-// Prerender this page as static
 export const prerender = true;
 
-// Fetch latest blog posts
-const allPosts = await getCollection('blog');
-const latestPosts = allPosts
-	.sort((a, b) => {
-    const dateA = new Date(a.data.pubDate);
-    const dateB = new Date(b.data.pubDate);
-    return dateB.valueOf() - dateA.valueOf();
-  })
-	.slice(0, 5);
-
-// Calculate reading time (rough estimate: 200 words per minute)
-function calculateReadingTime(content: string): number {
-  const wordsPerMinute = 200;
-  const wordCount = content.split(/\s+/).length;
-  return Math.ceil(wordCount / wordsPerMinute);
-}
+// Fetch data at build time
+const stats = await calculateStats();
+const activities = await getRepoActivity();
+const timelineItems = await generateTimelineHighlights(activities);
 ---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<!-- About Card Section -->
-			<div class="about-card-section">
-				<div class="about-card">
-					<div class="about-card-header">
-						<img src="/avatar.jpg" alt="Michelle Mayes" class="about-photo" />
-						<div class="about-info">
-							<h2>Michelle Mayes</h2>
-							<p class="about-role">Data Scientist, Product Manager, AI Professional</p>
-							<div class="about-location">
-								<span class="location-icon">📍</span>
-								<span>Austin, Texas</span>
-							</div>
-						</div>
-					</div>
-					<div class="about-content">
-						<p>
-							I'm a passionate Data Scientist & Product Manager with expertise in full-stack development, OG Machine Learning (before it became AI), full lifecycle product management, data analytics, and a strong eye for seeing the next big thing in AI tech.
-						</p>
-						<p>
-							Recently, I've shifted my focus to building software that is both functional and visually appealing using my Product Management and Data Science backgrounds. Dabbling in vibe coding!
-						</p>
-						<div class="about-skills">
-							<span class="skill-tag">AI</span>
-							<span class="skill-tag">Python</span>
-							<span class="skill-tag">AWS</span>
-							<span class="skill-tag">Data Science</span>
-							<span class="skill-tag">Product Management</span>
-							<span class="skill-tag">Analytics</span>
-							<span class="skill-tag">Cursor</span>
-							<span class="skill-tag">ChatGPT</span>
-							<span class="skill-tag">OpenAI Codex</span>
-							<span class="skill-tag">Looker</span>
-						</div>
-						<div class="about-actions">
-							<a href="/resume" class="btn btn-secondary">View Resume</a>
-							<a href="/about" class="btn btn-secondary">About Me</a>
-						</div>
-					</div>
-				</div>
-			</div>
+  <head>
+    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <!-- Hero -->
+      <section class="hero">
+        <h1>Michelle Mayes</h1>
+        <p class="tagline">I ship AI products fast.</p>
+      </section>
 
-			<!-- Latest Blog Posts Section -->
-			{latestPosts.length > 0 && (
-				<div class="blog-section">
-					<div class="section-header">
-						<h2>Latest Posts</h2>
-						<p>Recent thoughts and insights I've shared</p>
-					</div>
-					<div class="blog-posts-grid">
-						{latestPosts.slice(0, 3).map((post) => {
-							const readingTime = calculateReadingTime(post.body);
-							return (
-								<article class="blog-post-card-small">
-									<div class="blog-post-card-content">
-										<h3>
-											<a href={`/blog/${post.slug}/`}>{post.data.title}</a>
-										</h3>
-										<div class="blog-post-meta">
-											<span class="blog-post-date">{new Date(post.data.pubDate).toLocaleDateString()}</span>
-											<span class="blog-post-reading-time">{readingTime} min read</span>
-											{post.data.tags && post.data.tags.length > 0 && (
-												<span class="blog-post-tags">• {post.data.tags.join(', ')}</span>
-											)}
-										</div>
-										<p class="blog-post-description">{post.data.description}</p>
-									</div>
-									<div class="blog-post-card-footer">
-										<a href={`/blog/${post.slug}/`} class="btn btn-secondary">Read More</a>
-									</div>
-								</article>
-							);
-						})}
-					</div>
-					<div class="blog-section-footer">
-						<a href="/blog" class="btn btn-outline">View All Posts</a>
-					</div>
-				</div>
-			)}
+      <!-- Stats -->
+      <StatsBar stats={stats} />
 
-		</main>
-		<Footer />
-	</body>
+      <!-- Timeline -->
+      <section class="timeline-section">
+        <h2>What I've Shipped</h2>
+        <Timeline items={timelineItems} />
+      </section>
+    </main>
+    <Footer />
+  </body>
 </html>
 
 <style>
-	main {
-		width: 100%;
-		max-width: 1200px;
-		margin: 0 auto;
-		padding: 2rem;
-		box-sizing: border-box;
-	}
+  main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: var(--space-xl);
+  }
 
-	.section-header {
-		text-align: center;
-		margin-bottom: 3rem;
-	}
+  .hero {
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+  }
 
-	.section-header h2 {
-		font-size: 2.5rem;
-		margin-bottom: 1rem;
-		color: rgb(var(--black));
-	}
+  .hero h1 {
+    font-family: var(--font-serif);
+    font-size: 3.5rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 var(--space-md) 0;
+  }
 
-	.section-header p {
-		font-size: 1.1rem;
-		color: rgb(var(--gray));
-		max-width: 500px;
-		margin: 0 auto;
-	}
+  .tagline {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
 
-	/* About Card Section */
-	.about-card-section {
-		margin-bottom: 4rem;
-	}
+  .timeline-section {
+    margin-top: var(--space-3xl);
+  }
 
-	.about-card {
-		max-width: 800px;
-		margin: 0 auto;
-		background: var(--card-bg);
-		border: 1px solid var(--card-border);
-		border-radius: 16px;
-		padding: 2rem;
-		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-	}
+  .timeline-section h2 {
+    font-family: var(--font-serif);
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text);
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+  }
 
-	.about-card-header {
-		display: flex;
-		align-items: center;
-		gap: 1.5rem;
-		margin-bottom: 1.5rem;
-	}
+  @media (max-width: 768px) {
+    main {
+      padding: var(--space-lg);
+    }
 
-	.about-photo {
-		width: 160px;
-		height: 160px;
-		border-radius: 50%;
-		object-fit: cover;
-		border: 3px solid var(--accent);
-	}
+    .hero h1 {
+      font-size: 2.5rem;
+    }
 
-	.about-info h2 {
-		margin: 0 0 0.25rem 0;
-		font-size: 1.5rem;
-		color: rgb(var(--black));
-	}
+    .tagline {
+      font-size: 1.1rem;
+    }
 
-	.about-role {
-		margin: 0 0 0.5rem 0;
-		color: var(--accent);
-		font-weight: 600;
-	}
+    .timeline-section h2 {
+      font-size: 1.5rem;
+    }
+  }
 
-	.about-location {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		color: rgb(var(--gray));
-		font-size: 0.9rem;
-	}
+  @media (max-width: 480px) {
+    main {
+      padding: var(--space-md);
+    }
 
-	.about-content p {
-		margin-bottom: 1.5rem;
-		color: rgb(var(--gray-dark));
-		line-height: 1.6;
-	}
+    .hero h1 {
+      font-size: 2rem;
+    }
 
-	.about-skills {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-		margin-bottom: 1.5rem;
-	}
-
-	.skill-tag {
-		background: var(--accent-100);
-		color: var(--accent-dark);
-		padding: 0.25rem 0.75rem;
-		border-radius: 20px;
-		font-size: 0.8rem;
-		font-weight: 600;
-	}
-
-	.about-actions {
-		display: flex;
-		gap: 1rem;
-	}
-
-	.about-actions .btn {
-		padding: 0.5rem 1rem;
-		font-size: 0.9rem;
-	}
-
-	.blog-section-footer .btn {
-		padding: 0.5rem 1rem;
-		font-size: 0.9rem;
-	}
-
-	/* Blog Section */
-	.blog-section {
-		margin-bottom: 4rem;
-	}
-
-	.blog-posts-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-		gap: 1.5rem;
-		margin-bottom: 2rem;
-	}
-
-	.blog-post-card-small {
-		background: var(--card-bg);
-		border: 1px solid var(--card-border);
-		border-radius: 12px;
-		padding: 1.5rem;
-		transition: all 0.3s ease;
-		display: flex;
-		flex-direction: column;
-	}
-
-	.blog-post-card-small:hover {
-		box-shadow: var(--card-hover-shadow);
-		transform: translateY(-2px);
-	}
-
-	.blog-post-card-content {
-		flex: 1;
-		margin-bottom: 1rem;
-	}
-
-	.blog-post-card-small h3 {
-		margin: 0 0 0.75rem 0;
-		font-size: 1.1rem;
-	}
-
-	.blog-post-card-small h3 a {
-		color: var(--accent);
-		text-decoration: none;
-	}
-
-	.blog-post-card-small h3 a:hover {
-		text-decoration: underline;
-	}
-
-	.blog-post-meta {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-		margin-bottom: 0.75rem;
-		font-size: 0.85rem;
-		color: rgb(var(--gray));
-	}
-
-	.blog-post-date {
-		font-weight: 500;
-	}
-
-	.blog-post-reading-time {
-		background: var(--accent-100);
-		color: var(--accent-dark);
-		padding: 0.2rem 0.5rem;
-		border-radius: 4px;
-		font-size: 0.75rem;
-		font-weight: 600;
-	}
-
-	.blog-post-tags {
-		color: rgb(var(--gray));
-	}
-
-	.blog-post-description {
-		margin: 0;
-		color: rgb(var(--gray-dark));
-		line-height: 1.5;
-		font-size: 0.9rem;
-	}
-
-	.blog-post-card-footer {
-		margin-top: auto;
-	}
-
-	.blog-post-card-footer .btn {
-		padding: 0.4rem 0.8rem;
-		font-size: 0.8rem;
-	}
-
-	.blog-section-footer {
-		text-align: center;
-	}
-
-	@media (max-width: 768px) {
-		main {
-			padding: 1rem;
-		}
-
-		.section-header h2 {
-			font-size: 2rem;
-		}
-
-		.section-header p {
-			font-size: 1rem;
-		}
-
-		.about-card {
-			padding: 1.5rem;
-		}
-
-		.about-card-header {
-			flex-direction: column;
-			text-align: center;
-			gap: 1rem;
-		}
-
-		.about-photo {
-			width: 130px;
-			height: 130px;
-		}
-
-		.about-info h2 {
-			font-size: 1.3rem;
-		}
-
-		.about-location {
-			justify-content: center;
-		}
-
-		.about-skills {
-			justify-content: center;
-		}
-
-		.about-actions {
-			justify-content: center;
-			flex-direction: column;
-			gap: 0.75rem;
-		}
-
-		.about-actions .btn {
-			width: 100%;
-			text-align: center;
-		}
-
-		.blog-posts-grid {
-			grid-template-columns: 1fr;
-			gap: 1rem;
-		}
-
-		.blog-post-card-small {
-			padding: 1rem;
-		}
-
-		.blog-post-meta {
-			flex-direction: column;
-			align-items: flex-start;
-			gap: 0.5rem;
-		}
-
-		.blog-section-footer .btn {
-			width: 100%;
-		}
-	}
-
-	@media (max-width: 480px) {
-		main {
-			padding: 0.75rem;
-		}
-
-		.section-header h2 {
-			font-size: 1.75rem;
-		}
-
-		.about-card {
-			padding: 1rem;
-		}
-
-		.about-photo {
-			width: 110px;
-			height: 110px;
-		}
-
-		.about-info h2 {
-			font-size: 1.2rem;
-		}
-
-		.about-skills {
-			gap: 0.25rem;
-		}
-
-		.skill-tag {
-			font-size: 0.75rem;
-			padding: 0.2rem 0.5rem;
-		}
-
-		.blog-post-card-small h3 {
-			font-size: 1rem;
-		}
-
-		.blog-post-description {
-			font-size: 0.85rem;
-		}
-	}
+    .tagline {
+      font-size: 1rem;
+    }
+  }
 </style>
