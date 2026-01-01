@@ -1,0 +1,181 @@
+---
+import type { TimelineItem } from '../lib/openrouter';
+
+interface Props {
+  items: TimelineItem[];
+}
+
+const { items } = Astro.props;
+
+// Group by month/year
+const grouped = new Map<string, TimelineItem[]>();
+for (const item of items) {
+  const key = `${item.month} ${item.year}`;
+  const existing = grouped.get(key) || [];
+  existing.push(item);
+  grouped.set(key, existing);
+}
+---
+
+<div class="timeline">
+  {[...grouped.entries()].map(([monthYear, monthItems]) => (
+    <div class="timeline-month">
+      <h3 class="timeline-month-header">{monthYear}</h3>
+      <div class="timeline-items">
+        {monthItems.map((item) => (
+          <div class={`timeline-item ${item.isHighlight ? 'highlight' : ''}`}>
+            <span class="timeline-marker">{item.isHighlight ? '★' : '○'}</span>
+            <div class="timeline-content">
+              <a href={item.repoUrl} target="_blank" rel="noopener" class="timeline-title">
+                {item.title}
+              </a>
+              <p class="timeline-description">{item.description}</p>
+              <div class="timeline-meta">
+                {item.language && (
+                  <span class="timeline-tag">{item.language}</span>
+                )}
+                {item.daysToShip && item.daysToShip > 0 && (
+                  <span class="timeline-ship">Shipped in {item.daysToShip}d</span>
+                )}
+                {item.tags.map((tag) => (
+                  <span class="timeline-tag">{tag}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .timeline {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .timeline-month {
+    margin-bottom: var(--space-2xl);
+  }
+
+  .timeline-month-header {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--accent-100);
+  }
+
+  .timeline-items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .timeline-item {
+    display: flex;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+  }
+
+  .timeline-item:hover {
+    background: var(--accent-50);
+  }
+
+  .timeline-item.highlight {
+    background: var(--bg-card);
+    box-shadow: var(--shadow-sm);
+    border-left: 3px solid var(--accent);
+  }
+
+  .timeline-item.highlight:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  .timeline-marker {
+    font-size: 1rem;
+    color: var(--accent);
+    flex-shrink: 0;
+    width: 20px;
+    text-align: center;
+  }
+
+  .timeline-item:not(.highlight) .timeline-marker {
+    color: var(--text-light);
+  }
+
+  .timeline-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .timeline-title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text);
+    text-decoration: none;
+    display: block;
+    margin-bottom: var(--space-xs);
+  }
+
+  .timeline-title:hover {
+    color: var(--accent);
+  }
+
+  .timeline-item.highlight .timeline-title {
+    font-size: 1.1rem;
+  }
+
+  .timeline-description {
+    margin: 0 0 var(--space-sm) 0;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .timeline-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    align-items: center;
+  }
+
+  .timeline-tag {
+    background: var(--accent-100);
+    color: var(--accent-dark);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .timeline-ship {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  @media (max-width: 768px) {
+    .timeline-item {
+      padding: var(--space-sm);
+    }
+
+    .timeline-title {
+      font-size: 0.95rem;
+    }
+
+    .timeline-item.highlight .timeline-title {
+      font-size: 1rem;
+    }
+
+    .timeline-description {
+      font-size: 0.85rem;
+    }
+  }
+</style>
