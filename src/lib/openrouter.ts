@@ -16,6 +16,7 @@ export interface TimelineItem {
   tags: string[];
   stars: number;
   forks: number;
+  commitActivity: number[]; // Weekly commit counts (last 12 weeks)
 }
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
@@ -160,6 +161,7 @@ function createBasicTimelineItem(activity: RepoActivity): TimelineItem {
     tags: activity.repo.topics?.slice(0, 3) || [],
     stars: activity.repo.stargazers_count,
     forks: activity.repo.forks_count,
+    commitActivity: activity.commitActivity,
   };
 }
 

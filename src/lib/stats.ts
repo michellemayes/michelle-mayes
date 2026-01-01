@@ -1,4 +1,4 @@
-import { fetchRepositories, fetchShipDate, type GitHubRepository } from './github';
+import { fetchRepositories, fetchShipDate, fetchCommitActivity, type GitHubRepository } from './github';
 import { GITHUB_USERNAME } from '../consts';
 
 export interface GitHubStats {
@@ -17,6 +17,7 @@ export interface RepoActivity {
   daysSinceUpdate: number;
   daysSinceCreated: number;
   daysToShip: number | null; // Days from repo creation to first PR/commit
+  commitActivity: number[]; // Weekly commit counts (last 12 weeks)
   isRecent: boolean;
 }
 
@@ -99,15 +100,18 @@ export async function getRepoActivity(username: string = GITHUB_USERNAME): Promi
   const now = Date.now();
   const thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000;
 
-  // Fetch ship dates for recent repos (limit API calls)
+  // Fetch ship dates and commit activity for recent repos (limit API calls)
   const recentRepos = repos.slice(0, 20);
-  const shipDates = await Promise.all(
-    recentRepos.map(repo => fetchShipDate(username, repo.name))
-  );
+  const [shipDates, commitActivities] = await Promise.all([
+    Promise.all(recentRepos.map(repo => fetchShipDate(username, repo.name))),
+    Promise.all(recentRepos.map(repo => fetchCommitActivity(username, repo.name))),
+  ]);
 
   const shipDateMap = new Map<string, Date | null>();
+  const commitActivityMap = new Map<string, number[]>();
   recentRepos.forEach((repo, i) => {
     shipDateMap.set(repo.name, shipDates[i]);
+    commitActivityMap.set(repo.name, commitActivities[i]);
   });
 
   return repos.map(repo => {
@@ -128,6 +132,7 @@ export async function getRepoActivity(username: string = GITHUB_USERNAME): Promi
       daysSinceUpdate: Math.floor((now - new Date(repo.updated_at).getTime()) / (24 * 60 * 60 * 1000)),
       daysSinceCreated: Math.floor((now - createdAt) / (24 * 60 * 60 * 1000)),
       daysToShip,
+      commitActivity: commitActivityMap.get(repo.name) || [],
       isRecent: new Date(repo.updated_at).getTime() > thirtyDaysAgo,
     };
   });

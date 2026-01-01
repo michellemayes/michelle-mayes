@@ -225,3 +225,36 @@ export async function fetchShipDate(owner: string, repo: string): Promise<Date |
   // Fall back to first commit
   return fetchFirstCommitDate(owner, repo);
 }
+
+/**
+ * Fetch weekly commit activity for the last 12 weeks
+ * Returns an array of commit counts per week (most recent last)
+ */
+export async function fetchCommitActivity(owner: string, repo: string): Promise<number[]> {
+  try {
+    const url = `https://api.github.com/repos/${owner}/${repo}/stats/participation`;
+
+    const response = await fetch(url, {
+      headers: {
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'michelle-mayes-personal-site',
+        ...(process.env.GITHUB_TOKEN && {
+          'Authorization': `token ${process.env.GITHUB_TOKEN}`
+        })
+      }
+    });
+
+    // GitHub returns 202 if stats are being computed, treat as empty
+    if (response.status === 202 || !response.ok) {
+      return [];
+    }
+
+    const data = await response.json();
+    // owner array has weekly commits by the owner for the last 52 weeks
+    // Take the last 12 weeks for a compact view
+    const ownerCommits: number[] = data.owner || [];
+    return ownerCommits.slice(-12);
+  } catch {
+    return [];
+  }
+}

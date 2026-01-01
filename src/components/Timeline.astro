@@ -15,12 +15,25 @@ for (const item of items) {
   existing.push(item);
   grouped.set(key, existing);
 }
+
+// Fun phrases for ship speed
+const getShipPhrase = (days: number) => {
+  if (days === 0) return 'Same day! 🔥';
+  if (days <= 1) return 'Speed demon! ⚡';
+  if (days <= 3) return 'Lightning fast! 🚀';
+  if (days <= 7) return 'Quick ship! 💨';
+  if (days <= 14) return 'Two weeks! 📦';
+  return `${days} days`;
+};
 ---
 
 <div class="timeline">
   {[...grouped.entries()].map(([monthYear, monthItems], groupIndex) => (
     <div class="timeline-month" style={`--group-index: ${groupIndex}`}>
-      <h3 class="timeline-month-header">{monthYear}</h3>
+      <h3 class="timeline-month-header">
+        <span class="month-text">{monthYear}</span>
+        <span class="month-decoration">✦</span>
+      </h3>
       <div class="timeline-items">
         {monthItems.map((item, itemIndex) => (
           <div
@@ -28,9 +41,12 @@ for (const item of items) {
             style={`--item-index: ${itemIndex}`}
             data-expandable
           >
-            <span class="timeline-marker">
-              {item.isPrivate ? '🔒' : item.isHighlight ? '★' : '○'}
-            </span>
+            <div class="timeline-marker-wrapper">
+              <span class="timeline-marker">
+                {item.isPrivate ? '🔒' : item.isHighlight ? '✨' : '◇'}
+              </span>
+              <span class="marker-pulse"></span>
+            </div>
             <div class="timeline-content">
               <div class="timeline-header">
                 {item.isPrivate ? (
@@ -51,12 +67,14 @@ for (const item of items) {
               <p class="timeline-description">{item.description}</p>
               <div class="timeline-meta">
                 {item.language && (
-                  <span class="timeline-tag language-tag">{item.language}</span>
+                  <span class="timeline-tag language-tag">
+                    <span class="tag-dot"></span>
+                    {item.language}
+                  </span>
                 )}
                 {item.daysToShip !== null && item.daysToShip >= 0 && (
                   <span class="timeline-ship">
-                    <span class="ship-icon">🚀</span>
-                    {item.daysToShip === 0 ? 'Same day' : `${item.daysToShip}d`}
+                    {getShipPhrase(item.daysToShip)}
                   </span>
                 )}
                 {item.tags.map((tag) => (
@@ -66,40 +84,69 @@ for (const item of items) {
 
               {/* Expandable details section */}
               <div class="timeline-details">
-                <div class="details-grid">
-                  {item.stars > 0 && (
-                    <div class="detail-item">
-                      <span class="detail-icon">⭐</span>
-                      <span class="detail-value">{item.stars}</span>
-                      <span class="detail-label">stars</span>
+                {/* Commit Activity Graph */}
+                {item.commitActivity.length > 0 && (
+                  <div class="commit-graph">
+                    <span class="graph-label">Activity (12 weeks)</span>
+                    <div class="graph-bars">
+                      {item.commitActivity.map((count, i) => {
+                        const maxCount = Math.max(...item.commitActivity, 1);
+                        const height = Math.max((count / maxCount) * 100, 4);
+                        return (
+                          <div
+                            class="graph-bar"
+                            style={`--bar-height: ${height}%; --bar-index: ${i}`}
+                            title={`${count} commits`}
+                          >
+                            <span class="bar-fill"></span>
+                          </div>
+                        );
+                      })}
                     </div>
-                  )}
-                  {item.forks > 0 && (
-                    <div class="detail-item">
-                      <span class="detail-icon">🔱</span>
-                      <span class="detail-value">{item.forks}</span>
-                      <span class="detail-label">forks</span>
-                    </div>
-                  )}
-                  {item.daysToShip !== null && item.daysToShip >= 0 && (
-                    <div class="detail-item">
-                      <span class="detail-icon">⚡</span>
-                      <span class="detail-value">{item.daysToShip === 0 ? '<1' : item.daysToShip}</span>
-                      <span class="detail-label">days to ship</span>
-                    </div>
-                  )}
-                </div>
-                {item.tags.length > 0 && (
-                  <div class="tech-stack">
-                    <span class="tech-label">Tech Stack</span>
-                    <div class="tech-tags">
-                      {item.language && <span class="tech-tag primary">{item.language}</span>}
-                      {item.tags.map((tag) => (
-                        <span class="tech-tag">{tag}</span>
-                      ))}
+                    <div class="graph-legend">
+                      <span>12 weeks ago</span>
+                      <span>Now</span>
                     </div>
                   </div>
                 )}
+
+                <div class="details-row">
+                  <div class="details-grid">
+                    {item.stars > 0 && (
+                      <div class="detail-item">
+                        <span class="detail-icon bounce">⭐</span>
+                        <span class="detail-value">{item.stars}</span>
+                        <span class="detail-label">stars</span>
+                      </div>
+                    )}
+                    {item.forks > 0 && (
+                      <div class="detail-item">
+                        <span class="detail-icon">🍴</span>
+                        <span class="detail-value">{item.forks}</span>
+                        <span class="detail-label">forks</span>
+                      </div>
+                    )}
+                    {item.daysToShip !== null && item.daysToShip >= 0 && (
+                      <div class="detail-item">
+                        <span class="detail-icon wiggle">🚀</span>
+                        <span class="detail-value">{item.daysToShip === 0 ? '<1' : item.daysToShip}</span>
+                        <span class="detail-label">days to ship</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {item.tags.length > 0 && (
+                    <div class="tech-stack">
+                      <span class="tech-label">Tech Stack</span>
+                      <div class="tech-tags">
+                        {item.language && <span class="tech-tag primary">{item.language}</span>}
+                        {item.tags.map((tag) => (
+                          <span class="tech-tag">{tag}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -120,8 +167,28 @@ for (const item of items) {
       if (icon) {
         icon.textContent = item.classList.contains('expanded') ? '−' : '+';
       }
+
+      // Add a little confetti effect on first expand
+      if (item.classList.contains('expanded') && !item.classList.contains('was-expanded')) {
+        item.classList.add('was-expanded');
+        createSparkles(btn as HTMLElement);
+      }
     });
   });
+
+  function createSparkles(element: HTMLElement) {
+    const sparkles = ['✨', '💫', '⭐', '🌟'];
+    for (let i = 0; i < 5; i++) {
+      const sparkle = document.createElement('span');
+      sparkle.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
+      sparkle.className = 'sparkle';
+      sparkle.style.setProperty('--x', `${(Math.random() - 0.5) * 60}px`);
+      sparkle.style.setProperty('--y', `${-Math.random() * 40 - 20}px`);
+      sparkle.style.setProperty('--delay', `${i * 0.05}s`);
+      element.appendChild(sparkle);
+      setTimeout(() => sparkle.remove(), 600);
+    }
+  }
 </script>
 
 <style>
@@ -144,6 +211,15 @@ for (const item of items) {
     margin-bottom: var(--space-lg);
     padding-bottom: var(--space-sm);
     border-bottom: 1px solid var(--accent-100);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .month-decoration {
+    color: var(--accent);
+    font-size: 0.75rem;
+    animation: twinkle 2s ease-in-out infinite;
   }
 
   .timeline-items {
@@ -156,47 +232,90 @@ for (const item of items) {
     display: flex;
     gap: var(--space-md);
     padding: var(--space-md);
-    border-radius: 12px;
+    border-radius: 16px;
     background: var(--bg-card);
     box-shadow: var(--shadow-sm);
-    border-left: 3px solid transparent;
+    border: 1px solid transparent;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     animation: cardSlideIn 0.4s ease-out backwards;
     animation-delay: calc(var(--group-index) * 0.1s + var(--item-index) * 0.05s);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light, #a78bfa));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .timeline-item:hover::before {
+    opacity: 1;
   }
 
   .timeline-item:hover {
-    box-shadow: var(--shadow-md);
-    transform: translateX(4px);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+    border-color: var(--accent-100);
   }
 
   .timeline-item.highlight {
-    border-left-color: var(--accent);
+    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(139, 92, 246, 0.05) 100%);
+  }
+
+  .timeline-item.highlight::before {
+    opacity: 0.5;
   }
 
   .timeline-item.private {
-    border-left-color: var(--text-muted);
-    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(139, 92, 246, 0.03) 100%);
+    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(100, 100, 100, 0.05) 100%);
+  }
+
+  .timeline-item.private::before {
+    background: linear-gradient(90deg, var(--text-muted), var(--text-light));
+  }
+
+  .timeline-marker-wrapper {
+    position: relative;
+    flex-shrink: 0;
+    width: 28px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 2px;
   }
 
   .timeline-marker {
-    font-size: 1rem;
-    flex-shrink: 0;
-    width: 24px;
-    text-align: center;
+    font-size: 1.1rem;
+    z-index: 1;
     transition: transform 0.3s ease;
   }
 
   .timeline-item:hover .timeline-marker {
-    transform: scale(1.2);
+    transform: scale(1.3) rotate(10deg);
   }
 
-  .timeline-item.highlight .timeline-marker {
-    color: var(--accent);
+  .marker-pulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0;
+    animation: pulse 2s ease-in-out infinite;
   }
 
-  .timeline-item:not(.highlight):not(.private) .timeline-marker {
-    color: var(--text-light);
+  .timeline-item.highlight .marker-pulse {
+    animation: pulse 2s ease-in-out infinite;
   }
 
   .timeline-content {
@@ -220,7 +339,7 @@ for (const item of items) {
     display: inline-flex;
     align-items: center;
     gap: var(--space-xs);
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
   }
 
   .timeline-title:hover {
@@ -230,13 +349,13 @@ for (const item of items) {
   .link-arrow {
     font-size: 0.85em;
     opacity: 0;
-    transform: translateX(-4px);
+    transform: translateX(-4px) translateY(4px);
     transition: all 0.2s ease;
   }
 
   .timeline-title:hover .link-arrow {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) translateY(0);
   }
 
   .private-title {
@@ -246,45 +365,67 @@ for (const item of items) {
   }
 
   .private-badge {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    background: var(--text-muted);
+    background: linear-gradient(135deg, #6b7280, #4b5563);
     color: white;
-    padding: 2px 6px;
-    border-radius: 4px;
+    padding: 2px 8px;
+    border-radius: 10px;
   }
 
   .expand-btn {
-    background: var(--accent-100);
+    background: linear-gradient(135deg, var(--accent-100), var(--accent-50, #ede9fe));
     border: none;
-    width: 24px;
-    height: 24px;
-    border-radius: 6px;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
     flex-shrink: 0;
+    position: relative;
+    overflow: visible;
   }
 
   .expand-btn:hover {
     background: var(--accent);
-    transform: scale(1.1);
+    transform: scale(1.1) rotate(90deg);
   }
 
   .expand-icon {
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: var(--accent-dark);
     line-height: 1;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
   }
 
   .expand-btn:hover .expand-icon {
     color: white;
+  }
+
+  /* Sparkle effect */
+  :global(.sparkle) {
+    position: absolute;
+    pointer-events: none;
+    animation: sparkleFloat 0.5s ease-out forwards;
+    animation-delay: var(--delay);
+    font-size: 0.8rem;
+  }
+
+  @keyframes sparkleFloat {
+    0% {
+      opacity: 1;
+      transform: translate(0, 0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(var(--x), var(--y)) scale(0.5);
+    }
   }
 
   .timeline-item.highlight .timeline-title {
@@ -295,7 +436,7 @@ for (const item of items) {
     margin: 0 0 var(--space-sm) 0;
     font-size: 0.9rem;
     color: var(--text-muted);
-    line-height: 1.5;
+    line-height: 1.6;
   }
 
   .timeline-meta {
@@ -308,36 +449,48 @@ for (const item of items) {
   .timeline-tag {
     background: var(--accent-100);
     color: var(--accent-dark);
-    padding: 2px 8px;
-    border-radius: 4px;
+    padding: 3px 10px;
+    border-radius: 20px;
     font-size: 0.75rem;
     font-weight: 500;
     transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
   }
 
   .timeline-tag:hover {
     background: var(--accent);
     color: white;
-    transform: translateY(-1px);
+    transform: translateY(-2px) scale(1.05);
+  }
+
+  .tag-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
   }
 
   .language-tag {
-    background: var(--accent);
+    background: linear-gradient(135deg, var(--accent), var(--accent-light, #a78bfa));
     color: white;
+  }
+
+  .language-tag .tag-dot {
+    background: white;
+    animation: blink 1.5s ease-in-out infinite;
   }
 
   .timeline-ship {
     font-family: var(--font-mono);
     font-size: 0.75rem;
     color: var(--accent);
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-  }
-
-  .ship-icon {
-    font-size: 0.85em;
+    font-weight: 600;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.05));
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px dashed var(--accent);
   }
 
   /* Expandable details */
@@ -345,22 +498,93 @@ for (const item of items) {
     max-height: 0;
     overflow: hidden;
     opacity: 0;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     margin-top: 0;
   }
 
   .timeline-item.expanded .timeline-details {
-    max-height: 200px;
+    max-height: 400px;
     opacity: 1;
     margin-top: var(--space-md);
     padding-top: var(--space-md);
     border-top: 1px dashed var(--accent-100);
   }
 
+  /* Commit Graph */
+  .commit-graph {
+    margin-bottom: var(--space-md);
+  }
+
+  .graph-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    font-weight: 600;
+    display: block;
+    margin-bottom: var(--space-xs);
+  }
+
+  .graph-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 40px;
+    padding: var(--space-xs);
+    background: linear-gradient(180deg, transparent 0%, rgba(139, 92, 246, 0.05) 100%);
+    border-radius: 8px;
+  }
+
+  .graph-bar {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    cursor: help;
+  }
+
+  .bar-fill {
+    width: 100%;
+    height: var(--bar-height);
+    background: linear-gradient(180deg, var(--accent), var(--accent-light, #a78bfa));
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    animation: barGrow 0.5s ease-out backwards;
+    animation-delay: calc(var(--bar-index) * 0.03s);
+  }
+
+  .graph-bar:hover .bar-fill {
+    background: var(--accent);
+    transform: scaleY(1.1);
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+  }
+
+  @keyframes barGrow {
+    from {
+      transform: scaleY(0);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+
+  .graph-legend {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .details-row {
+    display: flex;
+    gap: var(--space-lg);
+    flex-wrap: wrap;
+  }
+
   .details-grid {
     display: flex;
     gap: var(--space-lg);
-    margin-bottom: var(--space-md);
   }
 
   .detail-item {
@@ -370,13 +594,22 @@ for (const item of items) {
   }
 
   .detail-icon {
-    font-size: 1rem;
+    font-size: 1.1rem;
+  }
+
+  .detail-icon.bounce {
+    animation: bounce 1s ease infinite;
+  }
+
+  .detail-icon.wiggle {
+    animation: wiggle 0.5s ease-in-out infinite;
   }
 
   .detail-value {
     font-family: var(--font-mono);
     font-weight: 600;
     color: var(--text);
+    font-size: 1.1rem;
   }
 
   .detail-label {
@@ -407,17 +640,23 @@ for (const item of items) {
   .tech-tag {
     background: var(--bg);
     color: var(--text);
-    padding: 4px 10px;
-    border-radius: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
     font-size: 0.75rem;
     font-weight: 500;
     border: 1px solid var(--accent-100);
+    transition: all 0.2s ease;
+  }
+
+  .tech-tag:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
   }
 
   .tech-tag.primary {
-    background: var(--accent);
+    background: linear-gradient(135deg, var(--accent), var(--accent-light, #a78bfa));
     color: white;
-    border-color: var(--accent);
+    border-color: transparent;
   }
 
   /* Animations */
@@ -443,6 +682,32 @@ for (const item of items) {
     }
   }
 
+  @keyframes twinkle {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.3; transform: translate(-50%, -50%) scale(1.5); }
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-5deg); }
+    75% { transform: rotate(5deg); }
+  }
+
   @media (max-width: 768px) {
     .timeline-item {
       padding: var(--space-sm);
@@ -460,21 +725,30 @@ for (const item of items) {
       font-size: 0.85rem;
     }
 
+    .details-row {
+      flex-direction: column;
+    }
+
     .details-grid {
       flex-wrap: wrap;
       gap: var(--space-md);
     }
 
     .expand-btn {
-      width: 28px;
-      height: 28px;
+      width: 30px;
+      height: 30px;
+    }
+
+    .graph-bars {
+      height: 32px;
     }
   }
 
   /* Reduce motion for accessibility */
   @media (prefers-reduced-motion: reduce) {
     .timeline-month,
-    .timeline-item {
+    .timeline-item,
+    .bar-fill {
       animation: none;
     }
 
@@ -484,6 +758,18 @@ for (const item of items) {
 
     .timeline-details {
       transition: opacity 0.2s ease;
+    }
+
+    .month-decoration,
+    .marker-pulse,
+    .language-tag .tag-dot,
+    .detail-icon.bounce,
+    .detail-icon.wiggle {
+      animation: none;
+    }
+
+    .expand-btn:hover {
+      transform: scale(1.1);
     }
   }
 </style>
