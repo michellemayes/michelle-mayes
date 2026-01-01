@@ -8,11 +8,14 @@ export interface TimelineItem {
   title: string;
   description: string;
   isHighlight: boolean;
+  isPrivate: boolean;
   repoUrl: string;
   repoName: string;
   language: string | null;
   daysToShip: number | null;
   tags: string[];
+  stars: number;
+  forks: number;
 }
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
@@ -111,7 +114,7 @@ function buildPrompt(activities: RepoActivity[]): string {
     description: a.repo.description,
     language: a.repo.language,
     daysOld: a.daysSinceCreated,
-    daysToShip: a.daysSinceCreated - a.daysSinceUpdate,
+    daysToShip: a.daysToShip, // Days from creation to first PR/commit
     stars: a.repo.stargazers_count,
     topics: a.repo.topics,
   }));
@@ -149,13 +152,14 @@ function createBasicTimelineItem(activity: RepoActivity): TimelineItem {
     title: formatRepoName(activity.repo.name),
     description: activity.repo.description || 'Updated repository',
     isHighlight: activity.repo.stargazers_count > 0,
+    isPrivate: activity.repo.private,
     repoUrl: activity.repo.html_url,
     repoName: activity.repo.name,
     language: activity.repo.language,
-    daysToShip: activity.daysSinceCreated > activity.daysSinceUpdate
-      ? activity.daysSinceCreated - activity.daysSinceUpdate
-      : null,
+    daysToShip: activity.daysToShip,
     tags: activity.repo.topics?.slice(0, 3) || [],
+    stars: activity.repo.stargazers_count,
+    forks: activity.repo.forks_count,
   };
 }
 

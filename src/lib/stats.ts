@@ -1,4 +1,4 @@
-import { fetchRepositories, type GitHubRepository } from './github';
+import { fetchRepositories, fetchShipDate, type GitHubRepository } from './github';
 import { GITHUB_USERNAME } from '../consts';
 
 export interface GitHubStats {
@@ -16,6 +16,7 @@ export interface RepoActivity {
   repo: GitHubRepository;
   daysSinceUpdate: number;
   daysSinceCreated: number;
+  daysToShip: number | null; // Days from repo creation to first PR/commit
   isRecent: boolean;
 }
 
@@ -65,16 +66,12 @@ export async function calculateStats(username: string = GITHUB_USERNAME): Promis
     repo => new Date(repo.updated_at).getTime() > thirtyDaysAgo
   ).length;
 
-  // Estimate average days to ship (created -> first significant update)
-  const shipTimes: number[] = [];
-  for (const repo of repos) {
-    const created = new Date(repo.created_at).getTime();
-    const updated = new Date(repo.updated_at).getTime();
-    const daysDiff = Math.floor((updated - created) / (24 * 60 * 60 * 1000));
-    if (daysDiff > 0 && daysDiff < 365) { // Reasonable range
-      shipTimes.push(daysDiff);
-    }
-  }
+  // Calculate average days to ship using actual first PR/commit dates
+  const repoActivity = await getRepoActivity(username);
+  const shipTimes = repoActivity
+    .filter(a => a.daysToShip !== null && a.daysToShip > 0)
+    .map(a => a.daysToShip as number);
+
   const avgDaysToShip = shipTimes.length > 0
     ? Math.round(shipTimes.reduce((a, b) => a + b, 0) / shipTimes.length)
     : null;
@@ -102,10 +99,36 @@ export async function getRepoActivity(username: string = GITHUB_USERNAME): Promi
   const now = Date.now();
   const thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000;
 
-  return repos.map(repo => ({
-    repo,
-    daysSinceUpdate: Math.floor((now - new Date(repo.updated_at).getTime()) / (24 * 60 * 60 * 1000)),
-    daysSinceCreated: Math.floor((now - new Date(repo.created_at).getTime()) / (24 * 60 * 60 * 1000)),
-    isRecent: new Date(repo.updated_at).getTime() > thirtyDaysAgo,
-  }));
+  // Fetch ship dates for recent repos (limit API calls)
+  const recentRepos = repos.slice(0, 20);
+  const shipDates = await Promise.all(
+    recentRepos.map(repo => fetchShipDate(username, repo.name))
+  );
+
+  const shipDateMap = new Map<string, Date | null>();
+  recentRepos.forEach((repo, i) => {
+    shipDateMap.set(repo.name, shipDates[i]);
+  });
+
+  return repos.map(repo => {
+    const createdAt = new Date(repo.created_at).getTime();
+    const shipDate = shipDateMap.get(repo.name);
+    let daysToShip: number | null = null;
+
+    if (shipDate) {
+      const daysDiff = Math.floor((shipDate.getTime() - createdAt) / (24 * 60 * 60 * 1000));
+      // Only show if it's a reasonable timeframe (0-365 days)
+      if (daysDiff >= 0 && daysDiff < 365) {
+        daysToShip = daysDiff;
+      }
+    }
+
+    return {
+      repo,
+      daysSinceUpdate: Math.floor((now - new Date(repo.updated_at).getTime()) / (24 * 60 * 60 * 1000)),
+      daysSinceCreated: Math.floor((now - createdAt) / (24 * 60 * 60 * 1000)),
+      daysToShip,
+      isRecent: new Date(repo.updated_at).getTime() > thirtyDaysAgo,
+    };
+  });
 }

@@ -18,28 +18,88 @@ for (const item of items) {
 ---
 
 <div class="timeline">
-  {[...grouped.entries()].map(([monthYear, monthItems]) => (
-    <div class="timeline-month">
+  {[...grouped.entries()].map(([monthYear, monthItems], groupIndex) => (
+    <div class="timeline-month" style={`--group-index: ${groupIndex}`}>
       <h3 class="timeline-month-header">{monthYear}</h3>
       <div class="timeline-items">
-        {monthItems.map((item) => (
-          <div class={`timeline-item ${item.isHighlight ? 'highlight' : ''}`}>
-            <span class="timeline-marker">{item.isHighlight ? '★' : '○'}</span>
+        {monthItems.map((item, itemIndex) => (
+          <div
+            class={`timeline-item ${item.isHighlight ? 'highlight' : ''} ${item.isPrivate ? 'private' : ''}`}
+            style={`--item-index: ${itemIndex}`}
+            data-expandable
+          >
+            <span class="timeline-marker">
+              {item.isPrivate ? '🔒' : item.isHighlight ? '★' : '○'}
+            </span>
             <div class="timeline-content">
-              <a href={item.repoUrl} target="_blank" rel="noopener" class="timeline-title">
-                {item.title}
-              </a>
+              <div class="timeline-header">
+                {item.isPrivate ? (
+                  <span class="timeline-title private-title">
+                    {item.title}
+                    <span class="private-badge">Private</span>
+                  </span>
+                ) : (
+                  <a href={item.repoUrl} target="_blank" rel="noopener" class="timeline-title">
+                    {item.title}
+                    <span class="link-arrow">↗</span>
+                  </a>
+                )}
+                <button class="expand-btn" aria-label="Expand details">
+                  <span class="expand-icon">+</span>
+                </button>
+              </div>
               <p class="timeline-description">{item.description}</p>
               <div class="timeline-meta">
                 {item.language && (
-                  <span class="timeline-tag">{item.language}</span>
+                  <span class="timeline-tag language-tag">{item.language}</span>
                 )}
-                {item.daysToShip && item.daysToShip > 0 && (
-                  <span class="timeline-ship">Shipped in {item.daysToShip}d</span>
+                {item.daysToShip !== null && item.daysToShip >= 0 && (
+                  <span class="timeline-ship">
+                    <span class="ship-icon">🚀</span>
+                    {item.daysToShip === 0 ? 'Same day' : `${item.daysToShip}d`}
+                  </span>
                 )}
                 {item.tags.map((tag) => (
                   <span class="timeline-tag">{tag}</span>
                 ))}
+              </div>
+
+              {/* Expandable details section */}
+              <div class="timeline-details">
+                <div class="details-grid">
+                  {item.stars > 0 && (
+                    <div class="detail-item">
+                      <span class="detail-icon">⭐</span>
+                      <span class="detail-value">{item.stars}</span>
+                      <span class="detail-label">stars</span>
+                    </div>
+                  )}
+                  {item.forks > 0 && (
+                    <div class="detail-item">
+                      <span class="detail-icon">🔱</span>
+                      <span class="detail-value">{item.forks}</span>
+                      <span class="detail-label">forks</span>
+                    </div>
+                  )}
+                  {item.daysToShip !== null && item.daysToShip >= 0 && (
+                    <div class="detail-item">
+                      <span class="detail-icon">⚡</span>
+                      <span class="detail-value">{item.daysToShip === 0 ? '<1' : item.daysToShip}</span>
+                      <span class="detail-label">days to ship</span>
+                    </div>
+                  )}
+                </div>
+                {item.tags.length > 0 && (
+                  <div class="tech-stack">
+                    <span class="tech-label">Tech Stack</span>
+                    <div class="tech-tags">
+                      {item.language && <span class="tech-tag primary">{item.language}</span>}
+                      {item.tags.map((tag) => (
+                        <span class="tech-tag">{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -49,6 +109,21 @@ for (const item of items) {
   ))}
 </div>
 
+<script>
+  document.querySelectorAll('[data-expandable]').forEach((item) => {
+    const btn = item.querySelector('.expand-btn');
+    const icon = item.querySelector('.expand-icon');
+
+    btn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      item.classList.toggle('expanded');
+      if (icon) {
+        icon.textContent = item.classList.contains('expanded') ? '−' : '+';
+      }
+    });
+  });
+</script>
+
 <style>
   .timeline {
     max-width: 700px;
@@ -57,6 +132,8 @@ for (const item of items) {
 
   .timeline-month {
     margin-bottom: var(--space-2xl);
+    animation: fadeSlideIn 0.5s ease-out backwards;
+    animation-delay: calc(var(--group-index) * 0.1s);
   }
 
   .timeline-month-header {
@@ -79,30 +156,46 @@ for (const item of items) {
     display: flex;
     gap: var(--space-md);
     padding: var(--space-md);
-    border-radius: 8px;
+    border-radius: 12px;
     background: var(--bg-card);
     box-shadow: var(--shadow-sm);
     border-left: 3px solid transparent;
-    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: cardSlideIn 0.4s ease-out backwards;
+    animation-delay: calc(var(--group-index) * 0.1s + var(--item-index) * 0.05s);
   }
 
   .timeline-item:hover {
     box-shadow: var(--shadow-md);
+    transform: translateX(4px);
   }
 
   .timeline-item.highlight {
     border-left-color: var(--accent);
   }
 
-  .timeline-marker {
-    font-size: 1rem;
-    color: var(--accent);
-    flex-shrink: 0;
-    width: 20px;
-    text-align: center;
+  .timeline-item.private {
+    border-left-color: var(--text-muted);
+    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(139, 92, 246, 0.03) 100%);
   }
 
-  .timeline-item:not(.highlight) .timeline-marker {
+  .timeline-marker {
+    font-size: 1rem;
+    flex-shrink: 0;
+    width: 24px;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+
+  .timeline-item:hover .timeline-marker {
+    transform: scale(1.2);
+  }
+
+  .timeline-item.highlight .timeline-marker {
+    color: var(--accent);
+  }
+
+  .timeline-item:not(.highlight):not(.private) .timeline-marker {
     color: var(--text-light);
   }
 
@@ -111,17 +204,87 @@ for (const item of items) {
     min-width: 0;
   }
 
+  .timeline-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xs);
+  }
+
   .timeline-title {
     font-weight: 600;
     font-size: 1rem;
     color: var(--text);
     text-decoration: none;
-    display: block;
-    margin-bottom: var(--space-xs);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    transition: color 0.2s ease;
   }
 
   .timeline-title:hover {
     color: var(--accent);
+  }
+
+  .link-arrow {
+    font-size: 0.85em;
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: all 0.2s ease;
+  }
+
+  .timeline-title:hover .link-arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .private-title {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .private-badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: var(--text-muted);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  .expand-btn {
+    background: var(--accent-100);
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .expand-btn:hover {
+    background: var(--accent);
+    transform: scale(1.1);
+  }
+
+  .expand-icon {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent-dark);
+    line-height: 1;
+    transition: color 0.2s ease;
+  }
+
+  .expand-btn:hover .expand-icon {
+    color: white;
   }
 
   .timeline-item.highlight .timeline-title {
@@ -149,6 +312,18 @@ for (const item of items) {
     border-radius: 4px;
     font-size: 0.75rem;
     font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .timeline-tag:hover {
+    background: var(--accent);
+    color: white;
+    transform: translateY(-1px);
+  }
+
+  .language-tag {
+    background: var(--accent);
+    color: white;
   }
 
   .timeline-ship {
@@ -156,6 +331,116 @@ for (const item of items) {
     font-size: 0.75rem;
     color: var(--accent);
     font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .ship-icon {
+    font-size: 0.85em;
+  }
+
+  /* Expandable details */
+  .timeline-details {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top: 0;
+  }
+
+  .timeline-item.expanded .timeline-details {
+    max-height: 200px;
+    opacity: 1;
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px dashed var(--accent-100);
+  }
+
+  .details-grid {
+    display: flex;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-md);
+  }
+
+  .detail-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .detail-icon {
+    font-size: 1rem;
+  }
+
+  .detail-value {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .detail-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .tech-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .tech-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  .tech-tag {
+    background: var(--bg);
+    color: var(--text);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: 1px solid var(--accent-100);
+  }
+
+  .tech-tag.primary {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+
+  /* Animations */
+  @keyframes fadeSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes cardSlideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
   }
 
   @media (max-width: 768px) {
@@ -173,6 +458,32 @@ for (const item of items) {
 
     .timeline-description {
       font-size: 0.85rem;
+    }
+
+    .details-grid {
+      flex-wrap: wrap;
+      gap: var(--space-md);
+    }
+
+    .expand-btn {
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  /* Reduce motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    .timeline-month,
+    .timeline-item {
+      animation: none;
+    }
+
+    .timeline-item:hover {
+      transform: none;
+    }
+
+    .timeline-details {
+      transition: opacity 0.2s ease;
     }
   }
 </style>
