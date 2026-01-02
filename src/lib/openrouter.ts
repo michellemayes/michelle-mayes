@@ -51,9 +51,9 @@ export async function generateTimelineHighlights(
         messages: [
           {
             role: 'system',
-            content: `You analyze GitHub repository data and identify impressive accomplishments.
-Return JSON only. Be concise but impressive. Focus on what was BUILT, not just "worked on".
-Highlight speed, scope, and impact. Make it sound like a shipped product, not a homework assignment.`
+            content: `You analyze GitHub repository data to highlight the real-world problems solved and value delivered.
+Return JSON only. Focus on the PROBLEM each project addresses and the VALUE it provides to users or businesses.
+Frame projects as solutions to pain points, not just technical builds. Show clear value proposition.`
           },
           {
             role: 'user',
@@ -120,7 +120,7 @@ function buildPrompt(activities: RepoActivity[]): string {
     topics: a.repo.topics,
   }));
 
-  return `Analyze these GitHub repos and generate impressive timeline entries.
+  return `Analyze these GitHub repos and generate timeline entries that highlight problems solved and value delivered.
 
 Repos:
 ${JSON.stringify(repoData, null, 2)}
@@ -129,18 +129,19 @@ Return a JSON array with this structure for each repo:
 [
   {
     "repoName": "exact-repo-name",
-    "title": "Short impressive title (e.g., 'Built AI-powered invoice processor')",
-    "description": "One sentence about impact/speed (e.g., 'Automated 6 hours of manual work, shipped in 3 days')",
-    "isHighlight": true/false (true for impressive projects, false for routine/minor)
+    "title": "Problem-focused title (e.g., 'Eliminated manual invoice processing')",
+    "description": "Summarize what the project does and the value it adds (e.g., 'Automates data extraction from invoices, reducing processing time from hours to seconds for small businesses')",
+    "isHighlight": true/false (true for projects with clear value proposition, false for utilities/minor)
   }
 ]
 
 Rules:
-- Title should start with action verb: Built, Launched, Shipped, Created, Designed
-- Description should mention speed or impact when possible
-- Mark as highlight if: has stars, interesting tech, clear product, fast turnaround
-- Keep routine maintenance/forks as isHighlight: false
-- Be concise, impressive, and honest`;
+- Title should frame the PROBLEM solved, not just what was built (e.g., "Streamlined team communication" not "Built a chat app")
+- Description should explain WHAT the project does + WHO benefits + HOW it adds value
+- Mark as highlight if: solves a real pain point, has clear users/audience, delivers measurable value
+- Keep routine utilities/configs as isHighlight: false
+- Be specific about the value proposition - avoid vague terms like "improves efficiency"
+- Infer the problem from repo name, description, and topics when not explicit`;
 }
 
 function createBasicTimelineItem(activity: RepoActivity): TimelineItem {
