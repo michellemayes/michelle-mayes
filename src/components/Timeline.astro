@@ -171,7 +171,7 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
     padding: var(--space-lg) 0;
   }
 
-  /* Floating particles */
+  /* Floating particles - reduced for mobile */
   .particles {
     position: absolute;
     inset: 0;
@@ -182,8 +182,8 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
 
   .particle {
     position: absolute;
-    font-size: 1.2rem;
-    opacity: 0.3;
+    font-size: 1rem;
+    opacity: 0.2;
     animation: float 20s ease-in-out infinite;
     animation-delay: calc(var(--i) * -1.3s);
   }
@@ -208,12 +208,8 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
       transform: translateY(100vh) rotate(0deg);
       opacity: 0;
     }
-    10% {
-      opacity: 0.4;
-    }
-    90% {
-      opacity: 0.4;
-    }
+    10% { opacity: 0.25; }
+    90% { opacity: 0.25; }
     100% {
       transform: translateY(-100px) rotate(360deg);
       opacity: 0;
@@ -227,36 +223,34 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
 
   .timeline-month {
     margin-bottom: var(--space-2xl);
-    animation: fadeSlideIn 0.6s ease-out backwards;
-    animation-delay: calc(var(--group-index) * 0.15s);
   }
 
+  /* Refined month header */
   .timeline-month-header {
     font-family: var(--font-serif);
-    font-size: 1.4rem;
+    font-size: var(--text-xl);
     font-weight: 600;
     color: var(--text);
     margin-bottom: var(--space-lg);
-    padding: var(--space-sm) var(--space-md);
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.02));
-    border-radius: 100px;
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: var(--space-md);
+  }
+
+  .timeline-month-header::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--accent-200), transparent);
+  }
+
+  .month-sparkle,
+  .month-text {
+    display: contents;
   }
 
   .month-sparkle {
-    font-size: 0.9rem;
-    animation: sparkle 1.5s ease-in-out infinite;
-  }
-
-  .month-sparkle:last-child {
-    animation-delay: 0.75s;
-  }
-
-  @keyframes sparkle {
-    0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
-    50% { opacity: 0.5; transform: scale(0.8) rotate(180deg); }
+    display: none; /* Hide sparkles, cleaner look */
   }
 
   .timeline-items {
@@ -265,102 +259,79 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
     gap: var(--space-lg);
   }
 
+  /* Refined card styling */
   .timeline-item {
     display: flex;
     gap: var(--space-md);
     padding: var(--space-lg);
-    border-radius: 20px;
+    border-radius: 16px;
     background: var(--bg-card);
-    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.08);
-    border: 2px solid transparent;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    animation: cardSlideIn 0.5s ease-out backwards;
-    animation-delay: calc(var(--group-index) * 0.1s + var(--item-index) * 0.08s);
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
-  }
-
-  /* Decorative blob */
-  .card-blob {
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
-    border-radius: 50%;
-    pointer-events: none;
-    transition: all 0.5s ease;
     opacity: 0;
+    transform: translateY(20px);
   }
 
-  .timeline-item:hover .card-blob {
+  .timeline-item.revealed {
     opacity: 1;
-    transform: scale(1.2);
+    transform: translateY(0);
   }
 
   .timeline-item::before {
     content: '';
     position: absolute;
-    inset: 0;
-    border-radius: 20px;
-    padding: 2px;
-    background: linear-gradient(135deg, var(--accent), #a78bfa, #c4b5fd);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    bottom: 0;
+    right: 0;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle at bottom right, rgba(139, 92, 246, 0.05) 0%, transparent 70%);
     pointer-events: none;
   }
 
-  .timeline-item:hover::before {
-    opacity: 1;
+  .timeline-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-colored-lg);
   }
 
-  .timeline-item:hover {
-    transform: translateY(-4px) scale(1.01);
-    box-shadow: 0 12px 40px rgba(139, 92, 246, 0.2);
+  .timeline-item.revealed:hover {
+    transform: translateY(-2px);
   }
 
   .timeline-item.highlight {
-    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(139, 92, 246, 0.08) 100%);
-  }
-
-  .timeline-item.highlight::before {
-    opacity: 0.5;
+    background: linear-gradient(135deg, var(--bg-card) 0%, var(--accent-50) 100%);
   }
 
   .timeline-item.private {
-    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(100, 100, 100, 0.05) 100%);
+    background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-subtle) 100%);
   }
 
+  /* Remove old blob */
+  .card-blob {
+    display: none;
+  }
+
+  /* Refined marker */
   .timeline-marker-wrapper {
     flex-shrink: 0;
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, var(--accent-100), rgba(139, 92, 246, 0.1));
-    border-radius: 12px;
+    background: var(--accent-50);
+    border-radius: 8px;
     transition: all 0.3s ease;
   }
 
   .timeline-item:hover .timeline-marker-wrapper {
-    transform: rotate(-10deg) scale(1.1);
-    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    transform: scale(1.1);
+    background: var(--accent-100);
   }
 
   .timeline-marker {
-    font-size: 1.2rem;
-    transition: transform 0.3s ease;
-  }
-
-  .timeline-item:hover .timeline-marker {
-    transform: scale(1.2);
-    filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.5));
+    font-size: 1rem;
   }
 
   .timeline-content {
@@ -378,13 +349,13 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
 
   .timeline-title {
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: var(--text-lg);
     color: var(--text);
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: var(--space-xs);
-    transition: all 0.2s ease;
+    transition: color 0.2s ease;
   }
 
   .timeline-title:hover {
@@ -394,8 +365,8 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
   .link-arrow {
     display: inline-block;
     opacity: 0;
-    transform: translateX(-8px);
-    transition: all 0.3s ease;
+    transform: translateX(-4px);
+    transition: all 0.2s ease;
     font-weight: 400;
   }
 
@@ -412,38 +383,42 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
   }
 
   .private-badge {
-    font-size: 0.7rem;
+    font-size: var(--text-xs);
     font-weight: 600;
-    background: linear-gradient(135deg, #6b7280, #4b5563);
+    background: var(--text-muted);
     color: white;
-    padding: 3px 10px;
+    padding: 2px 8px;
     border-radius: 100px;
   }
 
+  /* Refined expand button */
   .expand-btn {
-    background: linear-gradient(135deg, var(--accent-100), rgba(139, 92, 246, 0.2));
-    border: none;
-    width: 32px;
-    height: 32px;
+    background: var(--accent-50);
+    border: 1px solid var(--accent-100);
+    width: 36px;
+    height: 36px;
     border-radius: 10px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     flex-shrink: 0;
   }
 
   .expand-btn:hover {
     background: var(--accent);
-    transform: rotate(90deg) scale(1.1);
-    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+    border-color: var(--accent);
+  }
+
+  .expand-btn:active {
+    transform: scale(0.95);
   }
 
   .expand-icon {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: var(--accent);
-    transition: all 0.2s ease;
+    transition: color 0.2s ease;
   }
 
   .expand-btn:hover .expand-icon {
@@ -452,23 +427,21 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
 
   .timeline-item.expanded .expand-btn {
     background: var(--accent);
+    border-color: var(--accent);
   }
 
   .timeline-item.expanded .expand-icon {
     color: white;
   }
 
-  .timeline-item.highlight .timeline-title {
-    font-size: 1.15rem;
-  }
-
   .timeline-description {
     margin: 0 0 var(--space-sm) 0;
-    font-size: 0.9rem;
+    font-size: var(--text-sm);
     color: var(--text-muted);
-    line-height: 1.6;
+    line-height: var(--leading-relaxed);
   }
 
+  /* Refined tags */
   .timeline-meta {
     display: flex;
     flex-wrap: wrap;
@@ -477,56 +450,44 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
   }
 
   .timeline-tag {
-    background: var(--accent-100);
+    background: var(--accent-50);
     color: var(--accent-dark);
-    padding: 4px 12px;
+    padding: 6px 14px;
     border-radius: 100px;
-    font-size: 0.75rem;
+    font-size: var(--text-xs);
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     position: relative;
     overflow: hidden;
   }
 
   .timeline-tag:hover {
-    background: var(--accent);
-    color: white;
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    background: var(--accent-100);
+    transform: translateY(-1px);
   }
 
   .tag-glow {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    transform: translateX(-100%);
-    animation: shimmer 2s infinite;
-  }
-
-  @keyframes shimmer {
-    100% { transform: translateX(100%); }
+    display: none; /* Remove shimmer, cleaner */
   }
 
   .language-tag {
-    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    background: var(--accent);
     color: white;
+  }
+
+  .language-tag:hover {
+    background: var(--accent-dark);
   }
 
   .timeline-ship {
     font-family: var(--font-mono);
-    font-size: 0.8rem;
-    font-weight: 700;
+    font-size: var(--text-xs);
+    font-weight: 600;
     color: var(--accent);
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.05));
-    padding: 4px 12px;
+    background: var(--accent-50);
+    padding: 6px 14px;
     border-radius: 100px;
-    border: 2px dashed var(--accent);
-    animation: pulse-border 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse-border {
-    0%, 100% { border-color: var(--accent); }
-    50% { border-color: #a78bfa; }
+    border: 1px dashed var(--accent-200);
   }
 
   /* Expandable details */
@@ -534,9 +495,8 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
     max-height: 0;
     overflow: hidden;
     opacity: 0;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     margin-top: 0;
-    position: relative;
   }
 
   .timeline-item.expanded .timeline-details {
@@ -544,19 +504,19 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
     opacity: 1;
     margin-top: var(--space-lg);
     padding-top: var(--space-lg);
-    border-top: 2px dashed var(--accent-100);
+    border-top: 1px solid var(--accent-100);
   }
 
-  /* Commit Graph */
+  /* Commit Graph - refined */
   .commit-graph {
     margin-bottom: var(--space-lg);
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), transparent);
+    background: var(--bg-subtle);
     padding: var(--space-md);
-    border-radius: 16px;
+    border-radius: 12px;
   }
 
   .graph-label {
-    font-size: 0.8rem;
+    font-size: var(--text-xs);
     color: var(--text-muted);
     font-weight: 600;
     display: block;
@@ -566,8 +526,8 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
   .graph-bars {
     display: flex;
     align-items: flex-end;
-    gap: 4px;
-    height: 50px;
+    gap: 3px;
+    height: 40px;
   }
 
   .graph-bar {
@@ -584,51 +544,26 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
   .bar-fill {
     width: 100%;
     height: var(--bar-height);
-    background: linear-gradient(180deg, var(--accent), #a78bfa);
-    border-radius: 4px 4px 2px 2px;
-    transition: all 0.3s ease;
-    animation: barGrow 0.6s ease-out backwards;
-    animation-delay: calc(var(--bar-index) * 0.04s);
+    background: linear-gradient(180deg, var(--accent-light), var(--accent));
+    border-radius: 3px;
+    transition: all 0.2s ease;
   }
 
   .bar-sparkle {
-    position: absolute;
-    top: -8px;
-    font-size: 0.6rem;
-    opacity: 0;
-    transition: all 0.3s ease;
-    animation: twinkle 1s ease-in-out infinite;
-    animation-delay: calc(var(--bar-index) * 0.1s);
-  }
-
-  .graph-bar:hover .bar-sparkle {
-    opacity: 1;
-    top: -12px;
+    display: none; /* Remove sparkles */
   }
 
   .graph-bar:hover .bar-fill {
-    background: linear-gradient(180deg, #a78bfa, var(--accent));
-    transform: scaleY(1.1);
-    box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
-  }
-
-  @keyframes barGrow {
-    from { transform: scaleY(0); opacity: 0; }
-    to { transform: scaleY(1); opacity: 1; }
-  }
-
-  @keyframes twinkle {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.3); }
+    background: linear-gradient(180deg, var(--accent), var(--accent-dark));
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
   }
 
   .graph-legend {
     display: flex;
     justify-content: space-between;
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    margin-top: 8px;
-    font-style: italic;
+    font-size: var(--text-xs);
+    color: var(--text-light);
+    margin-top: var(--space-xs);
   }
 
   .details-row {
@@ -639,7 +574,7 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
 
   .details-grid {
     display: flex;
-    gap: var(--space-lg);
+    gap: var(--space-md);
   }
 
   .detail-item {
@@ -647,40 +582,28 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
     align-items: center;
     gap: 6px;
     padding: 8px 12px;
-    background: rgba(139, 92, 246, 0.05);
-    border-radius: 12px;
-    transition: all 0.3s ease;
+    background: var(--bg-subtle);
+    border-radius: 10px;
+    transition: all 0.2s ease;
   }
 
   .detail-item:hover {
-    background: rgba(139, 92, 246, 0.1);
-    transform: scale(1.05);
+    background: var(--accent-50);
   }
 
   .detail-icon {
-    font-size: 1.2rem;
-    transition: transform 0.3s ease;
-  }
-
-  .detail-icon.wiggle {
-    animation: wiggle 0.5s ease-in-out;
-  }
-
-  @keyframes wiggle {
-    0%, 100% { transform: rotate(0deg); }
-    25% { transform: rotate(-15deg); }
-    75% { transform: rotate(15deg); }
+    font-size: 1rem;
   }
 
   .detail-value {
     font-family: var(--font-mono);
     font-weight: 700;
     color: var(--accent);
-    font-size: 1.1rem;
+    font-size: var(--text-base);
   }
 
   .detail-label {
-    font-size: 0.75rem;
+    font-size: var(--text-xs);
     color: var(--text-muted);
   }
 
@@ -691,7 +614,7 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
   }
 
   .tech-label {
-    font-size: 0.8rem;
+    font-size: var(--text-xs);
     color: var(--text-muted);
     font-weight: 600;
   }
@@ -702,52 +625,30 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
     gap: 8px;
   }
 
+  /* Outlined tech tags in expanded view */
   .tech-tag {
-    background: var(--bg);
+    background: transparent;
     color: var(--text);
     padding: 6px 14px;
     border-radius: 100px;
-    font-size: 0.75rem;
+    font-size: var(--text-xs);
     font-weight: 600;
-    border: 2px solid var(--accent-100);
-    transition: all 0.3s ease;
+    border: 1px solid var(--accent-200);
+    transition: all 0.2s ease;
   }
 
   .tech-tag:hover {
     border-color: var(--accent);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+    background: var(--accent-50);
   }
 
   .tech-tag.primary {
-    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    background: var(--accent);
     color: white;
-    border-color: transparent;
+    border-color: var(--accent);
   }
 
-  /* Animations */
-  @keyframes fadeSlideIn {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes cardSlideIn {
-    from {
-      opacity: 0;
-      transform: translateX(-30px) rotate(-2deg);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0) rotate(0);
-    }
-  }
-
+  /* Mobile */
   @media (max-width: 768px) {
     .timeline-wrapper {
       padding: var(--space-md);
@@ -758,15 +659,11 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
     }
 
     .timeline-title {
-      font-size: 1rem;
-    }
-
-    .timeline-item.highlight .timeline-title {
-      font-size: 1.05rem;
+      font-size: var(--text-base);
     }
 
     .timeline-description {
-      font-size: 0.85rem;
+      font-size: var(--text-xs);
     }
 
     .details-row {
@@ -780,45 +677,31 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
     }
 
     .expand-btn {
-      width: 36px;
-      height: 36px;
+      width: 44px;
+      height: 44px;
     }
 
-    .graph-bars {
-      height: 40px;
+    .timeline-tag {
+      padding: 8px 16px;
     }
 
     .particles {
-      display: none;
+      opacity: 0.5;
     }
   }
 
-  /* Reduce motion for accessibility */
   @media (prefers-reduced-motion: reduce) {
-    .timeline-month,
-    .timeline-item,
-    .bar-fill,
+    .timeline-item {
+      opacity: 1;
+      transform: none;
+    }
+
     .particle {
-      animation: none !important;
+      animation: none;
     }
 
     .timeline-item:hover {
       transform: none;
-    }
-
-    .timeline-details {
-      transition: opacity 0.2s ease;
-    }
-
-    .month-sparkle,
-    .tag-glow,
-    .bar-sparkle,
-    .timeline-ship {
-      animation: none !important;
-    }
-
-    .expand-btn:hover {
-      transform: scale(1.1);
     }
   }
 </style>
