@@ -7,28 +7,49 @@
   /* Background */
   --bg: #FAFAFA;
   --bg-card: #FFFFFF;
+  --bg-subtle: #F5F5F7;
 
   /* Text */
   --text: #1a1a1a;
   --text-muted: #6b7280;
   --text-light: #9ca3af;
 
-  /* Purple accent */
+  /* Purple accent - expanded */
   --accent: #8B5CF6;
   --accent-dark: #7C3AED;
   --accent-light: #A78BFA;
   --accent-50: #F5F3FF;
   --accent-100: #EDE9FE;
+  --accent-200: #DDD6FE;
+  --accent-300: #C4B5FD;
 
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.03);
   --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.08);
+  --shadow-colored: 0 4px 20px rgba(139, 92, 246, 0.15);
+  --shadow-colored-lg: 0 8px 30px rgba(139, 92, 246, 0.2);
 
-  /* Typography */
-  --font-serif: 'Playfair Display', Georgia, serif;
+  /* Typography - fonts */
+  --font-serif: 'Fraunces', Georgia, serif;
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+
+  /* Typography - scale (1.25 ratio) */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+
+  /* Typography - line heights */
+  --leading-tight: 1.2;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.75;
 
   /* Spacing */
   --space-xs: 0.25rem;
