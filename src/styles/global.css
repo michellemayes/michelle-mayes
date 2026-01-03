@@ -211,3 +211,30 @@ blockquote {
   opacity: 1;
   visibility: visible;
 }
+
+/* Touch interactions */
+html {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Active states for touch feedback */
+a:active,
+button:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+/* Ensure buttons have proper touch targets */
+button,
+[role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Transitions for interactive elements */
+a,
+button,
+[role="button"] {
+  transition: transform 0.1s ease, opacity 0.1s ease, color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
