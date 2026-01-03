@@ -100,21 +100,3 @@ const navLinks = [
     }
   }
 </style>
-
-<script>
-  function updateActiveLink() {
-    const currentPath = window.location.pathname;
-    document.querySelectorAll('header .nav-links a').forEach(link => {
-      const href = link.getAttribute('href');
-      if (href && currentPath.startsWith(href)) {
-        link.classList.add('active');
-      } else {
-        link.classList.remove('active');
-      }
-    });
-  }
-
-  // Run on initial load and after each view transition
-  updateActiveLink();
-  document.addEventListener('astro:page-load', updateActiveLink);
-</script>
