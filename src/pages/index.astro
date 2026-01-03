@@ -29,6 +29,21 @@ const timelineItems = await generateTimelineHighlights(activities);
         <h2>What I've Shipped</h2>
         <Timeline items={timelineItems} />
       </section>
+
+      <!-- Contact CTA -->
+      <section class="contact-section">
+        <div class="contact-card">
+          <div class="contact-icon">📅</div>
+          <h2>Let's Build Something</h2>
+          <p>Have a project in mind or want to chat about AI, tech, or shipping fast? I'd love to connect.</p>
+          <a href="https://calendar.app.google/yYSHV4KQ4zJsxkdt5" target="_blank" rel="noopener noreferrer" class="cta-button">
+            <span>Schedule a Chat</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </section>
     </main>
     <Footer />
   </body>
@@ -67,6 +82,118 @@ const timelineItems = await generateTimelineHighlights(activities);
   @media (max-width: 480px) {
     main {
       padding: var(--space-md);
+    }
+  }
+
+  /* Contact Section */
+  .contact-section {
+    margin-top: var(--space-3xl);
+    padding: var(--space-2xl) 0;
+  }
+
+  .contact-card {
+    background: linear-gradient(135deg, var(--accent-50) 0%, var(--bg-card) 50%, var(--accent-50) 100%);
+    border: 1px solid var(--accent-100);
+    border-radius: 16px;
+    padding: var(--space-2xl) var(--space-xl);
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .contact-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light), var(--accent));
+  }
+
+  .contact-icon {
+    font-size: 3rem;
+    margin-bottom: var(--space-md);
+  }
+
+  .contact-section h2 {
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: var(--space-md);
+  }
+
+  .contact-section p {
+    color: var(--text-muted);
+    font-size: var(--text-lg);
+    max-width: 500px;
+    margin: 0 auto var(--space-xl) auto;
+    line-height: var(--leading-relaxed);
+  }
+
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    background: var(--accent);
+    color: white;
+    padding: var(--space-md) var(--space-xl);
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: var(--text-lg);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-colored);
+    min-height: 44px;
+  }
+
+  .cta-button:hover {
+    background: var(--accent-dark);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-colored-lg);
+  }
+
+  .cta-button:active {
+    transform: scale(0.98);
+  }
+
+  .cta-button svg {
+    transition: transform 0.3s ease;
+  }
+
+  .cta-button:hover svg {
+    transform: translateX(4px);
+  }
+
+  @media (max-width: 768px) {
+    .contact-card {
+      padding: var(--space-xl) var(--space-lg);
+    }
+
+    .contact-section h2 {
+      font-size: var(--text-xl);
+    }
+
+    .contact-section p {
+      font-size: var(--text-base);
+    }
+
+    .cta-button {
+      padding: var(--space-md) var(--space-lg);
+      font-size: var(--text-base);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .contact-icon {
+      font-size: 2.5rem;
+    }
+
+    .contact-section h2 {
+      font-size: var(--text-lg);
     }
   }
 </style>

@@ -70,33 +70,3 @@ const { title, description, image } = Astro.props;
 
 <!-- View Transitions -->
 <ViewTransitions />
-
-<!-- Loading Overlay -->
-<div id="loading-overlay" class="loading-overlay"></div>
-
-<script>
-	// Fast, subtle loading animation for page transitions
-	document.addEventListener('DOMContentLoaded', function() {
-		const loadingOverlay = document.getElementById('loading-overlay');
-		if (!loadingOverlay) return;
-		
-		// Show loading on page load
-		loadingOverlay.classList.add('active');
-		
-		// Hide loading when page is fully loaded
-		window.addEventListener('load', function() {
-			setTimeout(() => {
-				loadingOverlay.classList.remove('active');
-			}, 50);
-		});
-		
-		// Show loading on navigation
-		document.addEventListener('click', function(e) {
-			const target = e.target as HTMLElement | null;
-			const link = target?.closest('a[href]') as HTMLAnchorElement | null;
-			if (link && link.hostname === window.location.hostname) {
-				loadingOverlay.classList.add('active');
-			}
-		});
-	});
-</script>
