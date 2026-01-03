@@ -58,14 +58,28 @@ const navLinks = [
   .nav-links a {
     color: var(--text-muted);
     text-decoration: none;
-    font-size: 0.95rem;
+    font-size: var(--text-sm);
     font-weight: 500;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: 8px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
   }
 
-  .nav-links a:hover,
+  .nav-links a:hover {
+    color: var(--accent);
+    background: var(--accent-50);
+  }
+
   .nav-links a.active {
     color: var(--accent);
+    background: var(--accent-50);
+  }
+
+  .nav-links a:active {
+    transform: scale(0.98);
   }
 
   @media (max-width: 480px) {
