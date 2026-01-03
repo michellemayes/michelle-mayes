@@ -707,6 +707,7 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
 </style>
 
 <script>
+  // Expand/collapse functionality
   document.querySelectorAll('[data-expandable]').forEach((item) => {
     const btn = item.querySelector('.expand-btn');
     const icon = item.querySelector('.expand-icon');
@@ -719,4 +720,35 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
       }
     });
   });
+
+  // Scroll-triggered reveal animations
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry, index) => {
+      if (entry.isIntersecting && !entry.target.classList.contains('revealed')) {
+        // Stagger the animation based on position in viewport
+        const delay = index * 80;
+        setTimeout(() => {
+          entry.target.classList.add('revealed');
+          entry.target.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+        }, delay);
+      }
+    });
+  }, observerOptions);
+
+  // Observe all timeline items
+  document.querySelectorAll('.timeline-item').forEach((item) => {
+    revealObserver.observe(item);
+  });
+
+  // Handle reduced motion preference
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('.timeline-item').forEach((item) => {
+      item.classList.add('revealed');
+    });
+  }
 </script>
