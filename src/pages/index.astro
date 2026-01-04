@@ -2,7 +2,7 @@
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
-import StatsBar from '../components/StatsBar.astro';
+import HeroStats from '../components/HeroStats.astro';
 import Timeline from '../components/Timeline.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import { calculateStats, getRepoActivity } from '../lib/stats';
@@ -10,7 +10,6 @@ import { generateTimelineHighlights } from '../lib/openrouter';
 
 export const prerender = true;
 
-// Fetch data at build time
 const stats = await calculateStats();
 const activities = await getRepoActivity();
 const timelineItems = await generateTimelineHighlights(activities);
@@ -24,23 +23,8 @@ const timelineItems = await generateTimelineHighlights(activities);
   <body>
     <Header />
     <main>
-      <!-- Hero -->
-      <section class="hero">
-        <div class="avatar-wrapper">
-          <div class="avatar-glow"></div>
-          <img src="/avatar.jpg" alt="Michelle Mayes" class="avatar" />
-          <span class="avatar-sparkle sparkle-1">✨</span>
-          <span class="avatar-sparkle sparkle-2">💜</span>
-          <span class="avatar-sparkle sparkle-3">⭐</span>
-        </div>
-        <h1>Michelle Mayes</h1>
-        <p class="tagline">I ship fast. AI keeps up. ⚡</p>
-      </section>
+      <HeroStats stats={stats} />
 
-      <!-- Stats -->
-      <StatsBar stats={stats} />
-
-      <!-- Timeline -->
       <section class="timeline-section">
         <h2>What I've Shipped</h2>
         <Timeline items={timelineItems} />
@@ -72,103 +56,13 @@ const timelineItems = await generateTimelineHighlights(activities);
     padding: var(--space-xl);
   }
 
-  .hero {
-    text-align: center;
-    margin-bottom: var(--space-3xl);
-  }
-
-  .avatar-wrapper {
-    position: relative;
-    display: inline-block;
-    margin-bottom: var(--space-lg);
-  }
-
-  .avatar-glow {
-    position: absolute;
-    inset: -8px;
-    background: linear-gradient(135deg, var(--accent), #a78bfa, #c4b5fd, var(--accent));
-    background-size: 300% 300%;
-    border-radius: 50%;
-    animation: glow-rotate 4s ease-in-out infinite;
-    z-index: 0;
-  }
-
-  @keyframes glow-rotate {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
-
-  .avatar {
-    position: relative;
-    width: 140px;
-    height: 140px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid var(--bg);
-    z-index: 1;
-    transition: transform 0.3s ease;
-  }
-
-  .avatar-wrapper:hover .avatar {
-    transform: scale(1.05) rotate(3deg);
-  }
-
-  .avatar-wrapper:hover .avatar-glow {
-    animation-duration: 2s;
-  }
-
-  .avatar-sparkle {
-    position: absolute;
-    font-size: 1.2rem;
-    z-index: 2;
-    pointer-events: none;
-    animation: float-sparkle 3s ease-in-out infinite;
-  }
-
-  .sparkle-1 {
-    top: -5px;
-    right: -5px;
-    animation-delay: 0s;
-  }
-
-  .sparkle-2 {
-    bottom: 10px;
-    left: -10px;
-    animation-delay: 1s;
-  }
-
-  .sparkle-3 {
-    top: 30%;
-    right: -15px;
-    animation-delay: 2s;
-  }
-
-  @keyframes float-sparkle {
-    0%, 100% { transform: translateY(0) scale(1); opacity: 1; }
-    50% { transform: translateY(-8px) scale(1.2); opacity: 0.7; }
-  }
-
-  .hero h1 {
-    font-family: var(--font-serif);
-    font-size: 3.5rem;
-    font-weight: 600;
-    color: var(--text);
-    margin: 0 0 var(--space-md) 0;
-  }
-
-  .tagline {
-    font-size: 1.25rem;
-    color: var(--text-muted);
-    margin: 0;
-  }
-
   .timeline-section {
-    margin-top: var(--space-3xl);
+    margin-top: var(--space-2xl);
   }
 
   .timeline-section h2 {
     font-family: var(--font-serif);
-    font-size: 1.75rem;
+    font-size: var(--text-2xl);
     font-weight: 600;
     color: var(--text);
     text-align: center;
@@ -180,55 +74,14 @@ const timelineItems = await generateTimelineHighlights(activities);
       padding: var(--space-lg);
     }
 
-    .avatar {
-      width: 120px;
-      height: 120px;
-    }
-
-    .hero h1 {
-      font-size: 2.5rem;
-    }
-
-    .tagline {
-      font-size: 1.1rem;
-    }
-
     .timeline-section h2 {
-      font-size: 1.5rem;
+      font-size: var(--text-xl);
     }
   }
 
   @media (max-width: 480px) {
     main {
       padding: var(--space-md);
-    }
-
-    .avatar {
-      width: 100px;
-      height: 100px;
-    }
-
-    .avatar-sparkle {
-      font-size: 1rem;
-    }
-
-    .hero h1 {
-      font-size: 2rem;
-    }
-
-    .tagline {
-      font-size: 1rem;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .avatar-glow,
-    .avatar-sparkle {
-      animation: none;
-    }
-
-    .avatar-wrapper:hover .avatar {
-      transform: scale(1.02);
     }
   }
 
@@ -241,7 +94,7 @@ const timelineItems = await generateTimelineHighlights(activities);
   .contact-card {
     background: linear-gradient(135deg, var(--accent-50) 0%, var(--bg-card) 50%, var(--accent-50) 100%);
     border: 1px solid var(--accent-100);
-    border-radius: 20px;
+    border-radius: 16px;
     padding: var(--space-2xl) var(--space-xl);
     text-align: center;
     box-shadow: var(--shadow-lg);
@@ -262,12 +115,11 @@ const timelineItems = await generateTimelineHighlights(activities);
   .contact-icon {
     font-size: 3rem;
     margin-bottom: var(--space-md);
-    animation: float-sparkle 3s ease-in-out infinite;
   }
 
   .contact-section h2 {
     font-family: var(--font-serif);
-    font-size: 2rem;
+    font-size: var(--text-2xl);
     font-weight: 600;
     color: var(--text);
     margin-bottom: var(--space-md);
@@ -275,10 +127,10 @@ const timelineItems = await generateTimelineHighlights(activities);
 
   .contact-section p {
     color: var(--text-muted);
-    font-size: 1.1rem;
+    font-size: var(--text-lg);
     max-width: 500px;
     margin: 0 auto var(--space-xl) auto;
-    line-height: 1.6;
+    line-height: var(--leading-relaxed);
   }
 
   .cta-button {
@@ -290,17 +142,22 @@ const timelineItems = await generateTimelineHighlights(activities);
     padding: var(--space-md) var(--space-xl);
     border-radius: 12px;
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: var(--text-lg);
     text-decoration: none;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 14px rgba(139, 92, 246, 0.4);
+    box-shadow: var(--shadow-colored);
+    min-height: 44px;
   }
 
   .cta-button:hover {
     background: var(--accent-dark);
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+    box-shadow: var(--shadow-colored-lg);
+  }
+
+  .cta-button:active {
+    transform: scale(0.98);
   }
 
   .cta-button svg {
@@ -317,16 +174,16 @@ const timelineItems = await generateTimelineHighlights(activities);
     }
 
     .contact-section h2 {
-      font-size: 1.75rem;
+      font-size: var(--text-xl);
     }
 
     .contact-section p {
-      font-size: 1rem;
+      font-size: var(--text-base);
     }
 
     .cta-button {
       padding: var(--space-md) var(--space-lg);
-      font-size: 1rem;
+      font-size: var(--text-base);
     }
   }
 
@@ -336,7 +193,7 @@ const timelineItems = await generateTimelineHighlights(activities);
     }
 
     .contact-section h2 {
-      font-size: 1.5rem;
+      font-size: var(--text-lg);
     }
   }
 </style>
