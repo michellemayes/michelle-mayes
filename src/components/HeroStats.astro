@@ -1,7 +1,5 @@
 ---
-import { Image } from 'astro:assets';
 import type { GitHubStats } from '../lib/stats';
-import avatarImage from '../../public/avatar.jpg';
 
 interface Props {
   stats: GitHubStats;
@@ -21,7 +19,14 @@ const statItems = [
   <div class="hero-content">
     <div class="avatar-wrapper">
       <div class="avatar-glow"></div>
-      <Image src={avatarImage} alt="Michelle Mayes" class="avatar" width={160} height={160} loading="eager" />
+      <img
+        src="/avatar.jpg"
+        alt="Michelle Mayes"
+        class="avatar"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+      />
       <span class="avatar-sparkle sparkle-1">✨</span>
       <span class="avatar-sparkle sparkle-2">💜</span>
       <span class="avatar-sparkle sparkle-3">⭐</span>
