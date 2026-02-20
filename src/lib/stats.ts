@@ -1,6 +1,8 @@
 import { fetchRepositories, fetchShipDate, fetchCommitActivity, type GitHubRepository } from './github';
 import { GITHUB_USERNAME } from '../consts';
 
+const DEFAULT_ACTIVITY_WINDOW_DAYS = 365;
+
 export interface GitHubStats {
   totalRepos: number;
   totalCommits: number; // Approximation from recent activity
@@ -21,15 +23,24 @@ export interface RepoActivity {
   isRecent: boolean;
 }
 
+function filterRepositoriesByWindow(
+  repos: GitHubRepository[],
+  windowDays: number
+): GitHubRepository[] {
+  if (windowDays <= 0) return repos;
+  const startMs = Date.now() - windowDays * 24 * 60 * 60 * 1000;
+  return repos.filter((repo) => new Date(repo.created_at).getTime() >= startMs);
+}
+
 /**
  * Calculate comprehensive GitHub stats
  */
-export async function calculateStats(username: string = GITHUB_USERNAME): Promise<GitHubStats> {
+export async function calculateStats(
+  username: string = GITHUB_USERNAME,
+  windowDays: number = DEFAULT_ACTIVITY_WINDOW_DAYS
+): Promise<GitHubStats> {
   const allRepos = await fetchRepositories(username, 100, 'updated', 'desc', false);
-
-  // Only include repos created in 2025 or later
-  const startOf2025 = new Date('2025-01-01').getTime();
-  const repos = allRepos.filter(repo => new Date(repo.created_at).getTime() >= startOf2025);
+  const repos = filterRepositoriesByWindow(allRepos, windowDays);
 
   if (repos.length === 0) {
     return {
@@ -72,7 +83,7 @@ export async function calculateStats(username: string = GITHUB_USERNAME): Promis
   ).length;
 
   // Calculate average days to ship using actual first PR/commit dates
-  const repoActivity = await getRepoActivity(username);
+  const repoActivity = await getRepoActivity(username, windowDays);
   const shipTimes = repoActivity
     .filter(a => a.daysToShip !== null && a.daysToShip > 0)
     .map(a => a.daysToShip as number);
@@ -99,12 +110,12 @@ export async function calculateStats(username: string = GITHUB_USERNAME): Promis
 /**
  * Get repo activity details for timeline
  */
-export async function getRepoActivity(username: string = GITHUB_USERNAME): Promise<RepoActivity[]> {
+export async function getRepoActivity(
+  username: string = GITHUB_USERNAME,
+  windowDays: number = DEFAULT_ACTIVITY_WINDOW_DAYS
+): Promise<RepoActivity[]> {
   const allRepos = await fetchRepositories(username, 50, 'updated', 'desc', false);
-
-  // Only include repos created in 2025 or later
-  const startOf2025 = new Date('2025-01-01').getTime();
-  const repos = allRepos.filter(repo => new Date(repo.created_at).getTime() >= startOf2025);
+  const repos = filterRepositoriesByWindow(allRepos, windowDays);
 
   const now = Date.now();
   const thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000;

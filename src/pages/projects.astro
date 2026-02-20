@@ -2,309 +2,379 @@
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE, GITHUB_USERNAME } from '../consts';
-import { fetchRepositories, type GitHubRepository } from '../lib/github';
+import { SITE_TITLE, GITHUB_USERNAME } from '../consts';
+import { fetchRepositories } from '../lib/github';
+import { bucketProjects, getProjectDescription } from '../lib/projects';
 
-// Enable SSR for this page to fetch repositories on each request
 export const prerender = false;
 
-// Fetch repositories from GitHub (will be fetched on each page load)
 const repositories = await fetchRepositories(GITHUB_USERNAME);
+const { featured: featuredRepositories, catalog: catalogRepositories } = bucketProjects(repositories, 3);
 ---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<BaseHead title={`Projects - ${SITE_TITLE}`} description="My GitHub projects and repositories" />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<div class="section-header">
-				<h1>My Projects</h1>
-				<p>Here are the projects I'm working on from my GitHub.</p>
-			</div>
+  <head>
+    <BaseHead
+      title={`Projects - ${SITE_TITLE}`}
+      description="Selected projects with impact-focused summaries, followed by the full GitHub catalog."
+    />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <header class="section-header">
+        <h1>Selected Work</h1>
+        <p>
+          A curated view of projects with the clearest product signal, then the full GitHub catalog for depth.
+        </p>
+      </header>
 
-			<div class="projects-grid">
-				{repositories.map((repo) => (
-					<div class="project-card-small">
-						<div class="project-card-header">
-							<h3>
-								<a href={repo.html_url} target="_blank" rel="noopener noreferrer">
-									{repo.name}
-								</a>
-							</h3>
-							<div class="project-stats">
-								<span>⭐ {repo.stargazers_count}</span>
-								<span>🍴 {repo.forks_count}</span>
-							</div>
-						</div>
-						
-						<div class="project-card-content">
-							{repo.description && (
-								<p class="project-description">{repo.description}</p>
-							)}
-							
-							<div class="project-meta">
-								{repo.language && (
-									<span class="language-badge">{repo.language}</span>
-								)}
-								<span class="update-date">Updated {new Date(repo.updated_at).toLocaleDateString()}</span>
-							</div>
-						</div>
-						
-						<div class="project-card-footer">
-							<a href={repo.html_url} class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
-								View on GitHub
-							</a>
-						</div>
-					</div>
-				))}
-			</div>
+      {featuredRepositories.length > 0 && (
+        <section class="featured-section">
+          <div class="section-heading">
+            <h2>Featured Case Studies</h2>
+            <p>Prioritized by recent momentum, product clarity, and community traction.</p>
+          </div>
 
-			{repositories.length === 0 && (
-				<div class="card" style="text-align: center; padding: 3rem;">
-					<h3>No projects found</h3>
-					<p>Unable to load projects from GitHub. Please try again later.</p>
-				</div>
-			)}
-		</main>
-		<Footer />
-	</body>
+          <div class="featured-grid">
+            {featuredRepositories.map((repo) => (
+              <article class="featured-card">
+                <div class="featured-header">
+                  <h3>
+                    <a href={repo.html_url} target="_blank" rel="noopener noreferrer">{repo.name}</a>
+                  </h3>
+                  <span class="focus-chip">{repo.focusArea}</span>
+                </div>
+
+                <p class="featured-summary">
+                  {getProjectDescription(repo.description)}
+                </p>
+
+                <p class="impact-line">{repo.impactSignal}</p>
+
+                <div class="featured-meta">
+                  <span>⭐ {repo.stargazers_count}</span>
+                  <span>🍴 {repo.forks_count}</span>
+                  <span>Updated {new Date(repo.updated_at).toLocaleDateString()}</span>
+                </div>
+
+                <a href={repo.html_url} class="project-link" target="_blank" rel="noopener noreferrer">
+                  Read on GitHub
+                </a>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {catalogRepositories.length > 0 && (
+        <section class="catalog-section">
+          <div class="section-heading">
+            <h2>Project Catalog</h2>
+            <p>Everything else currently active in GitHub.</p>
+          </div>
+
+          <div class="projects-grid">
+            {catalogRepositories.map((repo) => (
+              <article class="project-card-small">
+                <div class="project-card-header">
+                  <h3>
+                    <a href={repo.html_url} target="_blank" rel="noopener noreferrer">{repo.name}</a>
+                  </h3>
+                  <div class="project-stats">
+                    <span>⭐ {repo.stargazers_count}</span>
+                    <span>🍴 {repo.forks_count}</span>
+                  </div>
+                </div>
+
+                <div class="project-card-content">
+                  <p class="project-description">
+                    {getProjectDescription(repo.description)}
+                  </p>
+
+                  <div class="project-meta">
+                    {repo.language && <span class="language-badge">{repo.language}</span>}
+                    <span class="update-date">Updated {new Date(repo.updated_at).toLocaleDateString()}</span>
+                  </div>
+                </div>
+
+                <div class="project-card-footer">
+                  <a href={repo.html_url} class="project-link" target="_blank" rel="noopener noreferrer">
+                    View on GitHub
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {repositories.length === 0 && (
+        <div class="empty-state">
+          <h3>No projects found</h3>
+          <p>Unable to load projects from GitHub right now. Please try again later.</p>
+        </div>
+      )}
+    </main>
+    <Footer />
+  </body>
 </html>
 
 <style>
-	main {
-		width: 100%;
-		max-width: 1200px;
-		margin: 0 auto;
-		padding: 2rem;
-		box-sizing: border-box;
-	}
+  main {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    box-sizing: border-box;
+  }
 
-	.section-header {
-		text-align: center;
-		margin-bottom: 3rem;
-	}
+  .section-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
 
-	.section-header h1 {
-		font-size: 2.5rem;
-		margin-bottom: 1rem;
-		color: var(--accent);
-	}
+  .section-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--accent);
+  }
 
-	.section-header p {
-		font-size: 1.1rem;
-		color: rgb(var(--gray));
-		max-width: 600px;
-		margin: 0 auto;
-	}
+  .section-header p {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    max-width: 680px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
 
-	.projects-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-		gap: 1.5rem;
-		margin-bottom: 2rem;
-	}
+  .featured-section,
+  .catalog-section {
+    margin-bottom: 3rem;
+  }
 
-	.project-card-small {
-		background: var(--card-bg);
-		border: 1px solid var(--card-border);
-		border-radius: 12px;
-		padding: 1.5rem;
-		transition: all 0.3s ease;
-		display: flex;
-		flex-direction: column;
-	}
+  .section-heading {
+    margin-bottom: 1rem;
+  }
 
-	.project-card-small:hover {
-		box-shadow: var(--card-hover-shadow);
-		transform: translateY(-2px);
-	}
+  .section-heading h2 {
+    font-size: 1.6rem;
+    margin-bottom: 0.4rem;
+  }
 
-	.project-card-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: flex-start;
-		margin-bottom: 1rem;
-	}
+  .section-heading p {
+    color: var(--text-muted);
+    margin: 0;
+  }
 
-	.project-card-small h3 {
-		margin: 0;
-		font-size: 1.2rem;
-		flex: 1;
-	}
+  .featured-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+  }
 
-	.project-card-small h3 a {
-		color: var(--accent);
-		text-decoration: none;
-	}
+  .featured-card {
+    background: linear-gradient(135deg, var(--bg-card), var(--accent-50));
+    border: 1px solid var(--accent-100);
+    border-radius: 14px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    box-shadow: var(--shadow-sm);
+  }
 
-	.project-card-small h3 a:hover {
-		text-decoration: underline;
-	}
+  .featured-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
 
-	.project-stats {
-		display: flex;
-		flex-direction: row;
-		gap: 0.75rem;
-		font-size: 0.8rem;
-		color: rgb(var(--gray));
-		flex-shrink: 0;
-	}
+  .featured-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
 
-	.project-stats span {
-		display: inline-block;
-		white-space: nowrap;
-	}
+  .featured-header a {
+    color: var(--text);
+    text-decoration: none;
+  }
 
-	.project-card-content {
-		flex: 1;
-		margin-bottom: 1rem;
-	}
+  .featured-header a:hover {
+    color: var(--accent-dark);
+  }
 
-	.project-description {
-		margin: 0 0 1rem 0;
-		color: rgb(var(--gray-dark));
-		line-height: 1.5;
-		font-size: 0.9rem;
-	}
+  .focus-chip {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--accent-dark);
+    background: var(--accent-100);
+    border-radius: 999px;
+    padding: 0.3rem 0.55rem;
+    white-space: nowrap;
+  }
 
-	.project-meta {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-		margin-bottom: 1rem;
-		font-size: 0.85rem;
-	}
+  .featured-summary {
+    margin: 0;
+    color: var(--text);
+    line-height: 1.55;
+  }
 
-	.language-badge {
-		background: var(--accent-100);
-		color: var(--accent-dark);
-		padding: 0.2rem 0.5rem;
-		border-radius: 4px;
-		font-size: 0.75rem;
-		font-weight: 600;
-	}
+  .impact-line {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+  }
 
-	.update-date {
-		color: rgb(var(--gray));
-	}
+  .featured-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+  }
 
-	.project-card-footer {
-		margin-top: auto;
-	}
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+  }
 
-	.project-card-footer .btn {
-		padding: 0.4rem 0.8rem;
-		font-size: 0.8rem;
-	}
+  .project-card-small {
+    background: var(--bg-card);
+    border: 1px solid var(--accent-100);
+    border-radius: 12px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+  }
 
-	@media (max-width: 768px) {
-		main {
-			padding: 1rem;
-		}
+  .project-card-small:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
 
-		.section-header h1 {
-			font-size: 2rem;
-		}
+  .project-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+    gap: 0.75rem;
+  }
 
-		.section-header p {
-			font-size: 1rem;
-		}
+  .project-card-small h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    flex: 1;
+  }
 
-		.projects-grid {
-			grid-template-columns: 1fr;
-			gap: 1rem;
-		}
+  .project-card-small h3 a {
+    color: var(--accent);
+    text-decoration: none;
+  }
 
-		.project-card-small {
-			padding: 1rem;
-		}
+  .project-card-small h3 a:hover {
+    text-decoration: underline;
+  }
 
-		.project-card-header {
-			flex-direction: row;
-			align-items: flex-start;
-			justify-content: space-between;
-			gap: 0.75rem;
-			margin-bottom: 0.75rem;
-		}
+  .project-stats {
+    display: flex;
+    gap: 0.65rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
 
-		.project-card-small h3 {
-			font-size: 1.1rem;
-			line-height: 1.3;
-			flex: 1;
-			word-wrap: break-word;
-			overflow-wrap: break-word;
-		}
+  .project-card-content {
+    flex: 1;
+    margin-bottom: 0.9rem;
+  }
 
-		.project-stats {
-			display: flex !important;
-			flex-direction: row !important;
-			align-self: flex-start;
-			gap: 0.75rem;
-			font-size: 0.85rem;
-			flex-shrink: 0;
-			white-space: nowrap;
-		}
+  .project-description {
+    margin: 0 0 0.75rem 0;
+    color: var(--text-muted);
+    line-height: 1.5;
+    font-size: 0.9rem;
+  }
 
-		.project-stats span {
-			display: inline-block !important;
-			white-space: nowrap;
-		}
+  .project-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 0.8rem;
+  }
 
-		.project-description {
-			font-size: 0.85rem;
-			line-height: 1.4;
-			margin-bottom: 0.75rem;
-		}
+  .language-badge {
+    background: var(--accent-100);
+    color: var(--accent-dark);
+    padding: 0.2rem 0.45rem;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
 
-		.project-meta {
-			flex-direction: column;
-			align-items: flex-start;
-			gap: 0.5rem;
-			margin-bottom: 0.75rem;
-		}
+  .update-date {
+    color: var(--text-muted);
+  }
 
-		.project-card-footer .btn {
-			width: 100%;
-			text-align: center;
-			padding: 0.6rem 1rem;
-			font-size: 0.85rem;
-		}
-	}
+  .project-card-footer {
+    margin-top: auto;
+  }
 
-	@media (max-width: 480px) {
-		main {
-			padding: 0.75rem;
-		}
+  .project-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: max-content;
+    min-height: 44px;
+    padding: 0.45rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    background: var(--accent-50);
+    color: var(--accent-dark);
+    border: 1px solid var(--accent-200);
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
 
-		.section-header {
-			margin-bottom: 2rem;
-		}
+  .project-link:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
 
-		.section-header h1 {
-			font-size: 1.75rem;
-		}
+  .empty-state {
+    text-align: center;
+    padding: 2.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--accent-100);
+    border-radius: 12px;
+  }
 
-		.project-card-small {
-			padding: 0.75rem;
-		}
+  .empty-state p {
+    color: var(--text-muted);
+    margin-bottom: 0;
+  }
 
-		.project-card-small h3 {
-			font-size: 1rem;
-		}
+  @media (max-width: 768px) {
+    main {
+      padding: 1rem;
+    }
 
-		.project-stats {
-			font-size: 0.8rem;
-		}
+    .section-header h1 {
+      font-size: 2rem;
+    }
 
-		.project-description {
-			font-size: 0.8rem;
-		}
+    .section-header p {
+      font-size: 1rem;
+    }
 
-		.project-meta {
-			font-size: 0.8rem;
-		}
-	}
+    .project-link {
+      width: 100%;
+    }
+  }
 </style>

@@ -5,14 +5,11 @@ import Header from '../components/Header.astro';
 import HeroStats from '../components/HeroStats.astro';
 import Timeline from '../components/Timeline.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
-import { calculateStats, getRepoActivity } from '../lib/stats';
-import { generateTimelineHighlights } from '../lib/openrouter';
+import { getHomeData } from '../lib/home-data';
 
 export const prerender = true;
 
-const stats = await calculateStats();
-const activities = await getRepoActivity();
-const timelineItems = await generateTimelineHighlights(activities);
+const { stats, timelineItems } = await getHomeData();
 ---
 
 <!doctype html>
