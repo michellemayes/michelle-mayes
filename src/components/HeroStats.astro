@@ -22,6 +22,9 @@ const statItems = [
     <div class="avatar-wrapper">
       <div class="avatar-glow"></div>
       <Image src={avatarImage} alt="Michelle Mayes" class="avatar" width={160} height={160} loading="eager" />
+      <span class="avatar-sparkle sparkle-1">✨</span>
+      <span class="avatar-sparkle sparkle-2">💜</span>
+      <span class="avatar-sparkle sparkle-3">⭐</span>
     </div>
     <h1 class="hero-name">Michelle Mayes</h1>
     <p class="hero-tagline">I ship fast. AI keeps up.</p>
@@ -97,6 +100,25 @@ const statItems = [
 
   .avatar-wrapper:hover .avatar {
     transform: scale(1.03);
+  }
+
+  .avatar-sparkle {
+    position: absolute;
+    font-size: 1.2rem;
+    z-index: 2;
+    pointer-events: none;
+    animation: float-sparkle 4s ease-in-out infinite;
+    opacity: 0;
+  }
+
+  .sparkle-1 { top: -5px; right: -5px; animation-delay: 0.5s; }
+  .sparkle-2 { bottom: 10px; left: -10px; animation-delay: 1.5s; }
+  .sparkle-3 { top: 30%; right: -15px; animation-delay: 2.5s; }
+
+  @keyframes float-sparkle {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0; }
+    10%, 90% { opacity: 0.8; }
+    50% { transform: translateY(-6px) scale(1.1); opacity: 1; }
   }
 
   /* Name & Tagline */
@@ -297,6 +319,7 @@ const statItems = [
 
   @media (prefers-reduced-motion: reduce) {
     .avatar-glow,
+    .avatar-sparkle,
     .hero-name,
     .hero-tagline,
     .hero-subline,
