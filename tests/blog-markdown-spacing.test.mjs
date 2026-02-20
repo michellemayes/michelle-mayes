@@ -12,6 +12,7 @@ const requiredGlobalSelectors = [
   '.blog-post-content :global(ul)',
   '.blog-post-content :global(ol)',
   '.blog-post-content :global(li)',
+  '.blog-post-content :global(hr)',
 ];
 
 test('blog markdown content uses global selectors so spacing styles apply', () => {

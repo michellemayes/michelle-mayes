@@ -213,6 +213,12 @@ const { Content } = await render(post);
     border-radius: 0 8px 8px 0;
   }
 
+  .blog-post-content :global(hr) {
+    border: 0;
+    border-top: 1px solid var(--accent-200);
+    margin: 2em 0 2.5em;
+  }
+
   .blog-post-content :global(img) {
     border-radius: 12px;
     box-shadow: var(--shadow-md);
