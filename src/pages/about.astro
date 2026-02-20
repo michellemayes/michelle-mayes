@@ -1,8 +1,10 @@
 ---
+import { Image } from 'astro:assets';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE, SOCIAL_LINKS } from '../consts';
+import { SITE_TITLE } from '../consts';
+import aboutPhoto from '../../public/about-photo.jpg';
 
 // Prerender this page as static
 export const prerender = true;
@@ -22,16 +24,16 @@ export const prerender = true;
 
 			<div class="about-card">
 				<div class="about-card-header">
-					<img src="/about-photo.jpg" alt="Michelle Mayes" class="about-photo" />
+					<Image src={aboutPhoto} alt="Michelle Mayes" class="about-photo" width={120} height={120} loading="lazy" />
 					<div class="about-info">
 						<p>
-							Learning everyday. Vibe-coding constantly. Exploring all of the new AI tech.
+							I build practical products at the intersection of AI and web development, with a strong bias toward shipping quickly and learning in public.
 						</p>
 						<p>
-							After years working in Data Science, Policy, and Advertising Tech, I am expanding my skillset to develop for the modern web and build full-stack applications with AI using my Product Management background. 
+							My background spans Data Science, Policy, and AdTech, and I bring that product perspective into modern full-stack work: clear problem framing, fast iteration, and outcome-focused decisions.
 						</p>
 						<p>
-							I'm looking for opportunities to share my learnings at conferences across the globe!
+							Right now I am focused on opportunities where I can build with high-velocity teams, improve developer workflows with AI, and share what works through writing and talks.
 						</p>
 						<p>
 							Based in Austin, TX.
@@ -43,7 +45,14 @@ export const prerender = true;
 			<div class="github-activity-section">
 				<h3>My GitHub Activity</h3>
 				<div class="github-calendar-container">
-					<img src="https://ghchart.rshah.org/michellemayes" alt="Michelle Mayes GitHub Activity" class="github-calendar" />
+					<img
+						src="https://ghchart.rshah.org/michellemayes"
+						alt="Michelle Mayes GitHub Activity"
+						class="github-calendar"
+						loading="lazy"
+						decoding="async"
+						referrerpolicy="no-referrer"
+					/>
 				</div>
 			</div>
 		</main>
@@ -73,7 +82,7 @@ export const prerender = true;
 
 	.section-header p {
 		font-size: 1.1rem;
-		color: rgb(var(--gray));
+		color: var(--text-muted);
 		max-width: 500px;
 		margin: 0 auto;
 	}
@@ -81,8 +90,8 @@ export const prerender = true;
 	.about-card {
 		max-width: 800px;
 		margin: 0 auto 3rem auto;
-		background: var(--card-bg);
-		border: 1px solid var(--card-border);
+		background: var(--bg-card);
+		border: 1px solid var(--accent-100);
 		border-radius: 16px;
 		padding: 2rem;
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -110,12 +119,12 @@ export const prerender = true;
 	.about-info h2 {
 		margin: 0 0 1rem 0;
 		font-size: 1.5rem;
-		color: rgb(var(--black));
+		color: var(--text);
 	}
 
 	.about-info p {
 		margin-bottom: 1rem;
-		color: rgb(var(--gray-dark));
+		color: var(--text-muted);
 		line-height: 1.6;
 	}
 
@@ -135,8 +144,8 @@ export const prerender = true;
 	}
 
 	.github-calendar-container {
-		background: var(--card-bg);
-		border: 1px solid var(--card-border);
+		background: var(--bg-card);
+		border: 1px solid var(--accent-100);
 		border-radius: 12px;
 		padding: 1.5rem;
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -151,15 +160,15 @@ export const prerender = true;
 	}
 
 	.card {
-		background: var(--card-bg);
-		border: 1px solid var(--card-border);
+		background: var(--bg-card);
+		border: 1px solid var(--accent-100);
 		border-radius: 12px;
 		padding: 1.5rem;
 		transition: all 0.3s ease;
 	}
 
 	.card:hover {
-		box-shadow: var(--card-hover-shadow);
+		box-shadow: var(--shadow-md);
 		transform: translateY(-2px);
 	}
 
@@ -171,7 +180,7 @@ export const prerender = true;
 
 	.card p {
 		margin-bottom: 1rem;
-		color: rgb(var(--gray-dark));
+		color: var(--text-muted);
 		line-height: 1.6;
 	}
 

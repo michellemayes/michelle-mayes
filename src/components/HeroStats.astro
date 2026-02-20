@@ -19,18 +19,33 @@ const statItems = [
   <div class="hero-content">
     <div class="avatar-wrapper">
       <div class="avatar-glow"></div>
-      <img src="/avatar.jpg" alt="Michelle Mayes" class="avatar" />
+      <img
+        src="/avatar.jpg"
+        alt="Michelle Mayes"
+        class="avatar"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+      />
       <span class="avatar-sparkle sparkle-1">✨</span>
       <span class="avatar-sparkle sparkle-2">💜</span>
       <span class="avatar-sparkle sparkle-3">⭐</span>
     </div>
     <h1 class="hero-name">Michelle Mayes</h1>
-    <p class="hero-tagline">I ship fast. AI keeps up. ⚡</p>
+    <p class="hero-tagline">I ship fast. AI keeps up.</p>
+    <p class="hero-subline">
+      Product-minded full-stack builder focused on practical AI workflows, web apps, and measurable outcomes.
+    </p>
+
+    <div class="hero-cta">
+      <a href="/projects" class="hero-link primary">View Projects</a>
+      <a href="/resume" class="hero-link secondary">View Resume</a>
+    </div>
 
     <div class="stats-ribbon">
       {statItems.map((stat, index) => (
         <div class="stat-item" style={`--stat-index: ${index}`}>
-          <span class="stat-value" data-value={typeof stat.value === 'number' ? stat.value : 0}>
+          <span class="stat-value">
             {stat.value}{stat.suffix}
           </span>
           <span class="stat-label">{stat.label}</span>
@@ -125,9 +140,66 @@ const statItems = [
   .hero-tagline {
     font-size: var(--text-xl);
     color: var(--text-muted);
-    margin: 0 0 var(--space-2xl) 0;
+    margin: 0 0 var(--space-sm) 0;
     opacity: 0;
     animation: fade-up 0.6s ease-out 0.4s forwards;
+  }
+
+  .hero-subline {
+    max-width: 680px;
+    margin: 0 auto var(--space-lg) auto;
+    color: var(--text-muted);
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+    opacity: 0;
+    animation: fade-up 0.6s ease-out 0.5s forwards;
+  }
+
+  .hero-cta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-2xl);
+    opacity: 0;
+    animation: fade-up 0.6s ease-out 0.6s forwards;
+  }
+
+  .hero-link {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.65rem 1rem;
+    border-radius: 10px;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+  }
+
+  .hero-link.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+
+  .hero-link.primary:hover {
+    background: var(--accent-dark);
+    border-color: var(--accent-dark);
+    color: white;
+  }
+
+  .hero-link.secondary {
+    background: var(--accent-50);
+    border-color: var(--accent-200);
+    color: var(--accent-dark);
+  }
+
+  .hero-link.secondary:hover {
+    background: var(--accent-100);
+    color: var(--accent-dark);
   }
 
   @keyframes fade-up {
@@ -195,6 +267,12 @@ const statItems = [
       font-size: var(--text-lg);
     }
 
+    .hero-subline {
+      font-size: var(--text-sm);
+      max-width: 560px;
+      padding: 0 var(--space-md);
+    }
+
     .stats-ribbon {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -232,6 +310,16 @@ const statItems = [
     .hero-tagline {
       font-size: var(--text-base);
     }
+
+    .hero-cta {
+      flex-direction: column;
+      padding: 0 var(--space-md);
+    }
+
+    .hero-link {
+      width: 100%;
+      max-width: 260px;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -239,6 +327,8 @@ const statItems = [
     .avatar-sparkle,
     .hero-name,
     .hero-tagline,
+    .hero-subline,
+    .hero-cta,
     .stat-item {
       animation: none;
       opacity: 1;

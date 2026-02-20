@@ -64,7 +64,13 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
                       <span class="link-arrow">→</span>
                     </a>
                   )}
-                  <button class="expand-btn" aria-label="Expand details">
+                  <button
+                    class="expand-btn"
+                    type="button"
+                    aria-label={`Expand details for ${item.title}`}
+                    aria-expanded="false"
+                    aria-controls={`timeline-details-${item.id}`}
+                  >
                     <span class="expand-icon">✦</span>
                   </button>
                 </div>
@@ -87,7 +93,12 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
                 </div>
 
                 {/* Expandable details section */}
-                <div class="timeline-details">
+                <div
+                  id={`timeline-details-${item.id}`}
+                  class="timeline-details"
+                  role="region"
+                  aria-hidden="true"
+                >
                   {/* Commit Activity Graph */}
                   {item.commitActivity.length > 0 && (
                     <div class="commit-graph">
@@ -711,12 +722,15 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
   document.querySelectorAll('[data-expandable]').forEach((item) => {
     const btn = item.querySelector('.expand-btn');
     const icon = item.querySelector('.expand-icon');
+    const details = item.querySelector('.timeline-details');
 
     btn?.addEventListener('click', (e) => {
       e.stopPropagation();
-      item.classList.toggle('expanded');
+      const isExpanded = item.classList.toggle('expanded');
+      btn.setAttribute('aria-expanded', String(isExpanded));
+      details?.setAttribute('aria-hidden', String(!isExpanded));
       if (icon) {
-        icon.textContent = item.classList.contains('expanded') ? '✕' : '✦';
+        icon.textContent = isExpanded ? '✕' : '✦';
       }
     });
   });
