@@ -9,8 +9,9 @@ const navLinks = [
 ];
 ---
 
+<a href="#main-content" class="skip-link">Skip to content</a>
 <header>
-  <nav>
+  <nav aria-label="Main navigation">
     <a href="/" class="site-title">{SITE_TITLE}</a>
     <div class="nav-links">
       {navLinks.map(({ href, label }) => (
@@ -40,8 +41,9 @@ const navLinks = [
 
   .site-title {
     font-family: var(--font-serif);
-    font-size: 1.5rem;
-    font-weight: 600;
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    letter-spacing: var(--tracking-tight);
     color: var(--text);
     text-decoration: none;
   }
@@ -60,7 +62,7 @@ const navLinks = [
     text-decoration: none;
     font-size: var(--text-sm);
     font-weight: 500;
-    transition: all 0.2s ease;
+    transition: color 0.2s ease, background-color 0.2s ease;
     padding: var(--space-sm) var(--space-md);
     border-radius: 8px;
     min-height: 44px;
@@ -88,7 +90,7 @@ const navLinks = [
     }
 
     .site-title {
-      font-size: 1.25rem;
+      font-size: var(--text-xl);
     }
 
     .nav-links {
@@ -96,7 +98,7 @@ const navLinks = [
     }
 
     .nav-links a {
-      font-size: 0.9rem;
+      font-size: var(--text-sm);
     }
   }
 </style>

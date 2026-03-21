@@ -9,13 +9,14 @@ const { stats } = Astro.props;
 
 const statItems = [
   { value: stats.totalRepos, label: 'Projects', suffix: '' },
-  { value: stats.recentActivity, label: 'Active This Month', suffix: '' },
+  { value: stats.recentActivity, label: 'Updated This Month', suffix: '' },
   { value: stats.primaryLanguagePercent, label: stats.primaryLanguage, suffix: '%' },
   { value: stats.avgDaysToShip || '—', label: 'Avg Days to Ship', suffix: stats.avgDaysToShip ? 'd' : '' },
 ];
 ---
 
 <section class="hero-stats">
+  <canvas class="hero-mesh" aria-hidden="true"></canvas>
   <div class="hero-content">
     <div class="avatar-wrapper">
       <div class="avatar-glow"></div>
@@ -27,14 +28,11 @@ const statItems = [
         decoding="async"
         fetchpriority="high"
       />
-      <span class="avatar-sparkle sparkle-1">✨</span>
-      <span class="avatar-sparkle sparkle-2">💜</span>
-      <span class="avatar-sparkle sparkle-3">⭐</span>
     </div>
     <h1 class="hero-name">Michelle Mayes</h1>
     <p class="hero-tagline">I ship fast. AI keeps up.</p>
     <p class="hero-subline">
-      Product-minded full-stack builder focused on practical AI workflows, web apps, and measurable outcomes.
+      Product-minded full-stack builder. Practical AI workflows, web apps, and measurable outcomes.
     </p>
 
     <div class="hero-cta">
@@ -45,7 +43,11 @@ const statItems = [
     <div class="stats-ribbon">
       {statItems.map((stat, index) => (
         <div class="stat-item" style={`--stat-index: ${index}`}>
-          <span class="stat-value">
+          <span
+            class="stat-value"
+            data-count-to={typeof stat.value === 'number' ? stat.value : undefined}
+            data-suffix={stat.suffix}
+          >
             {stat.value}{stat.suffix}
           </span>
           <span class="stat-label">{stat.label}</span>
@@ -55,12 +57,148 @@ const statItems = [
   </div>
 </section>
 
+<script>
+  // Count-up animation for stat values
+  const countElements = document.querySelectorAll('[data-count-to]');
+
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && countElements.length > 0) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const el = entry.target as HTMLElement;
+          const target = parseInt(el.dataset.countTo || '0', 10);
+          const suffix = el.dataset.suffix || '';
+          if (isNaN(target)) return;
+
+          const duration = 800;
+          const start = performance.now();
+
+          function update(now: number) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            // Ease-out cubic
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const current = Math.round(eased * target);
+            el.textContent = `${current}${suffix}`;
+            if (progress < 1) requestAnimationFrame(update);
+          }
+
+          requestAnimationFrame(update);
+          observer.unobserve(el);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    countElements.forEach((el) => observer.observe(el));
+  }
+
+  // Console easter egg for developer visitors
+  console.log(
+    '%c👋 Hey there, curious dev!',
+    'font-size: 16px; font-weight: bold; color: #8B5CF6;'
+  );
+  console.log(
+    '%cThis portfolio is built with Astro, ships daily via GitHub Actions, and pulls live data from GitHub.\nLike what you see? Let\'s chat → https://calendar.app.google/yYSHV4KQ4zJsxkdt5',
+    'font-size: 12px; color: #6B6876;'
+  );
+
+  // Cursor-reactive gradient mesh
+  const canvas = document.querySelector('.hero-mesh') as HTMLCanvasElement | null;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (canvas && !reducedMotion) {
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      let mouseX = 0.5;
+      let mouseY = 0.5;
+      let animId: number;
+      let isVisible = true;
+
+      // Blob definitions — each drifts independently
+      const blobs = [
+        { x: 0.3, y: 0.3, baseX: 0.3, baseY: 0.3, r: 0.35, color: [139, 92, 246], phase: 0, speed: 0.4 },    // purple
+        { x: 0.7, y: 0.6, baseX: 0.7, baseY: 0.6, r: 0.3, color: [217, 119, 6], phase: 2, speed: 0.3 },      // warm amber
+        { x: 0.5, y: 0.2, baseX: 0.5, baseY: 0.2, r: 0.25, color: [167, 139, 250], phase: 4, speed: 0.35 },   // light purple
+      ];
+
+      function resize() {
+        const rect = canvas!.parentElement!.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas!.width = rect.width * dpr;
+        canvas!.height = rect.height * dpr;
+        ctx!.scale(dpr, dpr);
+      }
+
+      function render(time: number) {
+        if (!isVisible) { animId = requestAnimationFrame(render); return; }
+
+        const w = canvas!.clientWidth;
+        const h = canvas!.clientHeight;
+        ctx!.clearRect(0, 0, w, h);
+
+        for (const blob of blobs) {
+          // Drift naturally
+          const t = time * 0.001 * blob.speed;
+          blob.x = blob.baseX + Math.sin(t + blob.phase) * 0.08;
+          blob.y = blob.baseY + Math.cos(t * 0.7 + blob.phase) * 0.06;
+
+          // Pull slightly toward cursor (subtle magnetic effect)
+          const pullStrength = 0.08;
+          const bx = (blob.x + (mouseX - blob.x) * pullStrength) * w;
+          const by = (blob.y + (mouseY - blob.y) * pullStrength) * h;
+          const br = blob.r * Math.max(w, h);
+
+          const grad = ctx!.createRadialGradient(bx, by, 0, bx, by, br);
+          const [r, g, b] = blob.color;
+          grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.12)`);
+          grad.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, 0.05)`);
+          grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
+
+          ctx!.fillStyle = grad;
+          ctx!.fillRect(0, 0, w, h);
+        }
+
+        animId = requestAnimationFrame(render);
+      }
+
+      // Track mouse relative to hero section
+      const heroSection = canvas!.closest('.hero-stats')!;
+      heroSection.addEventListener('mousemove', (e: Event) => {
+        const me = e as MouseEvent;
+        const rect = heroSection.getBoundingClientRect();
+        mouseX = (me.clientX - rect.left) / rect.width;
+        mouseY = (me.clientY - rect.top) / rect.height;
+      });
+
+      // Pause when off-screen
+      const visObserver = new IntersectionObserver(([entry]) => {
+        isVisible = entry.isIntersecting;
+      }, { threshold: 0 });
+      visObserver.observe(heroSection);
+
+      resize();
+      window.addEventListener('resize', resize);
+      animId = requestAnimationFrame(render);
+    }
+  }
+</script>
+
 <style>
   .hero-stats {
     text-align: center;
     padding: var(--space-xl) 0 var(--space-3xl);
     position: relative;
     overflow: hidden;
+  }
+
+  .hero-mesh {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    opacity: 0.6;
+    pointer-events: none;
   }
 
   .hero-content {
@@ -84,6 +222,11 @@ const statItems = [
     filter: blur(20px);
     animation: glow-pulse 3s ease-in-out infinite;
     z-index: 0;
+    transition: background 0.6s ease;
+  }
+
+  .avatar-wrapper:hover .avatar-glow {
+    background: var(--warm);
   }
 
   @keyframes glow-pulse {
@@ -100,37 +243,19 @@ const statItems = [
     border: 4px solid var(--bg);
     box-shadow: var(--shadow-colored-lg);
     z-index: 1;
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 0.4s ease-out;
   }
 
   .avatar-wrapper:hover .avatar {
     transform: scale(1.03);
   }
 
-  .avatar-sparkle {
-    position: absolute;
-    font-size: 1.2rem;
-    z-index: 2;
-    pointer-events: none;
-    animation: float-sparkle 4s ease-in-out infinite;
-    opacity: 0;
-  }
-
-  .sparkle-1 { top: -5px; right: -5px; animation-delay: 0.5s; }
-  .sparkle-2 { bottom: 10px; left: -10px; animation-delay: 1.5s; }
-  .sparkle-3 { top: 30%; right: -15px; animation-delay: 2.5s; }
-
-  @keyframes float-sparkle {
-    0%, 100% { transform: translateY(0) scale(1); opacity: 0; }
-    10%, 90% { opacity: 0.8; }
-    50% { transform: translateY(-6px) scale(1.1); opacity: 1; }
-  }
-
   /* Name & Tagline */
   .hero-name {
     font-family: var(--font-serif);
-    font-size: var(--text-5xl);
-    font-weight: 600;
+    font-size: var(--text-fluid-5xl);
+    font-weight: 700;
+    letter-spacing: var(--tracking-tight);
     color: var(--text);
     margin: 0 0 var(--space-sm) 0;
     opacity: 0;
@@ -138,7 +263,9 @@ const statItems = [
   }
 
   .hero-tagline {
-    font-size: var(--text-xl);
+    font-size: var(--text-fluid-xl);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wide);
     color: var(--text-muted);
     margin: 0 0 var(--space-sm) 0;
     opacity: 0;
@@ -176,7 +303,7 @@ const statItems = [
     font-weight: 600;
     text-decoration: none;
     border: 1px solid transparent;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   }
 
   .hero-link.primary {
@@ -240,16 +367,19 @@ const statItems = [
   .stat-value {
     font-family: var(--font-serif);
     font-size: var(--text-3xl);
-    font-weight: 600;
+    font-weight: 700;
     color: var(--accent);
     line-height: 1;
     margin-bottom: var(--space-xs);
+    font-variant-numeric: tabular-nums;
   }
 
   .stat-label {
-    font-size: var(--text-sm);
+    font-size: var(--text-xs);
     color: var(--text-muted);
     font-weight: 500;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
   }
 
   /* Mobile */
@@ -257,14 +387,6 @@ const statItems = [
     .avatar {
       width: 120px;
       height: 120px;
-    }
-
-    .hero-name {
-      font-size: var(--text-4xl);
-    }
-
-    .hero-tagline {
-      font-size: var(--text-lg);
     }
 
     .hero-subline {
@@ -303,14 +425,6 @@ const statItems = [
       height: 100px;
     }
 
-    .hero-name {
-      font-size: var(--text-3xl);
-    }
-
-    .hero-tagline {
-      font-size: var(--text-base);
-    }
-
     .hero-cta {
       flex-direction: column;
       padding: 0 var(--space-md);
@@ -323,8 +437,11 @@ const statItems = [
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .hero-mesh {
+      display: none;
+    }
+
     .avatar-glow,
-    .avatar-sparkle,
     .hero-name,
     .hero-tagline,
     .hero-subline,

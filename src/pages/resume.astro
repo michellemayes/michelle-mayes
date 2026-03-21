@@ -14,7 +14,7 @@ export const prerender = true;
   </head>
   <body>
     <Header />
-    <main>
+    <main id="main-content">
       <div class="resume-header">
         <h1>Resume</h1>
         <div class="resume-actions">
@@ -23,7 +23,9 @@ export const prerender = true;
         </div>
       </div>
       <div id="viewer" class="resume-viewer">
-        <iframe src="/resume.pdf" title="Michelle Mayes Resume"></iframe>
+        <iframe src="/resume.pdf" title="Michelle Mayes Resume">
+          <p>Unable to display PDF. <a href="/resume.pdf" download>Download the resume</a>.</p>
+        </iframe>
       </div>
     </main>
     <Footer />
@@ -59,11 +61,11 @@ export const prerender = true;
 
   .action-link {
     padding: var(--space-sm) var(--space-lg);
-    font-size: 0.9rem;
+    font-size: var(--text-sm);
     font-weight: 500;
     text-decoration: none;
     border-radius: 6px;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
     color: var(--text-muted);
     border: 1px solid var(--accent-100);
   }

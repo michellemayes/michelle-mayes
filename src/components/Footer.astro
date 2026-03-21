@@ -47,7 +47,7 @@ const currentYear = new Date().getFullYear();
   }
 
   .copyright {
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     color: var(--text-muted);
   }
 
@@ -58,10 +58,29 @@ const currentYear = new Date().getFullYear();
 
   .social-links a {
     color: var(--text-muted);
-    transition: color 0.2s ease;
+    transition: color 0.25s ease, transform 0.25s ease;
+    border-radius: 6px;
+    padding: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
   }
 
   .social-links a:hover {
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .social-links a[aria-label="GitHub"]:hover { color: #24292f; }
+  .social-links a[aria-label="LinkedIn"]:hover { color: #0A66C2; }
+  .social-links a[aria-label="Twitter"]:hover { color: #1a1a2e; }
+  .social-links a[aria-label="Email"]:hover { color: var(--warm); }
+
+  .social-links a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
     color: var(--accent);
   }
 
