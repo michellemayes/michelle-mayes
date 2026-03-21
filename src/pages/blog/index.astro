@@ -25,7 +25,7 @@ function calculateReadingTime(content: string): number {
   </head>
   <body>
     <Header />
-    <main>
+    <main id="main-content">
       <header class="page-header">
         <h1>Blog</h1>
         <p class="page-description">Thoughts on shipping fast, AI-assisted development, and building in public.</p>
@@ -84,8 +84,8 @@ function calculateReadingTime(content: string): number {
 
   .page-header h1 {
     font-family: var(--font-serif);
-    font-size: var(--text-4xl);
-    font-weight: 600;
+    font-size: var(--text-fluid-4xl);
+    font-weight: 700;
     color: var(--text);
     margin-bottom: var(--space-sm);
   }
@@ -110,7 +110,7 @@ function calculateReadingTime(content: string): number {
     background: var(--bg-card);
     border-radius: 16px;
     box-shadow: var(--shadow-md);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
     opacity: 0;
     transform: translateY(20px);
@@ -164,7 +164,7 @@ function calculateReadingTime(content: string): number {
   .post-title {
     font-family: var(--font-serif);
     font-size: var(--text-xl);
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text);
     margin: 0 0 var(--space-sm) 0;
     transition: color 0.2s ease;
@@ -217,10 +217,6 @@ function calculateReadingTime(content: string): number {
       padding: var(--space-lg);
     }
 
-    .page-header h1 {
-      font-size: var(--text-3xl);
-    }
-
     .page-description {
       font-size: var(--text-base);
     }
@@ -237,10 +233,6 @@ function calculateReadingTime(content: string): number {
   @media (max-width: 480px) {
     main {
       padding: var(--space-md);
-    }
-
-    .page-header h1 {
-      font-size: var(--text-2xl);
     }
 
     .post-card {
@@ -261,6 +253,10 @@ function calculateReadingTime(content: string): number {
 
     .post-card:hover {
       transform: none;
+    }
+
+    .post-card::before {
+      transition: none;
     }
   }
 </style>

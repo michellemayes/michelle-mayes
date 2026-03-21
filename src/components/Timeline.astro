@@ -16,25 +16,14 @@ for (const item of items) {
   grouped.set(key, existing);
 }
 
-// Random decorative emojis
-const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
 ---
 
 <div class="timeline-wrapper">
-  <!-- Floating particles background -->
-  <div class="particles" aria-hidden="true">
-    {Array.from({ length: 15 }).map((_, i) => (
-      <span class="particle" style={`--i: ${i}; --emoji: "${decorEmojis[i % decorEmojis.length]}"`}></span>
-    ))}
-  </div>
-
   <div class="timeline">
     {[...grouped.entries()].map(([monthYear, monthItems], groupIndex) => (
       <div class="timeline-month" style={`--group-index: ${groupIndex}`}>
         <h3 class="timeline-month-header">
-          <span class="month-sparkle">✨</span>
-          <span class="month-text">{monthYear}</span>
-          <span class="month-sparkle">✨</span>
+          {monthYear}
         </h3>
         <div class="timeline-items">
           {monthItems.map((item, itemIndex) => (
@@ -43,20 +32,15 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
               style={`--item-index: ${itemIndex}; --hue: ${(itemIndex * 30) % 360}`}
               data-expandable
             >
-              <!-- Decorative blob -->
-              <div class="card-blob"></div>
-
-              <div class="timeline-marker-wrapper">
-                <span class="timeline-marker">
-                  {item.isPrivate ? '🔒' : item.isHighlight ? '⭐' : '💜'}
-                </span>
+              <div class={`timeline-marker-wrapper ${item.isPrivate ? 'marker-private' : item.isHighlight ? 'marker-highlight' : ''}`}>
+                <span class="timeline-marker"></span>
               </div>
               <div class="timeline-content">
                 <div class="timeline-header">
                   {item.isPrivate ? (
                     <span class="timeline-title private-title">
                       {item.title}
-                      <span class="private-badge">🔐 Private</span>
+                      <span class="private-badge">Private</span>
                     </span>
                   ) : (
                     <a href={item.repoUrl} target="_blank" rel="noopener" class="timeline-title">
@@ -78,7 +62,6 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
                 <div class="timeline-meta">
                   {item.language && (
                     <span class="timeline-tag language-tag">
-                      <span class="tag-glow"></span>
                       {item.language}
                     </span>
                   )}
@@ -99,10 +82,11 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
                   role="region"
                   aria-hidden="true"
                 >
+                  <div class="timeline-details-inner">
                   {/* Commit Activity Graph */}
                   {item.commitActivity.length > 0 && (
                     <div class="commit-graph">
-                      <span class="graph-label">📊 Activity (12 weeks)</span>
+                      <span class="graph-label">Activity (12 weeks)</span>
                       <div class="graph-bars">
                         {item.commitActivity.map((count, i) => {
                           const maxCount = Math.max(...item.commitActivity, 1);
@@ -114,7 +98,6 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
                               title={`${count} commits`}
                             >
                               <span class="bar-fill"></span>
-                              {count > 0 && <span class="bar-sparkle">✨</span>}
                             </div>
                           );
                         })}
@@ -130,21 +113,18 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
                     <div class="details-grid">
                       {item.stars > 0 && (
                         <div class="detail-item">
-                          <span class="detail-icon">⭐</span>
                           <span class="detail-value">{item.stars}</span>
                           <span class="detail-label">stars</span>
                         </div>
                       )}
                       {item.forks > 0 && (
                         <div class="detail-item">
-                          <span class="detail-icon">🍴</span>
                           <span class="detail-value">{item.forks}</span>
                           <span class="detail-label">forks</span>
                         </div>
                       )}
                       {item.daysToShip !== null && item.daysToShip >= 0 && (
                         <div class="detail-item">
-                          <span class="detail-icon">🚀</span>
                           <span class="detail-value">{item.daysToShip === 0 ? '<1' : item.daysToShip}</span>
                           <span class="detail-label">days to ship</span>
                         </div>
@@ -153,7 +133,7 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
 
                     {(item.tags.length > 0 || item.language) && (
                       <div class="tech-stack">
-                        <span class="tech-label">🛠️ Tech Stack</span>
+                        <span class="tech-label">Tech Stack</span>
                         <div class="tech-tags">
                           {item.language && <span class="tech-tag primary">{item.language}</span>}
                           {item.tags.map((tag) => (
@@ -162,6 +142,7 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
                         </div>
                       </div>
                     )}
+                  </div>
                   </div>
                 </div>
               </div>
@@ -182,54 +163,8 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
     padding: var(--space-lg) 0;
   }
 
-  /* Floating particles - reduced for mobile */
-  .particles {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .particle {
-    position: absolute;
-    font-size: 1rem;
-    opacity: 0.2;
-    animation: float 20s ease-in-out infinite;
-    animation-delay: calc(var(--i) * -1.3s);
-  }
-
-  .particle::before {
-    content: var(--emoji);
-  }
-
-  .particle:nth-child(odd) {
-    left: calc(var(--i) * 7%);
-    animation-duration: 25s;
-  }
-
-  .particle:nth-child(even) {
-    right: calc(var(--i) * 5%);
-    animation-duration: 18s;
-    animation-direction: reverse;
-  }
-
-  @keyframes float {
-    0%, 100% {
-      transform: translateY(100vh) rotate(0deg);
-      opacity: 0;
-    }
-    10% { opacity: 0.25; }
-    90% { opacity: 0.25; }
-    100% {
-      transform: translateY(-100px) rotate(360deg);
-      opacity: 0;
-    }
-  }
-
   .timeline {
     position: relative;
-    z-index: 1;
   }
 
   .timeline-month {
@@ -240,7 +175,7 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
   .timeline-month-header {
     font-family: var(--font-serif);
     font-size: var(--text-xl);
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text);
     margin-bottom: var(--space-lg);
     display: flex;
@@ -253,15 +188,6 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
     flex: 1;
     height: 1px;
     background: linear-gradient(to right, var(--accent-200), transparent);
-  }
-
-  .month-sparkle,
-  .month-text {
-    display: contents;
-  }
-
-  .month-sparkle {
-    display: none; /* Hide sparkles, cleaner look */
   }
 
   .timeline-items {
@@ -278,7 +204,7 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
     border-radius: 16px;
     background: var(--bg-card);
     box-shadow: var(--shadow-md);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
     opacity: 0;
@@ -293,12 +219,20 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
   .timeline-item::before {
     content: '';
     position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 150px;
-    height: 150px;
-    background: radial-gradient(circle at bottom right, rgba(139, 92, 246, 0.05) 0%, transparent 70%);
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(139, 92, 246, 0.08) 0%,
+      transparent 60%
+    );
     pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .timeline-item:hover::before {
+    opacity: 1;
   }
 
   .timeline-item:hover {
@@ -318,12 +252,6 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
     background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-subtle) 100%);
   }
 
-  /* Remove old blob */
-  .card-blob {
-    display: none;
-  }
-
-  /* Refined marker */
   .timeline-marker-wrapper {
     flex-shrink: 0;
     width: 28px;
@@ -332,8 +260,8 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
     align-items: center;
     justify-content: center;
     background: var(--accent-50);
-    border-radius: 8px;
-    transition: all 0.3s ease;
+    border-radius: var(--radius-md);
+    transition: transform 0.3s ease, background-color 0.3s ease;
   }
 
   .timeline-item:hover .timeline-marker-wrapper {
@@ -342,7 +270,26 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
   }
 
   .timeline-marker {
-    font-size: 1rem;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .marker-highlight {
+    background: var(--warm-50);
+  }
+
+  .marker-highlight .timeline-marker {
+    background: var(--warm);
+  }
+
+  .marker-private {
+    background: var(--bg-subtle);
+  }
+
+  .marker-private .timeline-marker {
+    background: var(--text-muted);
   }
 
   .timeline-content {
@@ -359,7 +306,7 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
   }
 
   .timeline-title {
-    font-weight: 600;
+    font-weight: 700;
     font-size: var(--text-lg);
     color: var(--text);
     text-decoration: none;
@@ -377,7 +324,7 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
     display: inline-block;
     opacity: 0;
     transform: translateX(-4px);
-    transition: all 0.2s ease;
+    transition: opacity 0.2s ease, transform 0.2s ease;
     font-weight: 400;
   }
 
@@ -406,14 +353,14 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
   .expand-btn {
     background: var(--accent-50);
     border: 1px solid var(--accent-100);
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
     border-radius: 10px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
     flex-shrink: 0;
   }
 
@@ -429,7 +376,12 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
   .expand-icon {
     font-size: 0.9rem;
     color: var(--accent);
-    transition: color 0.2s ease;
+    transition: color 0.2s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-block;
+  }
+
+  .timeline-item.expanded .expand-icon {
+    transform: rotate(90deg);
   }
 
   .expand-btn:hover .expand-icon {
@@ -467,7 +419,7 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
     border-radius: 100px;
     font-size: var(--text-xs);
     font-weight: 600;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
     position: relative;
     overflow: hidden;
   }
@@ -475,10 +427,6 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
   .timeline-tag:hover {
     background: var(--accent-100);
     transform: translateY(-1px);
-  }
-
-  .tag-glow {
-    display: none; /* Remove shimmer, cleaner */
   }
 
   .language-tag {
@@ -494,24 +442,27 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     font-weight: 600;
-    color: var(--accent);
-    background: var(--accent-50);
+    color: var(--warm-dark);
+    background: var(--warm-50);
     padding: 6px 14px;
     border-radius: 100px;
-    border: 1px dashed var(--accent-200);
+    border: 1px dashed var(--warm-light);
   }
 
-  /* Expandable details */
+  /* Expandable details — grid-template-rows for GPU-composited height animation */
   .timeline-details {
-    max-height: 0;
-    overflow: hidden;
+    display: grid;
+    grid-template-rows: 0fr;
     opacity: 0;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-top: 0;
+    transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  }
+
+  .timeline-details-inner {
+    overflow: hidden;
   }
 
   .timeline-item.expanded .timeline-details {
-    max-height: 500px;
+    grid-template-rows: 1fr;
     opacity: 1;
     margin-top: var(--space-lg);
     padding-top: var(--space-lg);
@@ -557,11 +508,7 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
     height: var(--bar-height);
     background: linear-gradient(180deg, var(--accent-light), var(--accent));
     border-radius: 3px;
-    transition: all 0.2s ease;
-  }
-
-  .bar-sparkle {
-    display: none; /* Remove sparkles */
+    transition: background 0.2s ease, box-shadow 0.2s ease;
   }
 
   .graph-bar:hover .bar-fill {
@@ -595,15 +542,11 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
     padding: 8px 12px;
     background: var(--bg-subtle);
     border-radius: 10px;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease;
   }
 
   .detail-item:hover {
     background: var(--accent-50);
-  }
-
-  .detail-icon {
-    font-size: 1rem;
   }
 
   .detail-value {
@@ -645,7 +588,7 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
     font-size: var(--text-xs);
     font-weight: 600;
     border: 1px solid var(--accent-200);
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
   }
 
   .tech-tag:hover {
@@ -687,17 +630,39 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
       gap: var(--space-sm);
     }
 
-    .expand-btn {
-      width: 44px;
-      height: 44px;
-    }
-
     .timeline-tag {
       padding: 8px 16px;
     }
+  }
 
-    .particles {
-      opacity: 0.5;
+  @media (max-width: 480px) {
+    .timeline-wrapper {
+      padding: var(--space-sm);
+    }
+
+    .timeline-item {
+      padding: var(--space-sm);
+      gap: var(--space-sm);
+    }
+
+    .timeline-marker-wrapper {
+      width: 24px;
+      height: 24px;
+    }
+
+    .timeline-marker {
+      width: 6px;
+      height: 6px;
+    }
+
+    .timeline-meta {
+      gap: 6px;
+    }
+
+    .timeline-tag,
+    .timeline-ship {
+      padding: 4px 10px;
+      font-size: 0.6875rem;
     }
   }
 
@@ -705,10 +670,6 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
     .timeline-item {
       opacity: 1;
       transform: none;
-    }
-
-    .particle {
-      animation: none;
     }
 
     .timeline-item:hover {
@@ -763,6 +724,20 @@ const decorEmojis = ['✨', '💜', '🌟', '💫', '⭐', '🔮', '💎'];
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     document.querySelectorAll('.timeline-item').forEach((item) => {
       item.classList.add('revealed');
+    });
+  }
+
+  // Magnetic cursor glow on timeline cards
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('.timeline-item').forEach((card) => {
+      card.addEventListener('mousemove', (e: Event) => {
+        const me = e as MouseEvent;
+        const rect = (card as HTMLElement).getBoundingClientRect();
+        const x = me.clientX - rect.left;
+        const y = me.clientY - rect.top;
+        (card as HTMLElement).style.setProperty('--mouse-x', `${x}px`);
+        (card as HTMLElement).style.setProperty('--mouse-y', `${y}px`);
+      });
     });
   }
 </script>

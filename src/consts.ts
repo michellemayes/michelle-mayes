@@ -2,7 +2,7 @@
 // You can import this data from anywhere in your site by using the `import` keyword.
 
 export const SITE_TITLE = 'Michelle Mayes';
-export const SITE_DESCRIPTION = 'Personal website showcasing my projects, blog posts, and professional experience.';
+export const SITE_DESCRIPTION = 'Full-stack builder shipping AI-powered products, web apps, and practical developer tools.';
 
 // Social media links
 export const GITHUB_USERNAME = 'michellemayes'; // Update with your actual GitHub username

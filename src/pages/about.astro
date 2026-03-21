@@ -13,11 +13,11 @@ export const prerender = true;
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={`About - ${SITE_TITLE}`} description="Learn more about Michelle Mayes" />
+		<BaseHead title={`About - ${SITE_TITLE}`} description="Full-stack builder at the intersection of AI and product development, based in Austin, TX." />
 	</head>
 	<body>
 		<Header />
-		<main>
+		<main id="main-content">
 			<div class="section-header">
 				<h1>About Me</h1>
 			</div>
@@ -65,23 +65,22 @@ export const prerender = true;
 		width: 100%;
 		max-width: 1200px;
 		margin: 0 auto;
-		padding: 2rem;
-		box-sizing: border-box;
+		padding: var(--space-xl);
 	}
 
 	.section-header {
 		text-align: center;
-		margin-bottom: 3rem;
+		margin-bottom: var(--space-2xl);
 	}
 
 	.section-header h1 {
-		font-size: 2.5rem;
-		margin-bottom: 1rem;
+		font-size: var(--text-fluid-4xl);
+		margin-bottom: var(--space-md);
 		color: var(--accent);
 	}
 
 	.section-header p {
-		font-size: 1.1rem;
+		font-size: var(--text-lg);
 		color: var(--text-muted);
 		max-width: 500px;
 		margin: 0 auto;
@@ -89,18 +88,18 @@ export const prerender = true;
 
 	.about-card {
 		max-width: 800px;
-		margin: 0 auto 3rem auto;
+		margin: 0 auto var(--space-2xl) auto;
 		background: var(--bg-card);
 		border: 1px solid var(--accent-100);
-		border-radius: 16px;
-		padding: 2rem;
-		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+		border-radius: var(--radius-xl);
+		padding: var(--space-xl);
+		box-shadow: var(--shadow-lg);
 	}
 
 	.about-card-header {
 		display: flex;
 		align-items: flex-start;
-		gap: 1.5rem;
+		gap: var(--space-lg);
 	}
 
 	.about-photo {
@@ -117,15 +116,15 @@ export const prerender = true;
 	}
 
 	.about-info h2 {
-		margin: 0 0 1rem 0;
-		font-size: 1.5rem;
+		margin: 0 0 var(--space-md) 0;
+		font-size: var(--text-fluid-2xl);
 		color: var(--text);
 	}
 
 	.about-info p {
-		margin-bottom: 1rem;
+		margin-bottom: var(--space-md);
 		color: var(--text-muted);
-		line-height: 1.6;
+		line-height: var(--leading-relaxed);
 	}
 
 	.about-info p:last-child {
@@ -133,22 +132,22 @@ export const prerender = true;
 	}
 
 	.github-activity-section {
-		margin: 3rem 0;
+		margin: var(--space-2xl) 0;
 		text-align: center;
 	}
 
 	.github-activity-section h3 {
-		font-size: 1.5rem;
-		color: var(--accent);
-		margin-bottom: 2rem;
+		font-size: var(--text-fluid-2xl);
+		color: var(--warm);
+		margin-bottom: var(--space-xl);
 	}
 
 	.github-calendar-container {
 		background: var(--bg-card);
 		border: 1px solid var(--accent-100);
-		border-radius: 12px;
-		padding: 1.5rem;
-		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+		border-radius: var(--radius-lg);
+		padding: var(--space-lg);
+		box-shadow: var(--shadow-lg);
 		display: inline-block;
 	}
 
@@ -156,61 +155,27 @@ export const prerender = true;
 		width: 100%;
 		max-width: 800px;
 		height: auto;
-		border-radius: 8px;
+		border-radius: var(--radius-md);
 	}
-
-	.card {
-		background: var(--bg-card);
-		border: 1px solid var(--accent-100);
-		border-radius: 12px;
-		padding: 1.5rem;
-		transition: all 0.3s ease;
-	}
-
-	.card:hover {
-		box-shadow: var(--shadow-md);
-		transform: translateY(-2px);
-	}
-
-	.card h3 {
-		margin: 0 0 1rem 0;
-		font-size: 1.3rem;
-		color: var(--accent);
-	}
-
-	.card p {
-		margin-bottom: 1rem;
-		color: var(--text-muted);
-		line-height: 1.6;
-	}
-
-	.card p:last-child {
-		margin-bottom: 0;
-	}
-
 
 	@media (max-width: 768px) {
 		main {
-			padding: 1rem;
-		}
-
-		.section-header h1 {
-			font-size: 2rem;
+			padding: var(--space-md);
 		}
 
 		.section-header p {
-			font-size: 1rem;
+			font-size: var(--text-base);
 		}
 
 		.about-card {
-			padding: 1.5rem;
+			padding: var(--space-lg);
 		}
 
 		.about-card-header {
 			flex-direction: column;
 			align-items: center;
 			text-align: center;
-			gap: 1rem;
+			gap: var(--space-md);
 		}
 
 		.about-photo {
@@ -220,19 +185,15 @@ export const prerender = true;
 		}
 
 		.about-info h2 {
-			font-size: 1.3rem;
+			font-size: var(--text-xl);
 		}
 
 		.about-info p {
-			font-size: 0.95rem;
-		}
-
-		.github-activity-section h3 {
-			font-size: 1.3rem;
+			font-size: var(--text-sm);
 		}
 
 		.github-calendar-container {
-			padding: 1rem;
+			padding: var(--space-md);
 		}
 
 		.github-calendar {
@@ -242,15 +203,11 @@ export const prerender = true;
 
 	@media (max-width: 480px) {
 		main {
-			padding: 0.75rem;
-		}
-
-		.section-header h1 {
-			font-size: 1.75rem;
+			padding: var(--space-sm);
 		}
 
 		.about-card {
-			padding: 1rem;
+			padding: var(--space-md);
 		}
 
 		.about-photo {
@@ -260,19 +217,21 @@ export const prerender = true;
 		}
 
 		.about-info h2 {
-			font-size: 1.2rem;
+			font-size: var(--text-xl);
 		}
 
 		.about-info p {
-			font-size: 0.9rem;
-		}
-
-		.github-activity-section h3 {
-			font-size: 1.2rem;
+			font-size: var(--text-sm);
 		}
 
 		.github-calendar-container {
-			padding: 0.75rem;
+			padding: var(--space-sm);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.about-card {
+			transition: none;
 		}
 	}
 </style>

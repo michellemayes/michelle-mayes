@@ -28,7 +28,7 @@ const { Content } = await render(post);
 	</head>
 	<body>
 		<Header />
-		<main>
+		<main id="main-content">
 			<div class="blog-navigation">
 				<a href="/blog" class="back-to-posts-btn">
 					← Back to Posts
@@ -39,7 +39,7 @@ const { Content } = await render(post);
 				<header class="blog-post-header">
 					<h1>{post.data.title}</h1>
 					<div class="blog-post-meta">
-						<time>{new Date(post.data.pubDate).toLocaleDateString()}</time>
+						<time datetime={post.data.pubDate.toISOString()}>{new Date(post.data.pubDate).toLocaleDateString()}</time>
 						{post.data.tags && post.data.tags.length > 0 && (
 							<span>• {post.data.tags.join(', ')}</span>
 						)}
@@ -83,7 +83,7 @@ const { Content } = await render(post);
     border-radius: 8px;
     font-size: var(--text-sm);
     font-weight: 600;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
     border: 1px solid var(--accent-100);
     min-height: 44px;
   }
@@ -117,8 +117,9 @@ const { Content } = await render(post);
 
   .blog-post-header h1 {
     font-family: var(--font-serif);
-    font-size: var(--text-3xl);
-    font-weight: 600;
+    font-size: var(--text-fluid-3xl);
+    font-weight: 700;
+    letter-spacing: var(--tracking-tight);
     margin-bottom: var(--space-md);
     color: var(--text);
     line-height: var(--leading-tight);
@@ -146,7 +147,7 @@ const { Content } = await render(post);
   .blog-post-content {
     line-height: var(--leading-relaxed);
     color: var(--text);
-    font-size: 18px;
+    font-size: var(--text-lg);
   }
 
   .blog-post-content :global(h2) {
@@ -154,7 +155,7 @@ const { Content } = await render(post);
     color: var(--text);
     margin-top: var(--space-2xl);
     margin-bottom: var(--space-md);
-    font-size: var(--text-2xl);
+    font-size: var(--text-fluid-2xl);
   }
 
   .blog-post-content :global(h3) {
@@ -162,7 +163,7 @@ const { Content } = await render(post);
     color: var(--text);
     margin-top: var(--space-xl);
     margin-bottom: var(--space-sm);
-    font-size: var(--text-xl);
+    font-size: var(--text-fluid-xl);
   }
 
   .blog-post-content :global(p) {
@@ -246,10 +247,6 @@ const { Content } = await render(post);
       padding: var(--space-lg);
     }
 
-    .blog-post-header h1 {
-      font-size: var(--text-2xl);
-    }
-
     .blog-post-description {
       font-size: var(--text-base);
     }
@@ -260,15 +257,7 @@ const { Content } = await render(post);
     }
 
     .blog-post-content {
-      font-size: 16px;
-    }
-
-    .blog-post-content :global(h2) {
-      font-size: var(--text-xl);
-    }
-
-    .blog-post-content :global(h3) {
-      font-size: var(--text-lg);
+      font-size: var(--text-base);
     }
   }
 
@@ -280,10 +269,6 @@ const { Content } = await render(post);
     .blog-post {
       padding: var(--space-md);
       border-radius: 12px;
-    }
-
-    .blog-post-header h1 {
-      font-size: var(--text-xl);
     }
 
     .back-to-posts-btn {
