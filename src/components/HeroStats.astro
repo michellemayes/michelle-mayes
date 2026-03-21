@@ -16,7 +16,6 @@ const statItems = [
 ---
 
 <section class="hero-stats">
-  <canvas class="hero-mesh" aria-hidden="true"></canvas>
   <div class="hero-content">
     <div class="avatar-wrapper">
       <div class="avatar-glow"></div>
@@ -102,86 +101,6 @@ const statItems = [
     'font-size: 12px; color: #6B6876;'
   );
 
-  // Cursor-reactive gradient mesh
-  const canvas = document.querySelector('.hero-mesh') as HTMLCanvasElement | null;
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if (canvas && !reducedMotion) {
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      let mouseX = 0.5;
-      let mouseY = 0.5;
-      let animId: number;
-      let isVisible = true;
-
-      // Blob definitions — each drifts independently
-      const blobs = [
-        { x: 0.3, y: 0.3, baseX: 0.3, baseY: 0.3, r: 0.35, color: [139, 92, 246], phase: 0, speed: 0.4 },    // purple
-        { x: 0.7, y: 0.6, baseX: 0.7, baseY: 0.6, r: 0.3, color: [217, 119, 6], phase: 2, speed: 0.3 },      // warm amber
-        { x: 0.5, y: 0.2, baseX: 0.5, baseY: 0.2, r: 0.25, color: [167, 139, 250], phase: 4, speed: 0.35 },   // light purple
-      ];
-
-      function resize() {
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        const w = canvas!.clientWidth;
-        const h = canvas!.clientHeight;
-        canvas!.width = w * dpr;
-        canvas!.height = h * dpr;
-        ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
-      }
-
-      function render(time: number) {
-        if (!isVisible) { animId = requestAnimationFrame(render); return; }
-
-        const w = canvas!.clientWidth;
-        const h = canvas!.clientHeight;
-        ctx!.clearRect(0, 0, w, h);
-
-        for (const blob of blobs) {
-          // Drift naturally
-          const t = time * 0.001 * blob.speed;
-          blob.x = blob.baseX + Math.sin(t + blob.phase) * 0.08;
-          blob.y = blob.baseY + Math.cos(t * 0.7 + blob.phase) * 0.06;
-
-          // Pull slightly toward cursor (subtle magnetic effect)
-          const pullStrength = 0.08;
-          const bx = (blob.x + (mouseX - blob.x) * pullStrength) * w;
-          const by = (blob.y + (mouseY - blob.y) * pullStrength) * h;
-          const br = blob.r * Math.max(w, h);
-
-          const grad = ctx!.createRadialGradient(bx, by, 0, bx, by, br);
-          const [r, g, b] = blob.color;
-          grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.12)`);
-          grad.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, 0.05)`);
-          grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
-
-          ctx!.fillStyle = grad;
-          ctx!.fillRect(0, 0, w, h);
-        }
-
-        animId = requestAnimationFrame(render);
-      }
-
-      // Track mouse relative to hero section
-      const heroSection = canvas!.closest('.hero-stats')!;
-      heroSection.addEventListener('mousemove', (e: Event) => {
-        const me = e as MouseEvent;
-        const rect = heroSection.getBoundingClientRect();
-        mouseX = (me.clientX - rect.left) / rect.width;
-        mouseY = (me.clientY - rect.top) / rect.height;
-      });
-
-      // Pause when off-screen
-      const visObserver = new IntersectionObserver(([entry]) => {
-        isVisible = entry.isIntersecting;
-      }, { threshold: 0 });
-      visObserver.observe(heroSection);
-
-      resize();
-      window.addEventListener('resize', resize);
-      animId = requestAnimationFrame(render);
-    }
-  }
 </script>
 
 <style>
@@ -189,16 +108,7 @@ const statItems = [
     text-align: center;
     padding: var(--space-xl) 0 var(--space-3xl);
     position: relative;
-  }
-
-  .hero-mesh {
-    position: absolute;
-    inset: -15%;
-    width: 130%;
-    height: 130%;
-    z-index: 0;
-    opacity: 0.5;
-    pointer-events: none;
+    overflow: hidden;
   }
 
   .hero-content {
@@ -437,10 +347,6 @@ const statItems = [
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .hero-mesh {
-      display: none;
-    }
-
     .avatar-glow,
     .hero-name,
     .hero-tagline,
