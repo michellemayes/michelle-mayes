@@ -19,12 +19,34 @@ type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
 const { Content } = await render(post);
+
+const blogPostSchema = {
+	"@context": "https://schema.org",
+	"@type": "BlogPosting",
+	"headline": post.data.title,
+	"description": post.data.description,
+	"datePublished": post.data.pubDate.toISOString(),
+	...(post.data.updatedDate && { "dateModified": post.data.updatedDate.toISOString() }),
+	"author": {
+		"@type": "Person",
+		"name": "Michelle Mayes",
+		"url": "https://michellemayes.me",
+	},
+	"publisher": {
+		"@type": "Person",
+		"name": "Michelle Mayes",
+	},
+	"mainEntityOfPage": {
+		"@type": "WebPage",
+		"@id": `https://michellemayes.me/blog/${post.slug}/`,
+	},
+};
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={`${post.data.title} - ${SITE_TITLE}`} description={post.data.description} />
+		<BaseHead title={`${post.data.title} - ${SITE_TITLE}`} description={post.data.description} jsonLd={blogPostSchema} />
 	</head>
 	<body>
 		<Header />
@@ -52,6 +74,14 @@ const { Content } = await render(post);
 				<div class="blog-post-content">
 					<Content />
 				</div>
+
+				<footer class="author-bio">
+					<img src="/avatar.jpg" alt="Michelle Mayes" class="author-avatar" width="56" height="56" loading="lazy" />
+					<div class="author-info">
+						<strong>Michelle Mayes</strong>
+						<p>Data scientist and AI product engineer building intelligent systems with RAG, LLMs, and modern web stacks. <a href="/about">More about me</a></p>
+					</div>
+				</footer>
 			</article>
 		</main>
 		<Footer />
@@ -236,6 +266,43 @@ const { Content } = await render(post);
 
   .blog-post-content :global(a:hover) {
     text-decoration-color: var(--accent);
+  }
+
+  .author-bio {
+    display: flex;
+    gap: var(--space-md);
+    align-items: center;
+    padding-top: var(--space-xl);
+    margin-top: var(--space-2xl);
+    border-top: 1px solid var(--accent-100);
+  }
+
+  .author-avatar {
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .author-info strong {
+    display: block;
+    font-size: var(--text-base);
+    color: var(--text);
+    margin-bottom: var(--space-xs);
+  }
+
+  .author-info p {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    line-height: var(--leading-normal);
+  }
+
+  .author-info a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .author-info a:hover {
+    text-decoration: underline;
   }
 
   @media (max-width: 768px) {

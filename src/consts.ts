@@ -2,6 +2,7 @@
 // You can import this data from anywhere in your site by using the `import` keyword.
 
 export const SITE_TITLE = 'Michelle Mayes';
+export const SITE_TITLE_FULL = 'Michelle Mayes — Full-Stack Builder & AI Product Engineer';
 export const SITE_DESCRIPTION = 'Full-stack builder shipping AI-powered products, web apps, and practical developer tools.';
 
 // Social media links
@@ -14,4 +15,4 @@ export const SOCIAL_LINKS = {
 };
 
 // Site configuration
-export const SITE_URL = 'https://michelle-mayes.vercel.app'; // Update with your actual domain
+export const SITE_URL = 'https://michellemayes.me';

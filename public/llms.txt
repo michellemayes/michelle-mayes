@@ -1,0 +1,37 @@
+# Michelle Mayes — michellemayes.me
+
+> Full-stack builder shipping AI-powered products, web apps, and practical developer tools.
+
+## About
+
+Michelle Mayes is a data scientist and AI product engineer who builds intelligent systems using RAG, LLMs, and modern web stacks. She has experience in data science, product management, and full-stack engineering, with a focus on practical AI applications that ship to production.
+
+## Key Content
+
+- Homepage: https://michellemayes.me/
+- Blog: https://michellemayes.me/blog/
+- Projects: https://michellemayes.me/projects/
+- Resume: https://michellemayes.me/resume/
+- About: https://michellemayes.me/about/
+
+## Notable Work
+
+- Built a RAG-powered AI agent that replaced the product management function, handling 264 sessions and saving ~400 engineering hours in its first month
+- Created terrarium, a lightweight Mac app built with Tauri & Rust for viewing TSX/JSX components
+- Built vibe-tooling, a Claude Code plugin marketplace for code quality tools
+- Created heb-grocery-agent, a Chrome extension that automates grocery shopping on HEB.com
+
+## Expertise Areas
+
+- AI/ML systems: RAG pipelines, LLM integration, prompt engineering, embeddings
+- Product management: Specification writing, PRDs, product strategy
+- Full-stack development: Astro, Next.js, React, TypeScript, Python, Rust
+- Data science: Analytics, machine learning, data pipelines
+- Cloud infrastructure: AWS (Lambda, Step Functions, Bedrock, DynamoDB), Vercel
+
+## Contact
+
+- GitHub: https://github.com/michellemayes
+- LinkedIn: https://linkedin.com/in/michellejmayes
+- Twitter: https://twitter.com/michellejmayes
+- Email: michellejanemayes@gmail.com
