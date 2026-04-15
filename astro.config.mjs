@@ -8,7 +8,7 @@ import vercel from '@astrojs/vercel';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://michelle-mayes.vercel.app', // Update with your actual domain
+  site: 'https://michellemayes.me',
   integrations: [mdx(), sitemap()],
   adapter: vercel(),
   output: 'server', // Enables SSR for dynamic pages

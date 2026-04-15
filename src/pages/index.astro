@@ -4,18 +4,33 @@ import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import HeroStats from '../components/HeroStats.astro';
 import Timeline from '../components/Timeline.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { SITE_DESCRIPTION, SITE_TITLE_FULL, SOCIAL_LINKS } from '../consts';
 import { getHomeData } from '../lib/home-data';
 
 export const prerender = true;
 
 const { stats, timelineItems } = await getHomeData();
+
+const personSchema = {
+	"@context": "https://schema.org",
+	"@type": "Person",
+	"name": "Michelle Mayes",
+	"url": "https://michellemayes.me",
+	"jobTitle": "Full-Stack Builder & AI Product Engineer",
+	"description": SITE_DESCRIPTION,
+	"image": "https://michellemayes.me/avatar.jpg",
+	"sameAs": [
+		SOCIAL_LINKS.github,
+		SOCIAL_LINKS.linkedin,
+		SOCIAL_LINKS.twitter,
+	],
+};
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+    <BaseHead title={SITE_TITLE_FULL} description={SITE_DESCRIPTION} jsonLd={personSchema} />
   </head>
   <body>
     <Header />
