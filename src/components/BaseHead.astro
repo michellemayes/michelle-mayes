@@ -92,3 +92,13 @@ const ogImageURL = image ? new URL(image.src, Astro.site) : new URL('/avatar.jpg
 
 <!-- Vercel Speed Insights -->
 <SpeedInsights/>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GMRL1EKLX7"></script>
+<script is:inline>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+
+	gtag('config', 'G-GMRL1EKLX7');
+</script>
