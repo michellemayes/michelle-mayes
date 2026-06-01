@@ -1,4 +1,5 @@
-import type { GitHubRepository } from './github';
+import { fetchRepositories, type GitHubRepository } from './github';
+import snapshot from '../data/projects-snapshot.json';
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
@@ -20,6 +21,29 @@ export interface EnrichedProject extends GitHubRepository {
 export interface ProjectBuckets {
   featured: EnrichedProject[];
   catalog: EnrichedProject[];
+}
+
+const SNAPSHOT_REPOSITORIES = snapshot as GitHubRepository[];
+
+/**
+ * Load repositories with a resilient fallback.
+ *
+ * The GitHub REST API rate-limits unauthenticated requests (60/hour) and can
+ * return 403s or transient errors during a build. When the live fetch fails or
+ * comes back empty, fall back to a committed snapshot so the projects page
+ * always renders meaningful content instead of an empty state.
+ */
+export async function loadRepositories(
+  username?: string,
+  perPage?: number
+): Promise<GitHubRepository[]> {
+  const live = await fetchRepositories(username, perPage);
+  if (live.length > 0) {
+    return live;
+  }
+
+  console.warn('GitHub returned no repositories; falling back to projects snapshot.');
+  return SNAPSHOT_REPOSITORIES;
 }
 
 function getDaysSince(dateString: string, nowMs: number): number {
