@@ -3,12 +3,11 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { SITE_TITLE, GITHUB_USERNAME } from '../consts';
-import { fetchRepositories } from '../lib/github';
-import { bucketProjects, getProjectDescription } from '../lib/projects';
+import { bucketProjects, getProjectDescription, loadRepositories } from '../lib/projects';
 
 export const prerender = true;
 
-const repositories = await fetchRepositories(GITHUB_USERNAME);
+const repositories = await loadRepositories(GITHUB_USERNAME);
 const { featured: featuredRepositories, catalog: catalogRepositories } = bucketProjects(repositories, 3);
 ---
 
