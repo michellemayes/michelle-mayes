@@ -1,4 +1,5 @@
-import { fetchRepositories, fetchShipDate, fetchCommitActivity, type GitHubRepository } from './github';
+import { fetchShipDate, fetchCommitActivity, type GitHubRepository } from './github';
+import { loadRepositories } from './projects';
 import { GITHUB_USERNAME } from '../consts';
 
 const DEFAULT_ACTIVITY_WINDOW_DAYS = 365;
@@ -39,7 +40,7 @@ export async function calculateStats(
   username: string = GITHUB_USERNAME,
   windowDays: number = DEFAULT_ACTIVITY_WINDOW_DAYS
 ): Promise<GitHubStats> {
-  const allRepos = await fetchRepositories(username, 100, 'updated', 'desc', false);
+  const allRepos = await loadRepositories(username, 100);
   const repos = filterRepositoriesByWindow(allRepos, windowDays);
 
   if (repos.length === 0) {
@@ -114,7 +115,7 @@ export async function getRepoActivity(
   username: string = GITHUB_USERNAME,
   windowDays: number = DEFAULT_ACTIVITY_WINDOW_DAYS
 ): Promise<RepoActivity[]> {
-  const allRepos = await fetchRepositories(username, 50, 'updated', 'desc', false);
+  const allRepos = await loadRepositories(username, 50);
   const repos = filterRepositoriesByWindow(allRepos, windowDays);
 
   const now = Date.now();
