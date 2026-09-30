@@ -4,6 +4,7 @@ import { SITE_TITLE, SOCIAL_LINKS } from '../consts';
 const currentPath = Astro.url.pathname;
 
 const navLinks = [
+  { href: '/projects', label: 'Projects' },
   { href: '/about', label: 'About' },
   { href: '/blog', label: 'Blog' },
   { href: '/resume', label: 'Resume' },
@@ -55,7 +56,7 @@ const navLinks = [
 
   .nav-links {
     display: flex;
-    gap: var(--space-xl);
+    gap: var(--space-sm);
   }
 
   .nav-links a {
@@ -94,12 +95,18 @@ const navLinks = [
       font-size: var(--text-xl);
     }
 
+    nav {
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+    }
+
     .nav-links {
-      gap: var(--space-lg);
+      gap: 0;
     }
 
     .nav-links a {
       font-size: var(--text-sm);
+      padding: var(--space-sm);
     }
   }
 </style>
