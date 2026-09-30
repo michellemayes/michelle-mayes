@@ -1,0 +1,537 @@
+---
+import type { ShowcaseIcon, ShowcaseProject } from '../data/showcase';
+
+interface Props {
+  projects: ShowcaseProject[];
+  headingLevel?: 'h1' | 'h2';
+}
+
+const { projects, headingLevel = 'h2' } = Astro.props;
+const Heading = headingLevel;
+const [spotlight, ...rest] = projects;
+const totalStars = projects.reduce((sum, project) => sum + project.stars, 0);
+
+// Line icons (24x24, stroked) so the showcase stays emoji-free.
+const ICONS: Record<ShowcaseIcon, string> = {
+  pulse: '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/>',
+  sprout: '<path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/>',
+  wand: '<path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/>',
+  wrench: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  check: '<path d="M21 10.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.5"/><path d="m9 11 3 3L22 4"/>',
+  cart: '<circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>',
+  film: '<rect x="2" y="2" width="20" height="20" rx="2.18"/><path d="M7 2v20"/><path d="M17 2v20"/><path d="M2 12h20"/><path d="M2 7h5"/><path d="M2 17h5"/><path d="M17 17h5"/><path d="M17 7h5"/>',
+};
+
+const STAR = '<path d="M12 2.5l2.94 5.96 6.56.95-4.75 4.63 1.12 6.54L12 17.5l-5.87 3.08 1.12-6.54L2.5 9.41l6.56-.95z"/>';
+const FORK = '<circle cx="6" cy="5" r="2"/><circle cx="18" cy="5" r="2"/><circle cx="12" cy="19" r="2"/><path d="M6 7v2a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V7"/><path d="M12 12v5"/>';
+const SPARKLE = '<path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/>';
+
+function prettyHost(url: string): string {
+  try {
+    return new URL(url).host.replace(/^www\./, '');
+  } catch {
+    return 'Live site';
+  }
+}
+---
+
+{spotlight && (
+  <section class="showcase" aria-labelledby="showcase-title">
+    <div class="showcase-heading">
+      <span class="eyebrow">
+        <svg class="eyebrow-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" set:html={SPARKLE} />
+        Open Source
+      </span>
+      <Heading id="showcase-title">Tools people actually star</Heading>
+      <p>
+        Free, forkable, and in real use. These are the projects people install, fork, and
+        ask me about.
+      </p>
+      {totalStars > 0 && (
+        <p class="star-tally">
+          <svg class="star-tally-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" set:html={STAR} />
+          <strong>{totalStars}</strong> GitHub stars across these projects
+        </p>
+      )}
+    </div>
+
+    <article class={`project spotlight hue-${spotlight.hue}`}>
+      <div class="spotlight-art" aria-hidden="true">
+        <span class="sticker sticker-lg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={ICONS[spotlight.icon]} />
+        </span>
+        <svg class="sparkle s1" viewBox="0 0 24 24" fill="currentColor" set:html={SPARKLE} />
+        <svg class="sparkle s2" viewBox="0 0 24 24" fill="currentColor" set:html={SPARKLE} />
+        <svg class="sparkle s3" viewBox="0 0 24 24" fill="currentColor" set:html={SPARKLE} />
+      </div>
+      <div class="spotlight-body">
+        <span class="ribbon">Most starred</span>
+        <h3 class="project-name">
+          <a href={spotlight.url} target="_blank" rel="noopener noreferrer">{spotlight.name}</a>
+        </h3>
+        <p class="project-tagline">{spotlight.tagline}</p>
+        <p class="project-pitch">{spotlight.pitch}</p>
+        <ul class="stack" aria-label="Built with">
+          {spotlight.stack.map((tech) => <li>{tech}</li>)}
+        </ul>
+        <div class="project-footer">
+          <div class="counts">
+            <span class="count" title={`${spotlight.stars} GitHub stars`}>
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" set:html={STAR} />
+              {spotlight.stars}<span class="sr-only"> stars</span>
+            </span>
+            {spotlight.forks > 0 && (
+              <span class="count" title={`${spotlight.forks} forks`}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" set:html={FORK} />
+                {spotlight.forks}<span class="sr-only"> forks</span>
+              </span>
+            )}
+          </div>
+          <div class="links">
+            {spotlight.homepage && (
+              <a class="btn btn-solid" href={spotlight.homepage} target="_blank" rel="noopener noreferrer">
+                {prettyHost(spotlight.homepage)} <span aria-hidden="true">↗</span>
+              </a>
+            )}
+            <a class="btn btn-ghost" href={spotlight.url} target="_blank" rel="noopener noreferrer">
+              Source <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    {rest.length > 0 && (
+      <div class="project-grid">
+        {rest.map((project, index) => (
+          <article class={`project card hue-${project.hue}`} style={`--tilt: ${index % 2 === 0 ? -4 : 4}deg`}>
+            <div class="card-top">
+              <span class="sticker" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={ICONS[project.icon]} />
+              </span>
+              {project.stars > 0 ? (
+                <span class="count" title={`${project.stars} GitHub stars`}>
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" set:html={STAR} />
+                  {project.stars}<span class="sr-only"> stars</span>
+                </span>
+              ) : (
+                <span class="fresh">New</span>
+              )}
+            </div>
+            <h3 class="project-name">
+              <a href={project.url} target="_blank" rel="noopener noreferrer">{project.name}</a>
+            </h3>
+            <p class="project-tagline">{project.tagline}</p>
+            <p class="project-pitch">{project.pitch}</p>
+            <ul class="stack" aria-label="Built with">
+              {project.stack.map((tech) => <li>{tech}</li>)}
+            </ul>
+            <div class="links">
+              {project.homepage && (
+                <a class="btn btn-solid" href={project.homepage} target="_blank" rel="noopener noreferrer">
+                  Try it <span aria-hidden="true">↗</span>
+                </a>
+              )}
+              <a class="btn btn-ghost" href={project.url} target="_blank" rel="noopener noreferrer">
+                Source <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    )}
+  </section>
+)}
+
+<style>
+  .showcase {
+    margin-top: var(--space-2xl);
+  }
+
+  .showcase-heading {
+    text-align: center;
+    max-width: 620px;
+    margin: 0 auto var(--space-2xl);
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-dark);
+    background: var(--accent-50);
+    border: 1px dashed var(--accent-300);
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    margin-bottom: var(--space-md);
+  }
+
+  .showcase-heading h1,
+  .showcase-heading h2 {
+    font-size: var(--text-fluid-3xl);
+    margin-bottom: var(--space-sm);
+  }
+
+  .showcase-heading p {
+    color: var(--text-muted);
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+  }
+
+  .star-tally {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: var(--space-md);
+    font-size: var(--text-sm) !important;
+  }
+
+  .star-tally strong {
+    color: var(--text);
+    font-family: var(--font-mono);
+  }
+
+  .eyebrow-icon {
+    width: 12px;
+    height: 12px;
+  }
+
+  .star-tally-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--warm-light);
+    animation: twinkle 3s ease-in-out infinite;
+  }
+
+  /* Colour families */
+  .hue-violet { --tint: var(--accent-50); --tint-strong: var(--accent-100); --ink: var(--accent-dark); }
+  .hue-leaf   { --tint: var(--leaf-50);   --tint-strong: var(--leaf-100);   --ink: var(--leaf-dark); }
+  .hue-amber  { --tint: var(--warm-50);   --tint-strong: var(--warm-100);   --ink: var(--warm-dark); }
+  .hue-rose   { --tint: #FFF1F3;          --tint-strong: #FFE0E6;           --ink: #BE185D; }
+  .hue-sky    { --tint: #EFF8FF;          --tint-strong: #DBEEFE;           --ink: #0369A1; }
+
+  .project {
+    position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--tint-strong);
+    border-radius: 20px;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  }
+
+  .project:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 34px rgba(26, 26, 46, 0.1);
+  }
+
+  .project-name {
+    font-size: var(--text-xl);
+    margin: 0 0 4px;
+  }
+
+  .project-name a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .project-name a:hover {
+    color: var(--ink);
+  }
+
+  .project-tagline {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--ink);
+    font-size: var(--text-base);
+    margin-bottom: var(--space-sm);
+    line-height: var(--leading-normal);
+  }
+
+  .project-pitch {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+    margin-bottom: var(--space-md);
+  }
+
+  .stack {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: var(--space-md);
+  }
+
+  .stack li {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--tint);
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+  }
+
+  .count {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text);
+    background: var(--warm-50);
+    border: 1px solid var(--warm-100);
+    padding: 2px 10px;
+    border-radius: var(--radius-full);
+  }
+
+  .count svg {
+    width: 14px;
+    height: 14px;
+    color: var(--warm-light);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    padding: 0 var(--space-md);
+    border-radius: 12px;
+    font-size: var(--text-sm);
+    font-weight: 700;
+    text-decoration: none;
+    border: 1px solid var(--ink);
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+
+  .btn-solid {
+    background: var(--ink);
+    color: white;
+  }
+
+  .btn-solid:hover {
+    color: white;
+    transform: translateY(-1px);
+    filter: brightness(1.1);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+  }
+
+  .btn-ghost:hover {
+    background: var(--tint);
+    color: var(--ink);
+  }
+
+  /* Sticker glyphs */
+  .sticker {
+    display: inline-grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    color: var(--ink);
+    background: var(--tint);
+    border: 3px solid white;
+    border-radius: 16px;
+    box-shadow: 0 3px 0 var(--tint-strong), var(--shadow-sm);
+    transform: rotate(var(--tilt, -4deg));
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .sticker > svg {
+    width: 50%;
+    height: 50%;
+  }
+
+  .project:hover .sticker {
+    transform: rotate(calc(var(--tilt, -4deg) * -2)) scale(1.08);
+  }
+
+  /* Spotlight */
+  .spotlight {
+    display: grid;
+    grid-template-columns: minmax(200px, 0.8fr) 1.2fr;
+    overflow: hidden;
+    margin-bottom: var(--space-lg);
+  }
+
+  .spotlight-art {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 260px;
+    background:
+      radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.9) 0 12%, transparent 13%),
+      radial-gradient(circle at 70% 80%, var(--tint-strong) 0 30%, transparent 31%),
+      linear-gradient(160deg, var(--tint), var(--tint-strong));
+  }
+
+  .sticker-lg {
+    width: 128px;
+    height: 128px;
+    border-radius: 32px;
+    border-width: 5px;
+    --tilt: -6deg;
+    animation: bob 5s ease-in-out infinite;
+  }
+
+  .sparkle {
+    position: absolute;
+    color: var(--ink);
+    opacity: 0.55;
+    animation: twinkle 3.2s ease-in-out infinite;
+  }
+
+  .s1 { top: 18%; right: 20%; width: 20px; height: 20px; }
+  .s2 { bottom: 20%; left: 16%; width: 16px; height: 16px; animation-delay: 1s; }
+  .s3 { top: 60%; right: 12%; width: 12px; height: 12px; animation-delay: 2s; }
+
+  .spotlight-body {
+    padding: var(--space-xl);
+  }
+
+  .spotlight .project-name {
+    font-size: var(--text-fluid-2xl);
+  }
+
+  .spotlight .project-tagline {
+    font-size: var(--text-lg);
+  }
+
+  .ribbon {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--warm-dark);
+    background: var(--warm-100);
+    padding: 3px 10px;
+    border-radius: 6px;
+    transform: rotate(-2deg);
+    margin-bottom: var(--space-sm);
+  }
+
+  .project-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+  }
+
+  .counts {
+    display: flex;
+    gap: var(--space-sm);
+  }
+
+  /* Grid cards */
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+  }
+
+  .fresh {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    color: var(--accent-dark);
+    background: var(--accent-50);
+    border: 1px dashed var(--accent-300);
+    padding: 2px 10px;
+    border-radius: var(--radius-full);
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-lg);
+    background: linear-gradient(180deg, var(--bg-card) 60%, var(--tint));
+  }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+  }
+
+  .card .project-pitch {
+    flex: 1;
+  }
+
+  @keyframes bob {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 -8px; }
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.35; scale: 0.85; }
+    50% { opacity: 0.9; scale: 1.1; }
+  }
+
+  @media (max-width: 900px) {
+    .project-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 720px) {
+    .project-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .spotlight {
+      grid-template-columns: 1fr;
+    }
+
+    .spotlight-art {
+      min-height: 180px;
+    }
+
+    .sticker-lg {
+      width: 96px;
+      height: 96px;
+    }
+
+    .spotlight-body {
+      padding: var(--space-lg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sticker-lg,
+    .sparkle,
+    .star-tally-icon {
+      animation: none;
+    }
+
+    .project,
+    .sticker {
+      transition: none;
+    }
+
+    .project:hover {
+      transform: none;
+    }
+
+    .sticker,
+    .project:hover .sticker {
+      transform: rotate(var(--tilt, -4deg));
+    }
+  }
+</style>

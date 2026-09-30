@@ -6,7 +6,10 @@ const currentYear = new Date().getFullYear();
 
 <footer>
   <div class="footer-content">
-    <p class="copyright">&copy; {currentYear} Michelle Mayes</p>
+    <div class="footer-note">
+      <p class="copyright">&copy; {currentYear} Michelle Mayes</p>
+      <p class="made-with">Made in Austin with Astro, coffee, and too many side projects.</p>
+    </div>
     <div class="social-links">
       <a href={SOCIAL_LINKS.github} target="_blank" rel="noopener" aria-label="GitHub">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -51,6 +54,11 @@ const currentYear = new Date().getFullYear();
     color: var(--text-muted);
   }
 
+  .made-with {
+    font-size: var(--text-xs);
+    color: var(--text-light);
+  }
+
   .social-links {
     display: flex;
     gap: var(--space-lg);
@@ -92,6 +100,7 @@ const currentYear = new Date().getFullYear();
     .footer-content {
       flex-direction: column;
       gap: var(--space-md);
+      text-align: center;
     }
   }
 </style>

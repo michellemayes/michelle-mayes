@@ -2,13 +2,20 @@
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
+import OpenSourceShowcase from '../components/OpenSourceShowcase.astro';
 import { SITE_TITLE, GITHUB_USERNAME } from '../consts';
+import { buildShowcase } from '../data/showcase';
 import { bucketProjects, getProjectDescription, loadRepositories } from '../lib/projects';
 
 export const prerender = true;
 
 const repositories = await loadRepositories(GITHUB_USERNAME);
-const { featured: featuredRepositories, catalog: catalogRepositories } = bucketProjects(repositories, 3);
+const showcase = buildShowcase(repositories);
+const showcased = new Set(showcase.map((project) => project.url));
+const { catalog: catalogRepositories } = bucketProjects(
+  repositories.filter((repo) => !showcased.has(repo.html_url)),
+  0
+);
 ---
 
 <!doctype html>
@@ -16,7 +23,7 @@ const { featured: featuredRepositories, catalog: catalogRepositories } = bucketP
   <head>
     <BaseHead
       title={`Projects - ${SITE_TITLE}`}
-      description="Selected projects with impact-focused summaries, followed by the full GitHub catalog."
+      description="Most-starred open source projects by Michelle Mayes, plus the full GitHub catalog of experiments and prototypes."
     />
   </head>
   <body>
@@ -25,53 +32,17 @@ const { featured: featuredRepositories, catalog: catalogRepositories } = bucketP
       <div class="section-header">
         <h1>Selected Work</h1>
         <p>
-          Highlighted projects with the strongest impact, plus the full GitHub catalog.
+          The open source projects I'm proudest of, plus everything else on my GitHub.
         </p>
       </div>
 
-      {featuredRepositories.length > 0 && (
-        <section class="featured-section">
-          <div class="section-heading">
-            <h2>Featured Case Studies</h2>
-            <p>Projects with the most traction and clearest outcomes.</p>
-          </div>
-
-          <div class="featured-grid">
-            {featuredRepositories.map((repo) => (
-              <article class="featured-card">
-                <div class="featured-header">
-                  <h3>
-                    <a href={repo.html_url} target="_blank" rel="noopener noreferrer">{repo.name}</a>
-                  </h3>
-                  <span class="focus-chip">{repo.focusArea}</span>
-                </div>
-
-                <p class="featured-summary">
-                  {getProjectDescription(repo.description)}
-                </p>
-
-                <p class="impact-line">{repo.impactSignal}</p>
-
-                <div class="featured-meta">
-                  <span>⭐ {repo.stargazers_count}</span>
-                  <span>🍴 {repo.forks_count}</span>
-                  <span>Updated {new Date(repo.updated_at).toLocaleDateString()}</span>
-                </div>
-
-                <a href={repo.html_url} class="project-link" target="_blank" rel="noopener noreferrer">
-                  View on GitHub
-                </a>
-              </article>
-            ))}
-          </div>
-        </section>
-      )}
+      <OpenSourceShowcase projects={showcase} />
 
       {catalogRepositories.length > 0 && (
         <section class="catalog-section">
           <div class="section-heading">
-            <h2>Project Catalog</h2>
-            <p>All active repositories, sorted by recent updates.</p>
+            <h2>More Experiments</h2>
+            <p>Experiments, prototypes, and side quests, ranked by traction and recency.</p>
           </div>
 
           <div class="projects-grid">
@@ -147,8 +118,8 @@ const { featured: featuredRepositories, catalog: catalogRepositories } = bucketP
     line-height: var(--leading-normal);
   }
 
-  .featured-section,
   .catalog-section {
+    margin-top: var(--space-3xl);
     margin-bottom: var(--space-2xl);
   }
 
@@ -164,74 +135,6 @@ const { featured: featuredRepositories, catalog: catalogRepositories } = bucketP
   .section-heading p {
     color: var(--text-muted);
     margin: 0;
-  }
-
-  .featured-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--space-md);
-  }
-
-  .featured-card {
-    background: linear-gradient(135deg, var(--bg-card), var(--accent-50));
-    border: 1px solid var(--accent-100);
-    border-radius: var(--radius-xl);
-    padding: var(--space-lg);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-    box-shadow: var(--shadow-sm);
-  }
-
-  .featured-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-sm);
-  }
-
-  .featured-header h3 {
-    margin: 0;
-    font-size: var(--text-xl);
-  }
-
-  .featured-header a {
-    color: var(--text);
-    text-decoration: none;
-  }
-
-  .featured-header a:hover {
-    color: var(--accent-dark);
-  }
-
-  .focus-chip {
-    font-size: var(--text-xs);
-    font-weight: 700;
-    color: var(--warm-dark);
-    background: var(--warm-50);
-    border-radius: var(--radius-full);
-    padding: var(--space-xs) var(--space-sm);
-    white-space: nowrap;
-  }
-
-  .featured-summary {
-    margin: 0;
-    color: var(--text);
-    line-height: var(--leading-normal);
-  }
-
-  .impact-line {
-    margin: 0;
-    color: var(--text-muted);
-    font-size: var(--text-sm);
-  }
-
-  .featured-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-sm);
-    font-size: var(--text-xs);
-    color: var(--text-muted);
   }
 
   .projects-grid {
@@ -375,14 +278,6 @@ const { featured: featuredRepositories, catalog: catalogRepositories } = bucketP
   @media (max-width: 480px) {
     main {
       padding: var(--space-sm);
-    }
-
-    .featured-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .featured-card {
-      padding: var(--space-md);
     }
 
     .section-heading p {

@@ -3,20 +3,35 @@ import type { GitHubStats } from '../lib/stats';
 
 interface Props {
   stats: GitHubStats;
+  currentlyBuilding?: { name: string; url: string } | null;
 }
 
-const { stats } = Astro.props;
+const { stats, currentlyBuilding = null } = Astro.props;
 
 const statItems = [
   { value: stats.totalRepos, label: 'Projects', suffix: '' },
   { value: stats.recentActivity, label: 'Updated This Month', suffix: '' },
   { value: stats.primaryLanguagePercent, label: stats.primaryLanguage, suffix: '%' },
   { value: stats.avgDaysToShip || '—', label: 'Avg Days to Ship', suffix: stats.avgDaysToShip ? 'd' : '' },
-];
+].filter((stat) => stat.value !== 0 && stat.value !== '—');
 ---
 
 <section class="hero-stats">
+  <div class="hero-doodles" aria-hidden="true">
+    <span class="blob blob-violet"></span>
+    <span class="blob blob-amber"></span>
+    <span class="doodle d1"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/></svg></span>
+    <span class="doodle d2"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/></svg></span>
+    <span class="doodle d3"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/></svg></span>
+    <span class="doodle d4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 3"><circle cx="12" cy="12" r="9"/></svg></span>
+  </div>
   <div class="hero-content">
+    {currentlyBuilding && (
+      <a class="now-pill" href={currentlyBuilding.url} target="_blank" rel="noopener noreferrer">
+        <span class="now-dot" aria-hidden="true"></span>
+        Currently tinkering on <strong>{currentlyBuilding.name}</strong>
+      </a>
+    )}
     <div class="avatar-wrapper">
       <div class="avatar-glow"></div>
       <img
@@ -28,14 +43,23 @@ const statItems = [
         fetchpriority="high"
       />
     </div>
-    <h1 class="hero-name">Michelle Mayes</h1>
+    <h1 class="hero-name">
+      Michelle Mayes
+      <svg class="squiggle" viewBox="0 0 300 16" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M2 10 C 40 2, 70 16, 110 8 S 180 2, 220 9 S 280 14, 298 6" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" />
+      </svg>
+    </h1>
     <p class="hero-tagline">I ship fast. AI keeps up.</p>
     <p class="hero-subline">
-      Product-minded full-stack builder. Practical AI workflows, web apps, and measurable outcomes.
+      Product-minded full-stack builder making practical AI tools, cozy Mac apps, and the
+      occasional grocery robot. Always with measurable outcomes.
     </p>
 
     <div class="hero-cta">
-      <a href="/projects" class="hero-link primary">View Projects</a>
+      <a href="#showcase-title" class="hero-link primary">
+        See the open source
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </a>
       <a href="/resume" class="hero-link secondary">View Resume</a>
     </div>
 
@@ -108,6 +132,125 @@ const statItems = [
     text-align: center;
     padding: var(--space-3xl) 0;
     position: relative;
+  }
+
+  /* Background doodles */
+  .hero-doodles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.35;
+  }
+
+  .blob-violet {
+    width: 320px;
+    height: 320px;
+    background: var(--accent-200);
+    top: 18%;
+    left: 8%;
+    animation: drift 14s ease-in-out infinite;
+  }
+
+  .blob-amber {
+    width: 260px;
+    height: 260px;
+    background: var(--warm-100);
+    bottom: 10%;
+    right: 8%;
+    animation: drift 18s ease-in-out infinite reverse;
+  }
+
+  .doodle {
+    position: absolute;
+    color: var(--accent-300);
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .doodle svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .d1 { top: 14%; left: 18%; width: 22px; height: 22px; }
+  .d2 { top: 22%; right: 16%; width: 26px; height: 26px; color: var(--warm-light); opacity: 0.6; animation-delay: 1.5s; }
+  .d3 { bottom: 30%; left: 10%; width: 16px; height: 16px; animation-delay: 3s; }
+  .d4 { bottom: 18%; right: 22%; width: 22px; height: 22px; animation-delay: 2s; }
+
+  @keyframes drift {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(30px, 20px); }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(12deg); }
+  }
+
+  /* "Currently tinkering" pill */
+  .now-pill {
+    display: flex;
+    width: fit-content;
+    margin-inline: auto;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+    padding: 4px 14px;
+    margin-bottom: var(--space-lg);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    background: var(--bg-card);
+    border: 1px solid var(--accent-100);
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-sm);
+    text-decoration: none;
+    opacity: 0;
+    animation: fade-up 0.6s ease-out 0.1s forwards;
+  }
+
+  .now-pill strong {
+    color: var(--text);
+  }
+
+  .now-pill:hover {
+    color: var(--text);
+    border-color: var(--accent-300);
+  }
+
+  .now-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--leaf);
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5);
+    animation: ping 2s ease-out infinite;
+  }
+
+  @keyframes ping {
+    0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5); }
+    80%, 100% { box-shadow: 0 0 0 8px rgba(22, 163, 74, 0); }
+  }
+
+  .squiggle {
+    display: block;
+    width: min(70%, 320px);
+    height: 14px;
+    margin: 2px auto 0;
+    color: var(--warm-light);
+    stroke-dasharray: 360;
+    stroke-dashoffset: 360;
+    animation: draw 1s ease-out 0.8s forwards;
+  }
+
+  @keyframes draw {
+    to { stroke-dashoffset: 0; }
   }
 
   .hero-content {
@@ -211,6 +354,7 @@ const statItems = [
     font-size: var(--text-sm);
     font-weight: 600;
     text-decoration: none;
+    gap: 6px;
     border: 1px solid transparent;
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   }
@@ -346,6 +490,18 @@ const statItems = [
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .blob,
+    .doodle,
+    .now-dot {
+      animation: none;
+    }
+
+    .squiggle {
+      animation: none;
+      stroke-dashoffset: 0;
+    }
+
+    .now-pill,
     .avatar-glow,
     .hero-name,
     .hero-tagline,
