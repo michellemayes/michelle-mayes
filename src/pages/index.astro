@@ -50,9 +50,9 @@ const personSchema = {
 
       <section class="timeline-section">
         <div class="timeline-heading">
-          <span class="eyebrow"><span aria-hidden="true">⛵</span> The Shipping Log</span>
+          <span class="eyebrow">The Shipping Log</span>
           <h2>Everything else I've shipped</h2>
-          <p>Every push, prototype, and late-night experiment, newest first. Tap the ✦ for the details.</p>
+          <p>Every push, prototype, and late-night experiment, newest first. Expand any card for the details.</p>
         </div>
         <Timeline items={timelineItems} />
       </section>
@@ -60,7 +60,7 @@ const personSchema = {
       <!-- Contact CTA -->
       <section class="contact-section">
         <div class="contact-card">
-          <span class="contact-doodle" aria-hidden="true">☕</span>
+          <svg class="contact-doodle" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v2"/><path d="M14 2v2"/><path d="M6 2v2"/><path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/></svg>
           <h2>Let's Build Something</h2>
           <p>Have a project in mind, a wild idea, or just want to talk AI and product development? Grab a coffee with me.</p>
           <a href="https://calendar.app.google/yYSHV4KQ4zJsxkdt5" target="_blank" rel="noopener noreferrer" class="cta-button">
@@ -124,7 +124,7 @@ const personSchema = {
 
   .contact-doodle {
     display: inline-block;
-    font-size: 2rem;
+    color: var(--warm);
     margin-bottom: var(--space-sm);
     transform: rotate(-8deg);
     transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);

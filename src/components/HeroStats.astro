@@ -20,10 +20,10 @@ const statItems = [
   <div class="hero-doodles" aria-hidden="true">
     <span class="blob blob-violet"></span>
     <span class="blob blob-amber"></span>
-    <span class="doodle d1">✦</span>
-    <span class="doodle d2">✿</span>
-    <span class="doodle d3">✧</span>
-    <span class="doodle d4">◌</span>
+    <span class="doodle d1"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/></svg></span>
+    <span class="doodle d2"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/></svg></span>
+    <span class="doodle d3"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/></svg></span>
+    <span class="doodle d4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 3"><circle cx="12" cy="12" r="9"/></svg></span>
   </div>
   <div class="hero-content">
     {currentlyBuilding && (
@@ -34,7 +34,6 @@ const statItems = [
     )}
     <div class="avatar-wrapper">
       <div class="avatar-glow"></div>
-      <span class="avatar-badge" aria-hidden="true">👋</span>
       <img
         src="/avatar.jpg"
         alt="Michelle Mayes"
@@ -57,7 +56,10 @@ const statItems = [
     </p>
 
     <div class="hero-cta">
-      <a href="#greenhouse-title" class="hero-link primary">See the open source <span aria-hidden="true">🌱</span></a>
+      <a href="#showcase-title" class="hero-link primary">
+        See the open source
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </a>
       <a href="/resume" class="hero-link secondary">View Resume</a>
     </div>
 
@@ -171,10 +173,16 @@ const statItems = [
     animation: float 6s ease-in-out infinite;
   }
 
-  .d1 { top: 14%; left: 18%; font-size: 1.5rem; }
-  .d2 { top: 22%; right: 16%; font-size: 1.75rem; color: var(--warm-light); opacity: 0.6; animation-delay: 1.5s; }
-  .d3 { bottom: 30%; left: 10%; font-size: 1.1rem; animation-delay: 3s; }
-  .d4 { bottom: 18%; right: 22%; font-size: 1.4rem; animation-delay: 2s; }
+  .doodle svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .d1 { top: 14%; left: 18%; width: 22px; height: 22px; }
+  .d2 { top: 22%; right: 16%; width: 26px; height: 26px; color: var(--warm-light); opacity: 0.6; animation-delay: 1.5s; }
+  .d3 { bottom: 30%; left: 10%; width: 16px; height: 16px; animation-delay: 3s; }
+  .d4 { bottom: 18%; right: 22%; width: 22px; height: 22px; animation-delay: 2s; }
 
   @keyframes drift {
     0%, 100% { transform: translate(0, 0); }
@@ -228,32 +236,6 @@ const statItems = [
   @keyframes ping {
     0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5); }
     80%, 100% { box-shadow: 0 0 0 8px rgba(22, 163, 74, 0); }
-  }
-
-  .avatar-badge {
-    position: absolute;
-    right: 4px;
-    bottom: 8px;
-    z-index: 2;
-    display: grid;
-    place-items: center;
-    width: 44px;
-    height: 44px;
-    font-size: 1.4rem;
-    background: var(--bg-card);
-    border-radius: 50%;
-    box-shadow: var(--shadow-md);
-    transform-origin: 70% 70%;
-  }
-
-  .avatar-wrapper:hover .avatar-badge {
-    animation: wave 1s ease-in-out;
-  }
-
-  @keyframes wave {
-    0%, 100% { transform: rotate(0deg); }
-    20%, 60% { transform: rotate(18deg); }
-    40%, 80% { transform: rotate(-10deg); }
   }
 
   .squiggle {
@@ -510,8 +492,7 @@ const statItems = [
   @media (prefers-reduced-motion: reduce) {
     .blob,
     .doodle,
-    .now-dot,
-    .avatar-wrapper:hover .avatar-badge {
+    .now-dot {
       animation: none;
     }
 
