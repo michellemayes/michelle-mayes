@@ -7,7 +7,9 @@ import { SITE_TITLE, GITHUB_USERNAME } from '../consts';
 import { buildShowcase } from '../data/showcase';
 import { bucketProjects, getProjectDescription, loadRepositories } from '../lib/projects';
 
-export const prerender = true;
+// Render on request so new repos and star counts show up without a redeploy.
+// The CDN serves a cached copy for 5 minutes, then refreshes in the background.
+Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, stale-while-revalidate=86400');
 
 const repositories = await loadRepositories(GITHUB_USERNAME);
 const showcase = buildShowcase(repositories);
