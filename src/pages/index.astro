@@ -10,7 +10,9 @@ import { buildShowcase } from '../data/showcase';
 import { getHomeData } from '../lib/home-data';
 import { loadRepositories } from '../lib/projects';
 
-export const prerender = true;
+// Render on request so new repos and star counts show up without a redeploy.
+// The CDN serves a cached copy for 5 minutes, then refreshes in the background.
+Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, stale-while-revalidate=86400');
 
 const [{ stats, timelineItems }, repositories] = await Promise.all([
 	getHomeData(),

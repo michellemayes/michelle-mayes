@@ -51,3 +51,11 @@ test('projects page uses the resilient loader, not the raw fetch', () => {
   assert.match(page, /loadRepositories/);
   assert.doesNotMatch(page, /fetchRepositories/);
 });
+
+test('GitHub-driven pages render on request so stars and repos stay current', () => {
+  for (const page of ['src/pages/index.astro', 'src/pages/projects.astro']) {
+    const source = fs.readFileSync(path.join(repoRoot, page), 'utf8');
+    assert.doesNotMatch(source, /export const prerender = true/, `${page} must not be prerendered`);
+    assert.match(source, /s-maxage=\d+/, `${page} must set a CDN cache window`);
+  }
+});
