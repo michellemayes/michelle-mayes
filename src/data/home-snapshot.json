@@ -12,7 +12,6 @@
       "Swift": 8
     },
     "recentActivity": 3,
-    "avgDaysToShip": null,
     "streak": 6
   },
   "timelineItems": [
@@ -28,7 +27,6 @@
       "repoUrl": "https://github.com/michellemayes/nootle",
       "repoName": "nootle",
       "language": "Rust",
-      "daysToShip": null,
       "tags": [],
       "stars": 0,
       "forks": 0,
@@ -46,7 +44,6 @@
       "repoUrl": "https://github.com/michellemayes/terrarium",
       "repoName": "terrarium",
       "language": "TypeScript",
-      "daysToShip": null,
       "tags": [],
       "stars": 12,
       "forks": 0,
@@ -64,7 +61,6 @@
       "repoUrl": "https://github.com/michellemayes/michelle-mayes",
       "repoName": "michelle-mayes",
       "language": "Astro",
-      "daysToShip": null,
       "tags": [
         "astro"
       ],
@@ -84,7 +80,6 @@
       "repoUrl": "https://github.com/michellemayes/heb-grocery-agent",
       "repoName": "heb-grocery-agent",
       "language": "TypeScript",
-      "daysToShip": null,
       "tags": [
         "chrome-extension"
       ],
@@ -104,7 +99,6 @@
       "repoUrl": "https://github.com/michellemayes/vibe-tooling",
       "repoName": "vibe-tooling",
       "language": null,
-      "daysToShip": null,
       "tags": [],
       "stars": 6,
       "forks": 0,
@@ -122,7 +116,6 @@
       "repoUrl": "https://github.com/michellemayes/AnimaMac",
       "repoName": "AnimaMac",
       "language": "Swift",
-      "daysToShip": null,
       "tags": [],
       "stars": 1,
       "forks": 1,
@@ -140,7 +133,6 @@
       "repoUrl": "https://github.com/michellemayes/morning-byte",
       "repoName": "morning-byte",
       "language": "Python",
-      "daysToShip": null,
       "tags": [],
       "stars": 0,
       "forks": 0,
@@ -158,7 +150,6 @@
       "repoUrl": "https://github.com/michellemayes/evoloop",
       "repoName": "evoloop",
       "language": "TypeScript",
-      "daysToShip": null,
       "tags": [],
       "stars": 0,
       "forks": 0,
@@ -176,7 +167,6 @@
       "repoUrl": "https://github.com/michellemayes/logseq-ai-chat",
       "repoName": "logseq-ai-chat",
       "language": "TypeScript",
-      "daysToShip": null,
       "tags": [
         "electron",
         "groq",
@@ -198,7 +188,6 @@
       "repoUrl": "https://github.com/michellemayes/logseq-assistant",
       "repoName": "logseq-assistant",
       "language": "Python",
-      "daysToShip": null,
       "tags": [
         "codex-cli",
         "logseq"
@@ -219,7 +208,6 @@
       "repoUrl": "https://github.com/michellemayes/datespark",
       "repoName": "datespark",
       "language": "TypeScript",
-      "daysToShip": null,
       "tags": [
         "lovable"
       ],
@@ -239,7 +227,6 @@
       "repoUrl": "https://github.com/michellemayes/austin-terrain-web",
       "repoName": "austin-terrain-web",
       "language": "TypeScript",
-      "daysToShip": null,
       "tags": [
         "nextjs",
         "react",

@@ -1,4 +1,4 @@
-import { fetchShipDate, fetchCommitActivity, type GitHubRepository } from './github';
+import { fetchCommitActivity, type GitHubRepository } from './github';
 import { loadRepositories } from './projects';
 import { GITHUB_USERNAME } from '../consts';
 
@@ -11,7 +11,6 @@ export interface GitHubStats {
   primaryLanguagePercent: number;
   languageBreakdown: Record<string, number>;
   recentActivity: number; // Repos updated in last 30 days
-  avgDaysToShip: number | null; // Average days between created and first major update
   streak: number; // Days with activity (approximate)
 }
 
@@ -19,7 +18,6 @@ export interface RepoActivity {
   repo: GitHubRepository;
   daysSinceUpdate: number;
   daysSinceCreated: number;
-  daysToShip: number | null; // Days from repo creation to first PR/commit
   commitActivity: number[]; // Weekly commit counts (last 12 weeks)
   isRecent: boolean;
 }
@@ -51,7 +49,6 @@ export async function calculateStats(
       primaryLanguagePercent: 0,
       languageBreakdown: {},
       recentActivity: 0,
-      avgDaysToShip: null,
       streak: 0,
     };
   }
@@ -83,16 +80,6 @@ export async function calculateStats(
     repo => new Date(repo.updated_at).getTime() > thirtyDaysAgo
   ).length;
 
-  // Calculate average days to ship using actual first PR/commit dates
-  const repoActivity = await getRepoActivity(username, windowDays);
-  const shipTimes = repoActivity
-    .filter(a => a.daysToShip !== null && a.daysToShip > 0)
-    .map(a => a.daysToShip as number);
-
-  const avgDaysToShip = shipTimes.length > 0
-    ? Math.round(shipTimes.reduce((a, b) => a + b, 0) / shipTimes.length)
-    : null;
-
   // Estimate streak from recent repos
   const streak = Math.min(recentActivity * 2, 30); // Rough approximation
 
@@ -103,7 +90,6 @@ export async function calculateStats(
     primaryLanguagePercent,
     languageBreakdown,
     recentActivity,
-    avgDaysToShip,
     streak,
   };
 }
@@ -121,38 +107,24 @@ export async function getRepoActivity(
   const now = Date.now();
   const thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000;
 
-  // Fetch ship dates and commit activity for recent repos (limit API calls)
+  // Fetch commit activity for recent repos (limit API calls)
   const recentRepos = repos.slice(0, 20);
-  const [shipDates, commitActivities] = await Promise.all([
-    Promise.all(recentRepos.map(repo => fetchShipDate(username, repo.name))),
-    Promise.all(recentRepos.map(repo => fetchCommitActivity(username, repo.name))),
-  ]);
+  const commitActivities = await Promise.all(
+    recentRepos.map(repo => fetchCommitActivity(username, repo.name))
+  );
 
-  const shipDateMap = new Map<string, Date | null>();
   const commitActivityMap = new Map<string, number[]>();
   recentRepos.forEach((repo, i) => {
-    shipDateMap.set(repo.name, shipDates[i]);
     commitActivityMap.set(repo.name, commitActivities[i]);
   });
 
   return repos.map(repo => {
     const createdAt = new Date(repo.created_at).getTime();
-    const shipDate = shipDateMap.get(repo.name);
-    let daysToShip: number | null = null;
-
-    if (shipDate) {
-      const daysDiff = Math.floor((shipDate.getTime() - createdAt) / (24 * 60 * 60 * 1000));
-      // Only show if it's a reasonable timeframe (0-365 days)
-      if (daysDiff >= 0 && daysDiff < 365) {
-        daysToShip = daysDiff;
-      }
-    }
 
     return {
       repo,
       daysSinceUpdate: Math.floor((now - new Date(repo.updated_at).getTime()) / (24 * 60 * 60 * 1000)),
       daysSinceCreated: Math.floor((now - createdAt) / (24 * 60 * 60 * 1000)),
-      daysToShip,
       commitActivity: commitActivityMap.get(repo.name) || [],
       isRecent: new Date(repo.updated_at).getTime() > thirtyDaysAgo,
     };
