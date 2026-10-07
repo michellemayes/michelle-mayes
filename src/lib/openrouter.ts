@@ -12,7 +12,6 @@ export interface TimelineItem {
   repoUrl: string;
   repoName: string;
   language: string | null;
-  daysToShip: number | null;
   tags: string[];
   stars: number;
   forks: number;
@@ -115,7 +114,6 @@ function buildPrompt(activities: RepoActivity[]): string {
     description: a.repo.description,
     language: a.repo.language,
     daysOld: a.daysSinceCreated,
-    daysToShip: a.daysToShip, // Days from creation to first PR/commit
     stars: a.repo.stargazers_count,
     topics: a.repo.topics,
   }));
@@ -158,7 +156,6 @@ function createBasicTimelineItem(activity: RepoActivity): TimelineItem {
     repoUrl: activity.repo.html_url,
     repoName: activity.repo.name,
     language: activity.repo.language,
-    daysToShip: activity.daysToShip,
     tags: activity.repo.topics?.slice(0, 3) || [],
     stars: activity.repo.stargazers_count,
     forks: activity.repo.forks_count,

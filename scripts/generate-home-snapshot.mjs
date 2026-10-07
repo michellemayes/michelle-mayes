@@ -20,7 +20,7 @@ const now = Date.now();
 const repos = JSON.parse(readFileSync(join(dataDir, 'projects-snapshot.json'), 'utf8'));
 const inWindow = repos.filter((r) => new Date(r.created_at).getTime() >= now - WINDOW_DAYS * DAY_MS);
 
-// --- stats (mirrors calculateStats; avgDaysToShip needs the live API so stays null) ---
+// --- stats (mirrors calculateStats) ---
 const languageCounts = {};
 for (const r of inWindow) {
   if (r.language) languageCounts[r.language] = (languageCounts[r.language] || 0) + 1;
@@ -45,7 +45,6 @@ const stats = {
   primaryLanguagePercent,
   languageBreakdown,
   recentActivity,
-  avgDaysToShip: null,
   streak: Math.min(recentActivity * 2, 30),
 };
 
@@ -71,7 +70,6 @@ const timelineItems = inWindow.map((r) => {
     repoUrl: r.html_url,
     repoName: r.name,
     language: r.language,
-    daysToShip: null,
     tags: r.topics?.slice(0, 3) || [],
     stars: r.stargazers_count,
     forks: r.forks_count,

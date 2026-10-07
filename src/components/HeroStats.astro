@@ -12,8 +12,7 @@ const statItems = [
   { value: stats.totalRepos, label: 'Projects', suffix: '' },
   { value: stats.recentActivity, label: 'Updated This Month', suffix: '' },
   { value: stats.primaryLanguagePercent, label: stats.primaryLanguage, suffix: '%' },
-  { value: stats.avgDaysToShip || '—', label: 'Avg Days to Ship', suffix: stats.avgDaysToShip ? 'd' : '' },
-].filter((stat) => stat.value !== 0 && stat.value !== '—');
+].filter((stat) => stat.value !== 0);
 ---
 
 <section class="hero-stats">
