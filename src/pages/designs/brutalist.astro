@@ -1,0 +1,668 @@
+---
+import DesignHead from '../../components/designs/DesignHead.astro';
+import DesignSwitcher from '../../components/designs/DesignSwitcher.astro';
+import { NAV_LINKS, PROFILE, formatShortDate, getDesignData } from '../../lib/design-data';
+
+export const prerender = true;
+
+const { stats, timeline, showcase, currentlyBuilding, totalStars } = getDesignData();
+const tilts = [-3, 2, -1.5, 3, -2, 1.5, -2.5];
+const tickerWords = ['Claude Code', 'TypeScript', 'Rust', 'Tauri', 'Swift', 'Python', 'Astro', 'RAG', 'Chrome Extensions', 'macOS apps', 'Product sense'];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <DesignHead
+      title="Sticker Brutal"
+      themeColor="#FFF7E0"
+      fonts="family=Archivo+Black&family=Space+Grotesk:wght@400;500;700"
+    />
+  </head>
+  <body>
+    <header class="bar">
+      <a href="/" class="logo">MM<span>*</span></a>
+      <nav aria-label="Main navigation">
+        {NAV_LINKS.map(({ href, label }) => <a href={href}>{label}</a>)}
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-text">
+          {currentlyBuilding && (
+            <a class="now" href={currentlyBuilding.repoUrl}>● NOW BUILDING: {currentlyBuilding.title}</a>
+          )}
+          <h1>Michelle<br />Mayes</h1>
+          <p class="tagline"><mark>{PROFILE.tagline}</mark></p>
+          <p class="sub">{PROFILE.subline}</p>
+          <div class="actions">
+            <a class="btn pink" href="#stickers">See the stuff ↓</a>
+            <a class="btn" href="/resume">Resume</a>
+          </div>
+        </div>
+        <div class="hero-photo">
+          <figure class="polaroid">
+            <img src={PROFILE.avatar} alt="Michelle Mayes" width="400" height="400" loading="eager" />
+            <figcaption>that’s me ✌︎</figcaption>
+          </figure>
+          <span class="burst" aria-hidden="true">HI!</span>
+        </div>
+      </section>
+
+      <div class="ticker-clip" aria-hidden="true">
+        <div class="ticker">
+          <div class="ticker-track">
+            {[...tickerWords, ...tickerWords].map((word) => <span>{word} ✱</span>)}
+          </div>
+        </div>
+      </div>
+
+      <section class="stats" aria-label="Stats">
+        <div class="stat lime"><b>{stats.totalRepos}</b><span>projects</span></div>
+        <div class="stat sky"><b>{totalStars}</b><span>github stars</span></div>
+        <div class="stat orange"><b>{stats.recentActivity}</b><span>updated this month</span></div>
+        <div class="stat violet"><b>{stats.primaryLanguagePercent}%</b><span>{stats.primaryLanguage}</span></div>
+      </section>
+
+      <section class="section" id="stickers" aria-labelledby="sticker-title">
+        <h2 class="section-title" id="sticker-title">Open source <span>stickers</span></h2>
+        <div class="stickers">
+          {showcase.map((project, i) => (
+            <a class={`sticker hue-${project.hue}`} href={project.url} style={`--tilt: ${tilts[i % tilts.length]}deg`}>
+              <span class="sticker-top">
+                <span class="tag">{project.stack[0]}</span>
+                {project.stars > 0 && <span class="star">★ {project.stars}</span>}
+              </span>
+              <h3>{project.name}</h3>
+              <p class="sticker-tagline">{project.tagline}</p>
+              <p>{project.pitch}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="log-title">
+        <h2 class="section-title" id="log-title">The shipping <span>log</span></h2>
+        <ol class="log">
+          {timeline.map((item) => (
+            <li>
+              <time datetime={item.date}>{formatShortDate(item.date)}</time>
+              <a href={item.repoUrl}>{item.title}</a>
+              <p>{item.description}</p>
+              {item.language && <span class="lang">{item.language}</span>}
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section class="cta">
+        <h2>Let’s build something loud.</h2>
+        <p>Got a project, a wild idea, or want to nerd out about AI and product? Grab a coffee with me.</p>
+        <a class="btn big" href={PROFILE.calendarUrl} target="_blank" rel="noopener noreferrer">Schedule a chat →</a>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <span>© {new Date().getFullYear()} Michelle Mayes</span>
+      <span class="foot-links">
+        <a href={PROFILE.social.github}>GitHub</a>
+        <a href={PROFILE.social.linkedin}>LinkedIn</a>
+        <a href={PROFILE.social.twitter}>X</a>
+        <a href={PROFILE.email}>Email</a>
+      </span>
+    </footer>
+
+    <DesignSwitcher slug="brutalist" />
+  </body>
+</html>
+
+<style>
+  :global(*),
+  :global(*::before),
+  :global(*::after) {
+    box-sizing: border-box;
+  }
+
+  :global(:root) {
+    --ink: #111111;
+    --paper: #FFF7E0;
+    --pink: #FF5FA2;
+    --lime: #C6F432;
+    --sky: #6ED3FF;
+    --orange: #FF9F1C;
+    --violet: #B69CFF;
+    --yellow: #FFE14D;
+    --border: 3px solid var(--ink);
+    --shadow: 6px 6px 0 var(--ink);
+  }
+
+  :global(body) {
+    margin: 0;
+    background: var(--paper);
+    background-image: radial-gradient(rgba(17, 17, 17, 0.12) 1px, transparent 1px);
+    background-size: 18px 18px;
+    color: var(--ink);
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    padding-bottom: 88px;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  a:focus-visible {
+    outline: 3px dashed var(--pink);
+    outline-offset: 4px;
+  }
+
+  .bar {
+    max-width: 1160px;
+    margin: 20px auto 0;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .logo {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 28px;
+    text-decoration: none;
+    background: var(--yellow);
+    border: var(--border);
+    box-shadow: 4px 4px 0 var(--ink);
+    padding: 2px 12px;
+  }
+
+  .logo span {
+    color: var(--pink);
+  }
+
+  .bar nav {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .bar nav a {
+    font-weight: 700;
+    text-decoration: none;
+    background: #FFFFFF;
+    border: var(--border);
+    box-shadow: 4px 4px 0 var(--ink);
+    padding: 6px 14px;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+  }
+
+  .bar nav a:hover,
+  .btn:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+
+  .bar nav a:active,
+  .btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 var(--ink);
+  }
+
+  main {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 40px;
+    align-items: center;
+    padding: 56px 0 40px;
+  }
+
+  .now {
+    display: inline-block;
+    margin-bottom: 18px;
+    padding: 4px 10px;
+    background: var(--lime);
+    border: var(--border);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+  }
+
+  h1 {
+    margin: 0;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(3.4rem, 9vw, 7rem);
+    line-height: 0.88;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+  }
+
+  .tagline {
+    margin: 24px 0 12px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+  }
+
+  mark {
+    background: var(--yellow);
+    color: inherit;
+    padding: 0 8px;
+    border: var(--border);
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
+  .sub {
+    margin: 0 0 28px;
+    font-size: 18px;
+    max-width: 520px;
+  }
+
+  .actions {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 12px 22px;
+    background: #FFFFFF;
+    border: var(--border);
+    box-shadow: var(--shadow);
+    font-weight: 700;
+    font-size: 17px;
+    text-decoration: none;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+  }
+
+  .btn.pink {
+    background: var(--pink);
+  }
+
+  .hero-photo {
+    position: relative;
+    justify-self: center;
+  }
+
+  .polaroid {
+    margin: 0;
+    background: #FFFFFF;
+    border: var(--border);
+    box-shadow: 10px 10px 0 var(--ink);
+    padding: 14px 14px 10px;
+    transform: rotate(4deg);
+    max-width: 360px;
+  }
+
+  .polaroid img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border: var(--border);
+  }
+
+  .polaroid figcaption {
+    margin-top: 8px;
+    text-align: center;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 20px;
+  }
+
+  .burst {
+    position: absolute;
+    top: -24px;
+    left: -28px;
+    width: 96px;
+    height: 96px;
+    display: grid;
+    place-items: center;
+    background: var(--pink);
+    border: var(--border);
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 24px;
+    clip-path: polygon(50% 0%, 61% 18%, 82% 8%, 80% 30%, 100% 35%, 86% 52%, 100% 68%, 79% 72%, 82% 93%, 61% 84%, 50% 100%, 39% 84%, 18% 93%, 21% 72%, 0% 68%, 14% 52%, 0% 35%, 20% 30%, 18% 8%, 39% 18%);
+    animation: spin 12s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Unrotated wrapper clips the tilted band's corners so phones never scroll sideways. */
+  .ticker-clip {
+    margin: 4px -20px 0;
+    padding: 16px 0;
+    overflow: hidden;
+  }
+
+  .ticker {
+    margin: 0 -12px;
+    background: var(--ink);
+    color: var(--lime);
+    border-top: var(--border);
+    border-bottom: var(--border);
+    overflow: hidden;
+    transform: rotate(-1.5deg);
+  }
+
+  .ticker-track {
+    display: flex;
+    gap: 28px;
+    width: max-content;
+    padding: 12px 0;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 22px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    animation: marquee 30s linear infinite;
+  }
+
+  @keyframes marquee {
+    to { transform: translateX(-50%); }
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 56px;
+  }
+
+  .stat {
+    border: var(--border);
+    box-shadow: var(--shadow);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stat b {
+    font-family: 'Archivo Black', sans-serif;
+    font-weight: 400;
+    font-size: clamp(2.4rem, 5vw, 3.6rem);
+    line-height: 1;
+  }
+
+  .stat span {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+  }
+
+  .lime { background: var(--lime); }
+  .sky { background: var(--sky); }
+  .orange { background: var(--orange); }
+  .violet { background: var(--violet); }
+
+  .section {
+    margin-top: 72px;
+  }
+
+  .section-title {
+    margin: 0 0 28px;
+    font-family: 'Archivo Black', sans-serif;
+    font-weight: 400;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+  }
+
+  .section-title span {
+    display: inline-block;
+    background: var(--pink);
+    border: var(--border);
+    padding: 0 10px;
+    transform: rotate(-2deg);
+  }
+
+  .stickers {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 28px;
+  }
+
+  .sticker {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border: var(--border);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    text-decoration: none;
+    transform: rotate(var(--tilt));
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+  }
+
+  .sticker:hover,
+  .sticker:focus-visible {
+    transform: rotate(0deg) scale(1.03);
+    box-shadow: 10px 10px 0 var(--ink);
+  }
+
+  .hue-violet { background: var(--violet); }
+  .hue-leaf { background: var(--lime); }
+  .hue-amber { background: var(--orange); }
+  .hue-rose { background: var(--pink); }
+  .hue-sky { background: var(--sky); }
+
+  .sticker-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .tag {
+    background: #FFFFFF;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .star {
+    font-family: 'Archivo Black', sans-serif;
+  }
+
+  .sticker h3 {
+    margin: 0 0 4px;
+    font-family: 'Archivo Black', sans-serif;
+    font-weight: 400;
+    font-size: 26px;
+    line-height: 1.05;
+  }
+
+  .sticker-tagline {
+    margin: 0 0 10px;
+    font-weight: 700;
+  }
+
+  .sticker p:last-child {
+    margin: 0;
+    font-size: 15px;
+  }
+
+  .log {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: var(--border);
+    box-shadow: var(--shadow);
+    background: #FFFFFF;
+  }
+
+  .log li {
+    display: grid;
+    grid-template-columns: 130px minmax(0, 220px) minmax(0, 1fr) auto;
+    gap: 16px;
+    align-items: baseline;
+    padding: 14px 18px;
+    border-bottom: var(--border);
+  }
+
+  .log li:last-child {
+    border-bottom: 0;
+  }
+
+  .log li:nth-child(odd) {
+    background: #FFFBEA;
+  }
+
+  .log time {
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .log a {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 18px;
+    text-decoration: none;
+  }
+
+  .log a:hover {
+    background: var(--yellow);
+  }
+
+  .log p {
+    margin: 0;
+    font-size: 15px;
+  }
+
+  .lang {
+    font-size: 12px;
+    font-weight: 700;
+    border: 2px solid var(--ink);
+    padding: 1px 8px;
+    background: var(--sky);
+    white-space: nowrap;
+  }
+
+  .cta {
+    margin-top: 72px;
+    padding: 48px 32px;
+    background: var(--violet);
+    border: var(--border);
+    box-shadow: 10px 10px 0 var(--ink);
+    text-align: center;
+  }
+
+  .cta h2 {
+    margin: 0 0 12px;
+    font-family: 'Archivo Black', sans-serif;
+    font-weight: 400;
+    font-size: clamp(2rem, 5vw, 3.6rem);
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .cta p {
+    margin: 0 auto 28px;
+    max-width: 520px;
+    font-size: 18px;
+  }
+
+  .btn.big {
+    font-size: 22px;
+    padding: 16px 32px;
+    background: var(--yellow);
+  }
+
+  .foot {
+    max-width: 1160px;
+    margin: 56px auto 0;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    border-top: var(--border);
+    font-weight: 700;
+  }
+
+  .foot-links {
+    display: flex;
+    gap: 16px;
+  }
+
+  @media (max-width: 860px) {
+    .hero {
+      grid-template-columns: 1fr;
+      padding-top: 40px;
+    }
+
+    .hero-photo {
+      order: -1;
+    }
+
+    .polaroid {
+      max-width: 240px;
+    }
+
+    .stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .log li {
+      grid-template-columns: 1fr auto;
+      gap: 4px 12px;
+    }
+
+    .log li p {
+      grid-column: 1 / -1;
+    }
+
+    .log time {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .bar,
+    main {
+      padding: 0 16px;
+    }
+
+    .ticker-clip {
+      margin: 4px -16px 0;
+    }
+
+    .burst {
+      width: 72px;
+      height: 72px;
+      font-size: 18px;
+      left: -16px;
+    }
+
+    .cta {
+      padding: 32px 20px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .burst,
+    .ticker-track {
+      animation: none;
+    }
+
+    .sticker,
+    .sticker:hover {
+      transition: none;
+    }
+  }
+</style>

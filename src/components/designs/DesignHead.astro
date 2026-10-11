@@ -1,0 +1,27 @@
+---
+/**
+ * Minimal head for the /designs prototypes. Skips global.css so each
+ * concept starts from a blank slate, and keeps the pages out of search.
+ */
+interface Props {
+  title: string;
+  fonts?: string;
+  themeColor?: string;
+}
+
+const { title, fonts, themeColor = '#ffffff' } = Astro.props;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content={themeColor} />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<title>{title} · Design options · Michelle Mayes</title>
+{fonts && (
+  <>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?${fonts}&display=swap`} />
+  </>
+)}

@@ -1,0 +1,1112 @@
+---
+import DesignHead from '../../components/designs/DesignHead.astro';
+import DesignSwitcher from '../../components/designs/DesignSwitcher.astro';
+import { NAV_LINKS, PROFILE, formatShortDate, getDesignData } from '../../lib/design-data';
+
+export const prerender = true;
+
+const { stats, timeline, showcase, currentlyBuilding, totalStars } = getDesignData();
+
+const desktopIcons = [
+  { href: '/resume.pdf', label: 'Resume.pdf', kind: 'file' },
+  { href: '/blog', label: 'Blog', kind: 'folder' },
+  { href: '/about', label: 'About', kind: 'folder' },
+  { href: PROFILE.social.linkedin, label: 'LinkedIn', kind: 'link' },
+  { href: PROFILE.email, label: 'Say hi', kind: 'mail' },
+];
+
+const dockApps = [
+  { window: 'about', label: 'About Me', color: 'linear-gradient(160deg, #C4B5FD, #7C3AED)', glyph: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0' },
+  { window: 'finder', label: 'Open Source', color: 'linear-gradient(160deg, #7DD3FC, #2563EB)', glyph: 'M4 6h6l2 2h8v10H4z' },
+  { window: 'log', label: 'Shipping Log', color: 'linear-gradient(160deg, #FDE68A, #F59E0B)', glyph: 'M7 4h10v16H7zM9.5 8h5M9.5 12h5M9.5 16h3' },
+];
+
+const dockLinks = [
+  { href: '/projects', label: 'Projects', color: 'linear-gradient(160deg, #86EFAC, #16A34A)', glyph: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z' },
+  { href: '/blog', label: 'Blog', color: 'linear-gradient(160deg, #FDA4AF, #E11D48)', glyph: 'M5 19l3-1 10-10-2-2L6 16zM14 6l2 2' },
+  { href: PROFILE.calendarUrl, label: 'Schedule a chat', color: 'linear-gradient(160deg, #FFFFFF, #E5E7EB)', glyph: 'M5 6h14v13H5zM5 10h14M9 4v4M15 4v4', dark: true },
+  { href: PROFILE.social.github, label: 'GitHub', color: 'linear-gradient(160deg, #4B5563, #111827)', glyph: 'M9 19c-4 1-4-2-6-2m12 4v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1-.3-3.4 1.3a11.6 11.6 0 0 0-6 0C6.8 2.8 5.8 3.1 5.8 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4.4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21' },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <DesignHead
+      title="Desktop OS"
+      themeColor="#C9B8F5"
+      fonts="family=Inter:wght@400;500;600;700;800&family=Caveat:wght@600"
+    />
+  </head>
+  <body>
+    <header class="menubar">
+      <div class="menu-left">
+        <a href="/" class="menu-logo" aria-label="Home">✦</a>
+        <strong>Michelle OS</strong>
+        <nav aria-label="Main navigation">
+          {NAV_LINKS.map(({ href, label }) => <a href={href}>{label}</a>)}
+        </nav>
+      </div>
+      <div class="menu-right">
+        {currentlyBuilding && <a href={currentlyBuilding.repoUrl} class="menu-now">● {currentlyBuilding.title}</a>}
+        <time class="menu-clock" data-clock></time>
+      </div>
+    </header>
+
+    <main class="desktop">
+      <ul class="icons" aria-label="Desktop shortcuts">
+        {desktopIcons.map((icon) => (
+          <li>
+            <a href={icon.href} class={`icon icon-${icon.kind}`}>
+              <span class="icon-art" aria-hidden="true"></span>
+              <span class="icon-label">{icon.label}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <section class="window win-about" data-window="about" aria-labelledby="about-title">
+        <div class="titlebar" data-drag>
+          <span class="lights"><button type="button" class="light close" data-close aria-label="Close About Me"></button><i></i><i></i></span>
+          <h2 class="win-title" id="about-title">About Me</h2>
+        </div>
+        <div class="win-body about-body">
+          <img src={PROFILE.avatar} alt="Michelle Mayes" width="112" height="112" loading="eager" />
+          <h1>{PROFILE.name}</h1>
+          <p class="about-role">{PROFILE.role}</p>
+          <p class="about-tagline">{PROFILE.tagline}</p>
+          <p class="about-sub">{PROFILE.subline}</p>
+          <div class="about-actions">
+            <a class="mac-btn primary" href={PROFILE.calendarUrl} target="_blank" rel="noopener noreferrer">Schedule a chat</a>
+            <a class="mac-btn" href="/resume">Resume</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="window win-finder" data-window="finder" aria-labelledby="finder-title">
+        <div class="titlebar" data-drag>
+          <span class="lights"><button type="button" class="light close" data-close aria-label="Close Open Source"></button><i></i><i></i></span>
+          <h2 class="win-title" id="finder-title">Open Source</h2>
+          <span class="win-meta">{showcase.length} items · ★ {totalStars}</span>
+        </div>
+        <div class="finder">
+          <aside class="finder-side">
+            <p>Favorites</p>
+            <a href="#finder-title" class="active">Open Source</a>
+            <a href="#log-title">Shipping Log</a>
+            <a href="/projects">All Projects</a>
+            <p>Tags</p>
+            <span><i class="dot violet"></i>AI tools</span>
+            <span><i class="dot amber"></i>Mac apps</span>
+            <span><i class="dot leaf"></i>Dev tools</span>
+          </aside>
+          <div class="finder-main">
+            <div class="finder-head" aria-hidden="true"><span>Name</span><span>Kind</span><span>★</span></div>
+            <ul class="finder-list">
+              {showcase.map((project) => (
+                <li>
+                  <a href={project.url}>
+                    <span class="f-name">
+                      <i class={`f-icon hue-${project.hue}`} aria-hidden="true"></i>
+                      <span>
+                        <strong>{project.name}</strong>
+                        <small>{project.tagline}</small>
+                      </span>
+                    </span>
+                    <span class="f-kind">{project.stack[0]}</span>
+                    <span class="f-stars">{project.stars}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="window win-log" data-window="log" aria-labelledby="log-title">
+        <div class="titlebar" data-drag>
+          <span class="lights"><button type="button" class="light close" data-close aria-label="Close Shipping Log"></button><i></i><i></i></span>
+          <h2 class="win-title" id="log-title">shipping-log.txt</h2>
+          <span class="win-meta">Edited</span>
+        </div>
+        <ol class="win-body log-body">
+          {timeline.map((item) => (
+            <li>
+              <span class="log-date">{formatShortDate(item.date)}</span>
+              <a href={item.repoUrl}>{item.title}</a>
+              <p>{item.description}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <aside class="widget win-stats" aria-label="GitHub stats">
+        <p class="widget-label">GitHub</p>
+        <div class="widget-grid">
+          <div><b>{stats.totalRepos}</b><span>repos</span></div>
+          <div><b>{stats.recentActivity}</b><span>active</span></div>
+          <div><b>{totalStars}</b><span>stars</span></div>
+          <div><b>{stats.primaryLanguagePercent}%</b><span>{stats.primaryLanguage}</span></div>
+        </div>
+      </aside>
+
+      <aside class="sticky" aria-label="Note">
+        <p>To do:</p>
+        <ul>
+          <li class="done">ship terrarium</li>
+          {currentlyBuilding && <li>finish {currentlyBuilding.title.toLowerCase()}</li>}
+          <li>grab coffee w/ you?</li>
+        </ul>
+      </aside>
+    </main>
+
+    <nav class="dock" aria-label="Dock">
+      {dockApps.map((app) => (
+        <button type="button" class="dock-item" data-open={app.window} aria-label={`Open ${app.label}`}>
+          <span class="dock-icon" style={`background: ${app.color}`}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={app.glyph} /></svg>
+          </span>
+          <span class="dock-tip">{app.label}</span>
+        </button>
+      ))}
+      <span class="dock-sep" aria-hidden="true"></span>
+      {dockLinks.map((link) => (
+        <a class="dock-item" href={link.href} aria-label={link.label}>
+          <span class="dock-icon" style={`background: ${link.color}`}>
+            <svg viewBox="0 0 24 24" fill="none" stroke={link.dark ? '#111827' : '#fff'} stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={link.glyph} /></svg>
+          </span>
+          <span class="dock-tip">{link.label}</span>
+        </a>
+      ))}
+    </nav>
+
+    <DesignSwitcher slug="desktop" placement="top" />
+
+    <script>
+      // Menu bar clock
+      const clock = document.querySelector<HTMLTimeElement>('[data-clock]');
+      const renderClock = () => {
+        if (!clock) return;
+        const now = new Date();
+        clock.textContent = now.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+        clock.dateTime = now.toISOString();
+      };
+      renderClock();
+      setInterval(renderClock, 30_000);
+
+      // Window management: focus, drag (wide screens only), close and reopen from the dock.
+      const wide = window.matchMedia('(min-width: 1100px)');
+      const windows = Array.from(document.querySelectorAll<HTMLElement>('[data-window]'));
+      let topZ = 10;
+
+      const focusWindow = (win: HTMLElement) => {
+        windows.forEach((w) => w.classList.remove('is-focused'));
+        win.classList.add('is-focused');
+        win.style.zIndex = String(++topZ);
+      };
+
+      windows.forEach((win) => {
+        win.addEventListener('pointerdown', () => focusWindow(win));
+
+        win.querySelector('[data-close]')?.addEventListener('click', (event) => {
+          event.stopPropagation();
+          win.classList.add('is-closed');
+        });
+
+        const handle = win.querySelector<HTMLElement>('[data-drag]');
+        if (!handle) return;
+
+        handle.addEventListener('pointerdown', (event) => {
+          if (!wide.matches || (event.target as HTMLElement).closest('button')) return;
+          const desktop = win.offsetParent as HTMLElement;
+          const startX = event.clientX - win.offsetLeft;
+          const startY = event.clientY - win.offsetTop;
+          handle.setPointerCapture(event.pointerId);
+          win.classList.add('is-dragging');
+
+          const move = (e: PointerEvent) => {
+            const maxX = desktop.clientWidth - 80;
+            const maxY = desktop.clientHeight - 40;
+            win.style.left = `${Math.min(Math.max(e.clientX - startX, -win.offsetWidth + 80), maxX)}px`;
+            win.style.top = `${Math.min(Math.max(e.clientY - startY, 0), maxY)}px`;
+          };
+          const stop = () => {
+            win.classList.remove('is-dragging');
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', stop);
+            handle.removeEventListener('pointercancel', stop);
+          };
+          handle.addEventListener('pointermove', move);
+          handle.addEventListener('pointerup', stop);
+          handle.addEventListener('pointercancel', stop);
+        });
+      });
+
+      document.querySelectorAll<HTMLButtonElement>('[data-open]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const win = document.querySelector<HTMLElement>(`[data-window="${button.dataset.open}"]`);
+          if (!win) return;
+          win.classList.remove('is-closed');
+          focusWindow(win);
+          if (!wide.matches) win.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  :global(*),
+  :global(*::before),
+  :global(*::after) {
+    box-sizing: border-box;
+  }
+
+  :global(body) {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #1F1D2B;
+    -webkit-font-smoothing: antialiased;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.55), transparent 35%),
+      radial-gradient(circle at 85% 15%, #FBCFE8 0%, transparent 40%),
+      radial-gradient(circle at 70% 85%, #FDE68A 0%, transparent 45%),
+      radial-gradient(circle at 10% 90%, #A5B4FC 0%, transparent 45%),
+      linear-gradient(160deg, #C9B8F5, #E9D5FF 50%, #FBD5C0);
+  }
+
+  @media (min-width: 1100px) {
+    :global(body) {
+      background-attachment: fixed;
+    }
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid #2563EB;
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  /* Menu bar */
+  .menubar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    height: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 0 14px;
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(20px) saturate(1.6);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    font-size: 13px;
+  }
+
+  .menu-left,
+  .menu-right,
+  .menubar nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .menu-logo {
+    font-size: 15px;
+  }
+
+  .menubar nav a,
+  .menu-now {
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  .menubar nav a:hover,
+  .menu-now:hover {
+    background: rgba(0, 0, 0, 0.08);
+  }
+
+  .menu-now {
+    color: #15803D;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .menu-clock {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* Desktop surface */
+  .desktop {
+    position: relative;
+    min-height: calc(100vh - 30px);
+    min-height: max(calc(100vh - 30px), 880px);
+    padding-bottom: 120px;
+  }
+
+  .icons {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 84px;
+    padding: 6px 4px;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .icon:hover .icon-label {
+    background: #2563EB;
+    color: #FFFFFF;
+  }
+
+  .icon-art {
+    position: relative;
+    width: 52px;
+    height: 52px;
+    filter: drop-shadow(0 4px 6px rgba(31, 29, 43, 0.2));
+  }
+
+  .icon-file .icon-art {
+    width: 42px;
+    background: #FFFFFF;
+    border-radius: 4px;
+    clip-path: polygon(0 0, 70% 0, 100% 22%, 100% 100%, 0 100%);
+  }
+
+  .icon-file .icon-art::after {
+    content: 'PDF';
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    bottom: 8px;
+    padding: 1px 0;
+    background: #DC2626;
+    color: #FFFFFF;
+    font-size: 9px;
+    font-weight: 800;
+    border-radius: 2px;
+  }
+
+  .icon-folder .icon-art {
+    height: 40px;
+    margin-top: 8px;
+    background: linear-gradient(180deg, #7DD3FC, #3B82F6);
+    border-radius: 3px 6px 6px 6px;
+  }
+
+  .icon-folder .icon-art::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 0;
+    width: 22px;
+    height: 8px;
+    background: #60A5FA;
+    border-radius: 3px 3px 0 0;
+  }
+
+  .icon-link .icon-art,
+  .icon-mail .icon-art {
+    border-radius: 12px;
+  }
+
+  .icon-link .icon-art {
+    background: linear-gradient(160deg, #38BDF8, #0A66C2);
+  }
+
+  .icon-link .icon-art::after {
+    content: 'in';
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: #FFFFFF;
+    font-weight: 800;
+    font-size: 22px;
+  }
+
+  .icon-mail .icon-art {
+    background: linear-gradient(160deg, #93C5FD, #2563EB);
+  }
+
+  .icon-mail .icon-art::after {
+    content: '';
+    position: absolute;
+    inset: 15px 10px;
+    border: 2px solid #FFFFFF;
+    border-radius: 3px;
+    background: linear-gradient(to bottom right, transparent 48%, #FFFFFF 49%, #FFFFFF 51%, transparent 52%) left / 50% 100% no-repeat,
+      linear-gradient(to bottom left, transparent 48%, #FFFFFF 49%, #FFFFFF 51%, transparent 52%) right / 50% 100% no-repeat;
+  }
+
+  .icon-label {
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #1F1D2B;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+  }
+
+  /* Windows */
+  .window {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 12px;
+    box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.15), 0 20px 50px rgba(31, 29, 43, 0.22);
+    overflow: hidden;
+    z-index: 1;
+    transition: box-shadow 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .window.is-focused {
+    box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.2), 0 30px 70px rgba(31, 29, 43, 0.32);
+  }
+
+  .window.is-dragging {
+    transition: none;
+    user-select: none;
+  }
+
+  .window.is-closed {
+    display: none;
+  }
+
+  .titlebar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 12px;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    background: rgba(246, 245, 250, 0.9);
+    touch-action: none;
+  }
+
+  @media (min-width: 1100px) {
+    .titlebar {
+      cursor: grab;
+    }
+
+    .is-dragging .titlebar {
+      cursor: grabbing;
+    }
+  }
+
+  .lights {
+    position: absolute;
+    left: 12px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .lights i,
+  .light {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 0;
+    padding: 0;
+    background: #FEBC2E;
+  }
+
+  .lights i:last-child {
+    background: #28C840;
+  }
+
+  .light.close {
+    background: #FF5F57;
+    cursor: pointer;
+  }
+
+  .win-title {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #4B4860;
+  }
+
+  .win-meta {
+    position: absolute;
+    right: 12px;
+    font-size: 12px;
+    color: #8A879A;
+  }
+
+  .win-body {
+    overflow-y: auto;
+  }
+
+  .win-about {
+    left: 3vw;
+    top: 28px;
+    width: 400px;
+  }
+
+  .about-body {
+    padding: 24px 28px 26px;
+    text-align: center;
+  }
+
+  .about-body img {
+    width: 112px;
+    height: 112px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 0 4px #FFFFFF, 0 0 0 5px rgba(0, 0, 0, 0.08);
+  }
+
+  .about-body h1 {
+    margin: 14px 0 0;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .about-role {
+    margin: 0 0 12px;
+    color: #6B6880;
+  }
+
+  .about-tagline {
+    margin: 0 0 6px;
+    font-size: 17px;
+    font-weight: 700;
+    color: #7C3AED;
+  }
+
+  .about-sub {
+    margin: 0 0 20px;
+    color: #4B4860;
+  }
+
+  .about-actions {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .mac-btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 0 14px;
+    border-radius: 7px;
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    font-weight: 500;
+  }
+
+  .mac-btn.primary {
+    background: linear-gradient(180deg, #4F8BFF, #2563EB);
+    border-color: #1D4ED8;
+    color: #FFFFFF;
+  }
+
+  .mac-btn:hover {
+    filter: brightness(0.97);
+  }
+
+  .win-finder {
+    left: calc(3vw + 430px);
+    top: 56px;
+    width: min(580px, calc(100vw - 3vw - 430px - 140px));
+    height: 410px;
+  }
+
+  .finder {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr);
+    min-height: 0;
+    flex: 1;
+  }
+
+  .finder-side {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 12px 8px;
+    background: rgba(240, 238, 248, 0.7);
+    border-right: 1px solid rgba(0, 0, 0, 0.06);
+    font-size: 13px;
+  }
+
+  .finder-side p {
+    margin: 8px 8px 4px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #8A879A;
+  }
+
+  .finder-side p:first-child {
+    margin-top: 0;
+  }
+
+  .finder-side a,
+  .finder-side span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+
+  .finder-side a:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  .finder-side a.active {
+    background: rgba(37, 99, 235, 0.12);
+    color: #1D4ED8;
+    font-weight: 600;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .dot.violet { background: #8B5CF6; }
+  .dot.amber { background: #F59E0B; }
+  .dot.leaf { background: #22C55E; }
+
+  .finder-main {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .finder-head,
+  .finder-list a {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 120px 40px;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .finder-head {
+    padding: 6px 14px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    font-size: 11px;
+    font-weight: 600;
+    color: #8A879A;
+  }
+
+  .finder-list {
+    list-style: none;
+    margin: 0;
+    padding: 4px 6px;
+    overflow-y: auto;
+  }
+
+  .finder-list li:nth-child(even) a {
+    background: rgba(0, 0, 0, 0.025);
+  }
+
+  .finder-list a {
+    padding: 7px 8px;
+    border-radius: 6px;
+  }
+
+  .finder-list a:hover {
+    background: #2563EB !important;
+    color: #FFFFFF;
+  }
+
+  .finder-list a:hover small,
+  .finder-list a:hover .f-kind {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .f-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .f-name span {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .f-name small {
+    color: #8A879A;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .f-icon {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+  }
+
+  .hue-violet { background: linear-gradient(160deg, #C4B5FD, #7C3AED); }
+  .hue-leaf { background: linear-gradient(160deg, #86EFAC, #16A34A); }
+  .hue-amber { background: linear-gradient(160deg, #FDE68A, #D97706); }
+  .hue-rose { background: linear-gradient(160deg, #FDA4AF, #E11D48); }
+  .hue-sky { background: linear-gradient(160deg, #7DD3FC, #0284C7); }
+
+  .f-kind {
+    font-size: 12px;
+    color: #6B6880;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .f-stars {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+
+  .win-log {
+    left: calc(3vw + 480px);
+    top: 500px;
+    width: min(520px, calc(100vw - 3vw - 480px - 130px));
+    height: 300px;
+  }
+
+  .log-body {
+    list-style: none;
+    margin: 0;
+    padding: 16px 22px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12.5px;
+    background: #FFFFFF;
+    flex: 1;
+  }
+
+  .log-body li {
+    margin-bottom: 14px;
+  }
+
+  .log-date {
+    color: #8A879A;
+    margin-right: 8px;
+  }
+
+  .log-body a {
+    font-weight: 700;
+    color: #7C3AED;
+  }
+
+  .log-body a:hover {
+    text-decoration: underline;
+  }
+
+  .log-body p {
+    margin: 2px 0 0;
+    color: #4B4860;
+  }
+
+  /* Widgets */
+  .widget {
+    position: absolute;
+    left: 3vw;
+    top: 500px;
+    width: 200px;
+    padding: 14px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 10px 30px rgba(31, 29, 43, 0.12);
+  }
+
+  .widget-label {
+    margin: 0 0 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #7C3AED;
+  }
+
+  .widget-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .widget-grid div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .widget-grid b {
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .widget-grid span {
+    font-size: 11px;
+    color: #6B6880;
+  }
+
+  .sticky {
+    position: absolute;
+    left: calc(3vw + 222px);
+    top: 520px;
+    width: 210px;
+    padding: 16px 18px 20px;
+    background: #FEF08A;
+    box-shadow: 0 12px 24px rgba(31, 29, 43, 0.18);
+    transform: rotate(-3deg);
+    font-family: 'Caveat', cursive;
+    font-size: 22px;
+    line-height: 1.25;
+    color: #3F3A1D;
+  }
+
+  .sticky p {
+    margin: 0 0 6px;
+  }
+
+  .sticky ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+
+  .sticky .done {
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+
+  /* Dock */
+  .dock {
+    position: fixed;
+    left: 50%;
+    bottom: 12px;
+    transform: translateX(-50%);
+    z-index: 900;
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 8px 10px;
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(24px) saturate(1.6);
+    -webkit-backdrop-filter: blur(24px) saturate(1.6);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 22px;
+    box-shadow: 0 10px 30px rgba(31, 29, 43, 0.18);
+  }
+
+  .dock-item {
+    position: relative;
+    display: block;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    font: inherit;
+  }
+
+  .dock-icon {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 13px;
+    box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(31, 29, 43, 0.2);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-origin: bottom center;
+  }
+
+  .dock-icon svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .dock-item:hover .dock-icon,
+  .dock-item:focus-visible .dock-icon {
+    transform: scale(1.3) translateY(-6px);
+  }
+
+  .dock-tip {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 20px);
+    transform: translateX(-50%);
+    padding: 3px 10px;
+    border-radius: 6px;
+    background: rgba(31, 29, 43, 0.85);
+    color: #FFFFFF;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+  }
+
+  .dock-item:hover .dock-tip,
+  .dock-item:focus-visible .dock-tip {
+    opacity: 1;
+  }
+
+  .dock-sep {
+    align-self: stretch;
+    width: 1px;
+    margin: 4px 2px;
+    background: rgba(31, 29, 43, 0.18);
+  }
+
+  /* Narrow screens: windows stack like a phone home screen; dock stays in the flow. */
+  @media (max-width: 1099px) {
+    .menubar nav,
+    .menu-now {
+      display: none;
+    }
+
+    .desktop {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-height: 0;
+      padding: 16px 16px 24px;
+    }
+
+    .window,
+    .widget,
+    .sticky,
+    .icons {
+      position: static;
+      width: auto;
+      height: auto;
+      max-width: 640px;
+      margin: 0 auto;
+      align-self: stretch;
+    }
+
+    .icons {
+      order: 10;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .win-finder {
+      height: auto;
+    }
+
+    .finder {
+      grid-template-columns: 1fr;
+    }
+
+    .finder-side {
+      display: none;
+    }
+
+    .win-log {
+      max-height: 420px;
+    }
+
+    .widget,
+    .sticky {
+      width: 100%;
+    }
+
+    .sticky {
+      transform: rotate(-1deg);
+    }
+
+    .dock {
+      position: static;
+      transform: none;
+      margin: 8px auto 88px;
+      width: max-content;
+      max-width: calc(100vw - 32px);
+      overflow-x: auto;
+      gap: 6px;
+    }
+
+    .dock-icon {
+      width: 44px;
+      height: 44px;
+    }
+
+    .dock-tip {
+      display: none;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .finder-head,
+    .finder-list a {
+      grid-template-columns: minmax(0, 1fr) 32px;
+    }
+
+    .f-kind,
+    .finder-head span:nth-child(2) {
+      display: none;
+    }
+
+    .dock-sep {
+      display: none;
+    }
+
+    .dock-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+    }
+
+    .dock-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dock-icon,
+    .window {
+      transition: none;
+    }
+
+    .dock-item:hover .dock-icon {
+      transform: none;
+    }
+  }
+</style>

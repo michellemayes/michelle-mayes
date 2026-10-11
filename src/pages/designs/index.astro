@@ -1,0 +1,302 @@
+---
+import DesignHead from '../../components/designs/DesignHead.astro';
+import { DESIGN_OPTIONS } from '../../lib/design-data';
+
+export const prerender = true;
+
+// Each card previews its concept's type and palette, so the gallery loads every display face once.
+const specimenFonts: Record<string, string> = {
+  editorial: "'Playfair Display', serif",
+  terminal: "'JetBrains Mono', monospace",
+  bento: "'Plus Jakarta Sans', sans-serif",
+  brutalist: "'Archivo Black', sans-serif",
+  desktop: "'Inter', sans-serif",
+};
+
+const specimenText: Record<string, string> = {
+  editorial: 'The Mayes Dispatch',
+  terminal: '~ ❯ whoami',
+  bento: 'I ship fast.',
+  brutalist: 'MICHELLE MAYES',
+  desktop: '✦ Michelle OS',
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <DesignHead
+      title="Gallery"
+      themeColor="#F7F6F3"
+      fonts="family=Playfair+Display:wght@900&family=JetBrains+Mono:wght@700&family=Plus+Jakarta+Sans:wght@500;700;800&family=Archivo+Black&family=Inter:wght@500;800"
+    />
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">Homepage explorations</p>
+        <h1>Five directions for michellemayes.me</h1>
+        <p class="lede">
+          Each option is a full homepage built with the real project data, from the same snapshots the live site falls back to.
+          Click one to open it, then use the switcher at the bottom (or your arrow keys) to flip between them.
+        </p>
+        <a class="back" href="/">&larr; Back to the current homepage</a>
+      </header>
+
+      <ol class="cards">
+        {DESIGN_OPTIONS.map((option, index) => (
+          <li>
+            <a class="card" href={`/designs/${option.slug}`}>
+              <div
+                class="preview"
+                style={`--bg: ${option.palette[0]}; --ink: ${option.palette[1]}; --accent: ${option.palette[2]}; font-family: ${specimenFonts[option.slug]}`}
+              >
+                <span class={`specimen specimen-${option.slug}`}>{specimenText[option.slug]}</span>
+                <span class="swatches" aria-hidden="true">
+                  {option.palette.map((color) => <i style={`background: ${color}`}></i>)}
+                </span>
+              </div>
+              <div class="info">
+                <span class="num">0{index + 1}</span>
+                <h2>{option.name}</h2>
+                <p>{option.blurb}</p>
+                <span class="open">Open &rarr;</span>
+              </div>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </main>
+  </body>
+</html>
+
+<style>
+  :global(*),
+  :global(*::before),
+  :global(*::after) {
+    box-sizing: border-box;
+  }
+
+  :global(body) {
+    margin: 0;
+    background: #F7F6F3;
+    color: #1A1A2E;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  main {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 56px 24px 80px;
+  }
+
+  header {
+    max-width: 680px;
+    margin-bottom: 40px;
+  }
+
+  .eyebrow {
+    margin: 0 0 8px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #7C3AED;
+  }
+
+  h1 {
+    margin: 0 0 12px;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+
+  .lede {
+    margin: 0 0 16px;
+    font-size: 17px;
+    color: #5B5870;
+  }
+
+  .back {
+    color: #7C3AED;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .back:hover {
+    text-decoration: underline;
+  }
+
+  .cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: inherit;
+    text-decoration: none;
+    background: #FFFFFF;
+    border: 1px solid #E8E6EF;
+    border-radius: 18px;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .card:hover,
+  .card:focus-visible {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px rgba(26, 26, 46, 0.12);
+  }
+
+  .card:focus-visible {
+    outline: 2px solid #7C3AED;
+    outline-offset: 3px;
+  }
+
+  .preview {
+    position: relative;
+    height: 180px;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: var(--bg);
+    color: var(--ink);
+    overflow: hidden;
+  }
+
+  .specimen {
+    font-size: 30px;
+    line-height: 1;
+    text-align: center;
+  }
+
+  .specimen-editorial {
+    font-weight: 900;
+    border-top: 3px double var(--ink);
+    border-bottom: 3px double var(--ink);
+    padding: 10px 0;
+  }
+
+  .specimen-terminal {
+    font-weight: 700;
+    font-size: 24px;
+    color: var(--accent);
+  }
+
+  .specimen-bento {
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: #FFFFFF;
+    border-radius: 18px;
+    padding: 18px 22px;
+    box-shadow: 0 6px 18px rgba(30, 27, 46, 0.08);
+  }
+
+  .specimen-brutalist {
+    background: var(--accent);
+    border: 3px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--ink);
+    padding: 8px 14px;
+    transform: rotate(-3deg);
+    font-size: 26px;
+  }
+
+  .specimen-desktop {
+    color: #1F1D2B;
+    font-weight: 800;
+    font-size: 22px;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 12px;
+    padding: 34px 26px 16px;
+    box-shadow: 0 14px 30px rgba(31, 29, 43, 0.2);
+    position: relative;
+  }
+
+  .specimen-desktop::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #FF5F57;
+    box-shadow: 16px 0 0 #FEBC2E, 32px 0 0 #28C840;
+  }
+
+  .swatches {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    display: flex;
+    gap: 4px;
+  }
+
+  .swatches i {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 20px 22px 22px;
+  }
+
+  .num {
+    font-size: 12px;
+    font-weight: 800;
+    color: #9B98A5;
+  }
+
+  .info h2 {
+    margin: 2px 0 6px;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .info p {
+    margin: 0 0 16px;
+    color: #5B5870;
+  }
+
+  .open {
+    margin-top: auto;
+    font-weight: 800;
+    color: #7C3AED;
+  }
+
+  @media (max-width: 480px) {
+    main {
+      padding: 36px 16px 64px;
+    }
+
+    .cards {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card,
+    .card:hover {
+      transition: none;
+      transform: none;
+    }
+  }
+</style>

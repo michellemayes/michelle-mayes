@@ -1,0 +1,581 @@
+---
+import DesignHead from '../../components/designs/DesignHead.astro';
+import DesignSwitcher from '../../components/designs/DesignSwitcher.astro';
+import { NAV_LINKS, PROFILE, getDesignData } from '../../lib/design-data';
+
+export const prerender = true;
+
+const { stats, timeline, showcase, currentlyBuilding, totalStars } = getDesignData();
+const languages = Object.entries(stats.languageBreakdown);
+const BAR_WIDTH = 24;
+
+// Short pseudo commit hashes derived from the repo ids, so they stay stable between builds.
+const shortHash = (id: string) => Number(id).toString(16).padStart(7, '0').slice(-7);
+const isoDay = (iso: string) => iso.slice(0, 10);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <DesignHead
+      title="Terminal"
+      themeColor="#0E0D14"
+      fonts="family=JetBrains+Mono:ital,wght@0,400;0,700;1,400"
+    />
+  </head>
+  <body>
+    <main class="window" aria-label="Michelle Mayes terminal">
+      <div class="chrome">
+        <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="chrome-title">michelle@mayes: ~ — zsh — 120×40</span>
+      </div>
+
+      <div class="screen">
+        <p class="motd">Last login: {new Date().toUTCString().slice(0, 16)} on ttys001 · scroll to run the next command</p>
+
+        <section class="block">
+          <p class="cmd"><span class="ps1">~</span> <span class="typed" data-type>whoami</span></p>
+          <div class="out whoami">
+            <img src={PROFILE.avatar} alt="Michelle Mayes" width="120" height="120" />
+            <div>
+              <h1>{PROFILE.name}</h1>
+              <p class="role">{PROFILE.role}</p>
+              <p class="tagline"><span class="accent">#</span> {PROFILE.tagline}</p>
+              <p class="dim">{PROFILE.subline}</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="block">
+          <p class="cmd"><span class="ps1">~</span> gh stats --user michellemayes</p>
+          <div class="out">
+            <table class="kv">
+              <tbody>
+                <tr><th>repos</th><td><span class="num">{stats.totalRepos}</span></td></tr>
+                <tr><th>active_30d</th><td><span class="num">{stats.recentActivity}</span></td></tr>
+                <tr><th>showcase_stars</th><td><span class="num">{totalStars}</span> <span class="yellow">★</span></td></tr>
+                {currentlyBuilding && (
+                  <tr><th>tinkering_on</th><td><a href={currentlyBuilding.repoUrl}>{currentlyBuilding.repoName}</a> <span class="live" aria-hidden="true">●</span></td></tr>
+                )}
+              </tbody>
+            </table>
+            <ul class="bars" aria-label="Language breakdown">
+              {languages.map(([name, percent]) => {
+                const filled = Math.max(1, Math.round((percent / 100) * BAR_WIDTH));
+                return (
+                  <li>
+                    <span class="bar-label">{name.padEnd(11, ' ')}</span>
+                    <span class="bar-fill" aria-hidden="true">{'█'.repeat(filled)}</span><span class="bar-empty" aria-hidden="true">{'░'.repeat(BAR_WIDTH - filled)}</span>
+                    <span class="bar-pct">{String(percent).padStart(3, ' ')}%</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </section>
+
+        <section class="block" aria-labelledby="oss">
+          <p class="cmd" id="oss"><span class="ps1">~</span> ls -l ~/open-source</p>
+          <div class="out">
+            <p class="dim">total {showcase.length}</p>
+            <ul class="ls">
+              {showcase.map((project) => (
+                <li>
+                  <a href={project.url} class="ls-row">
+                    <span class="perm dim">drwxr-xr-x</span>
+                    <span class="stars"><span class="yellow">★</span> {String(project.stars).padStart(2, ' ')}</span>
+                    <span class="lang">{(project.language ?? project.stack[0]).padEnd(11, ' ')}</span>
+                    <span class="name">{project.repo}/</span>
+                    <span class="comment"># {project.tagline}</span>
+                  </a>
+                  <p class="pitch">{project.pitch}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section class="block" aria-labelledby="log">
+          <p class="cmd" id="log"><span class="ps1">~</span> git log --oneline --all-projects</p>
+          <ol class="out gitlog">
+            {timeline.map((item, index) => (
+              <li>
+                <span class="hash">{shortHash(item.id)}</span>
+                {index === 0 && <span class="ref">(HEAD -&gt; main)</span>}
+                <span class="date">{isoDay(item.date)}</span>
+                <a href={item.repoUrl} class="subject">{item.title}</a>
+                {item.language && <span class="lang-tag">[{item.language}]</span>}
+                <span class="desc">{item.description}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section class="block">
+          <p class="cmd"><span class="ps1">~</span> open ./schedule-a-chat</p>
+          <div class="out cta">
+            <p>Have a project in mind, a wild idea, or want to talk AI and product development?</p>
+            <a class="cta-button" href={PROFILE.calendarUrl} target="_blank" rel="noopener noreferrer">[ Schedule a chat ]</a>
+            <a class="cta-alt" href={PROFILE.email}>mail -s "hello" michelle</a>
+          </div>
+        </section>
+
+        <section class="block">
+          <p class="cmd"><span class="ps1">~</span> ls</p>
+          <nav class="out dirs" aria-label="Main navigation">
+            {NAV_LINKS.map(({ href, label }) => <a href={href}>{label.toLowerCase()}/</a>)}
+            <a href={PROFILE.social.github}>github@</a>
+            <a href={PROFILE.social.linkedin}>linkedin@</a>
+            <a href="/rss.xml">rss.xml</a>
+          </nav>
+        </section>
+
+        <p class="cmd prompt-end"><span class="ps1">~</span> <span class="cursor" aria-hidden="true"></span></p>
+      </div>
+    </main>
+
+    <DesignSwitcher slug="terminal" />
+
+    <script>
+      // Type out the first command once, unless the visitor prefers reduced motion.
+      const typed = document.querySelector<HTMLElement>('[data-type]');
+      if (typed && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const text = typed.textContent ?? '';
+        typed.textContent = '';
+        let i = 0;
+        const tick = () => {
+          typed.textContent = text.slice(0, ++i);
+          if (i < text.length) setTimeout(tick, 90);
+        };
+        setTimeout(tick, 300);
+      }
+    </script>
+  </body>
+</html>
+
+<style>
+  :global(*),
+  :global(*::before),
+  :global(*::after) {
+    box-sizing: border-box;
+  }
+
+  :global(body) {
+    margin: 0;
+    min-height: 100vh;
+    padding: 32px 24px 96px;
+    background:
+      radial-gradient(ellipse at top, rgba(139, 92, 246, 0.18), transparent 60%),
+      #07060B;
+    color: #E6E1F5;
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 14px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: #A78BFA;
+    color: #0E0D14;
+  }
+
+  a {
+    color: #7DD3FC;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  a:focus-visible {
+    outline: 1px dashed #A78BFA;
+    outline-offset: 2px;
+  }
+
+  .window {
+    max-width: 1040px;
+    margin: 0 auto;
+    background: #0E0D14;
+    border: 1px solid #2A2738;
+    border-radius: 12px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(167, 139, 250, 0.06);
+    overflow: hidden;
+  }
+
+  .chrome {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    background: #191724;
+    border-bottom: 1px solid #2A2738;
+    color: #8A84A3;
+    font-size: 12px;
+  }
+
+  .lights {
+    position: absolute;
+    left: 14px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .lights i {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #FF5F57;
+  }
+
+  .lights i:nth-child(2) { background: #FEBC2E; }
+  .lights i:nth-child(3) { background: #28C840; }
+
+  .chrome-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0 80px;
+  }
+
+  .screen {
+    padding: 24px 28px 32px;
+  }
+
+  .motd {
+    margin: 0 0 20px;
+    color: #6E6987;
+  }
+
+  .block {
+    margin-bottom: 28px;
+  }
+
+  .cmd {
+    margin: 0 0 8px;
+    color: #E6E1F5;
+    font-weight: 700;
+  }
+
+  .ps1 {
+    color: #4ADE80;
+  }
+
+  .ps1::after {
+    content: ' ❯';
+    color: #A78BFA;
+  }
+
+  .out {
+    margin: 0;
+    padding-left: 18px;
+    border-left: 1px solid #2A2738;
+  }
+
+  .dim {
+    color: #8A84A3;
+  }
+
+  .accent {
+    color: #A78BFA;
+  }
+
+  .yellow {
+    color: #FACC15;
+  }
+
+  .num {
+    color: #F0ABFC;
+  }
+
+  .whoami {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .whoami img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    filter: grayscale(1) contrast(1.15);
+    mix-blend-mode: luminosity;
+    border: 1px solid #2A2738;
+    flex-shrink: 0;
+  }
+
+  .whoami h1 {
+    margin: 0;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: #FFFFFF;
+  }
+
+  .role {
+    margin: 4px 0 12px;
+    color: #4ADE80;
+  }
+
+  .tagline {
+    margin: 0 0 6px;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .whoami .dim {
+    margin: 0;
+    max-width: 640px;
+  }
+
+  .kv {
+    border-collapse: collapse;
+    margin-bottom: 12px;
+  }
+
+  .kv th {
+    text-align: left;
+    font-weight: 400;
+    color: #8A84A3;
+    padding: 0 24px 0 0;
+  }
+
+  .kv td {
+    padding: 0;
+  }
+
+  .live {
+    color: #4ADE80;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+
+  .bars {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  .bar-label {
+    color: #C4B5FD;
+  }
+
+  .bar-fill {
+    color: #A78BFA;
+  }
+
+  .bar-empty {
+    color: #2A2738;
+  }
+
+  .bar-pct {
+    color: #8A84A3;
+  }
+
+  .ls {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .ls li {
+    margin-bottom: 6px;
+  }
+
+  .ls-row {
+    display: flex;
+    gap: 14px;
+    white-space: pre;
+    color: inherit;
+    padding: 2px 6px;
+    margin: 0 -6px;
+    border-radius: 4px;
+  }
+
+  .ls-row:hover {
+    background: rgba(167, 139, 250, 0.12);
+    text-decoration: none;
+  }
+
+  .ls-row .lang {
+    color: #FDBA74;
+  }
+
+  .ls-row .name {
+    color: #7DD3FC;
+    font-weight: 700;
+  }
+
+  .ls-row .comment {
+    color: #6E6987;
+    font-style: italic;
+    white-space: normal;
+  }
+
+  .pitch {
+    margin: 0 0 0 calc(10ch + 14px);
+    padding-left: 0;
+    color: #8A84A3;
+    font-size: 13px;
+    max-width: 72ch;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease;
+  }
+
+  .ls li:hover .pitch,
+  .ls li:focus-within .pitch {
+    max-height: 6em;
+  }
+
+  .gitlog {
+    list-style: none;
+  }
+
+  .gitlog li {
+    margin-bottom: 4px;
+  }
+
+  .hash {
+    color: #FACC15;
+    margin-right: 8px;
+  }
+
+  .ref {
+    color: #4ADE80;
+    font-weight: 700;
+    margin-right: 8px;
+  }
+
+  .date {
+    color: #6E6987;
+    margin-right: 8px;
+  }
+
+  .subject {
+    color: #FFFFFF;
+    font-weight: 700;
+    margin-right: 8px;
+  }
+
+  .lang-tag {
+    color: #FDBA74;
+    margin-right: 8px;
+  }
+
+  .desc {
+    display: block;
+    padding-left: 8ch;
+    color: #8A84A3;
+    font-size: 13px;
+  }
+
+  .cta p {
+    margin: 0 0 12px;
+  }
+
+  .cta-button {
+    display: inline-block;
+    padding: 8px 14px;
+    background: #A78BFA;
+    color: #0E0D14;
+    font-weight: 700;
+    border-radius: 4px;
+    margin-right: 16px;
+  }
+
+  .cta-button:hover {
+    background: #C4B5FD;
+    text-decoration: none;
+  }
+
+  .cta-alt {
+    color: #8A84A3;
+  }
+
+  .dirs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 24px;
+  }
+
+  .dirs a {
+    font-weight: 700;
+  }
+
+  .prompt-end {
+    margin: 0;
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 9px;
+    height: 1.1em;
+    vertical-align: text-bottom;
+    background: #E6E1F5;
+    animation: blink 1s steps(1) infinite;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  @keyframes pulse {
+    50% { opacity: 0.35; }
+  }
+
+  @media (max-width: 700px) {
+    :global(body) {
+      padding: 0 0 96px;
+      font-size: 13px;
+    }
+
+    .window {
+      border-radius: 0;
+      border-left: 0;
+      border-right: 0;
+    }
+
+    .screen {
+      padding: 16px;
+    }
+
+    .whoami {
+      flex-direction: column;
+    }
+
+    .whoami img {
+      width: 88px;
+      height: 88px;
+    }
+
+    .ls-row {
+      flex-wrap: wrap;
+      white-space: normal;
+      gap: 4px 10px;
+    }
+
+    .ls-row .perm {
+      display: none;
+    }
+
+    .pitch {
+      margin-left: 0;
+      max-height: none;
+    }
+
+    .desc {
+      padding-left: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cursor,
+    .live {
+      animation: none;
+    }
+  }
+</style>
