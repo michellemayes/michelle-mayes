@@ -47,12 +47,15 @@ This is the source code for my personal website, built with [Astro](https://astr
 
 ### Typography
 - **Font**: Inter (Google Fonts)
+- **Headings**: Fraunces for page content, Inter for the OS chrome
 - **Hierarchy**: Clear heading structure with proper contrast
 
-### Components
-- **Cards**: Rounded corners with subtle shadows
-- **Buttons**: Purple primary, outlined secondary
-- **Grid Layouts**: Responsive auto-fit grids
+### Desktop OS theme
+The whole site is styled as a Mac-style desktop ("Michelle OS"):
+- **Menu bar** (`Header.astro`): navigation, a live clock, and the project currently being built
+- **Dock** (`Footer.astro`): page links and contact shortcuts; on the homepage it also reopens closed windows
+- **Windows**: every page's `<main id="main-content" data-window-title="...">` is drawn as a window by `global.css`
+- **Homepage** (`index.astro`): draggable About, Open Source, and Shipping Log windows, plus desktop icons, a stats widget, and a sticky note. Below 1100px wide, the windows stack in a single column
 
 ## 🔧 Development
 

@@ -1,6 +1,12 @@
 ---
-import { SITE_TITLE, SOCIAL_LINKS } from '../consts';
+import { SITE_TITLE } from '../consts';
 
+interface Props {
+  /** The project shown in the menu bar's status item. */
+  now?: { name: string; url: string } | null;
+}
+
+const { now = null } = Astro.props;
 const currentPath = Astro.url.pathname;
 
 const navLinks = [
@@ -12,101 +18,139 @@ const navLinks = [
 ---
 
 <a href="#main-content" class="skip-link">Skip to content</a>
-<header>
-  <nav aria-label="Main navigation">
-    <a href="/" class="site-title">{SITE_TITLE}</a>
-    <div class="nav-links">
+<header class="menubar">
+  <div class="menu-left">
+    <a href="/" class="menu-logo" aria-label={`${SITE_TITLE} home`}>✦</a>
+    <a href="/" class="menu-brand">Michelle OS</a>
+    <nav aria-label="Main navigation">
       {navLinks.map(({ href, label }) => (
         <a
           href={href}
-          class={currentPath.startsWith(href) ? 'active' : ''}
+          class:list={{ active: currentPath.startsWith(href) }}
+          aria-current={currentPath.startsWith(href) ? 'page' : undefined}
         >
           {label}
         </a>
       ))}
-    </div>
-  </nav>
+    </nav>
+  </div>
+  <div class="menu-right">
+    {now && (
+      <a href={now.url} class="menu-now" target="_blank" rel="noopener noreferrer" title="Currently tinkering on">
+        <span class="menu-now-dot" aria-hidden="true"></span>{now.name}
+      </a>
+    )}
+    <time class="menu-clock" data-clock></time>
+  </div>
 </header>
 
-<style>
-  header {
-    padding: var(--space-lg) var(--space-xl);
-    max-width: 1200px;
-    margin: 0 auto;
-  }
+<script>
+  const clock = document.querySelector<HTMLTimeElement>('[data-clock]');
+  const renderClock = () => {
+    if (!clock) return;
+    const now = new Date();
+    clock.textContent = now.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    clock.dateTime = now.toISOString();
+  };
+  renderClock();
+  setInterval(renderClock, 30_000);
+</script>
 
-  nav {
+<style>
+  .menubar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    height: var(--menubar-height);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 12px;
+    padding: 0 14px;
+    background: rgba(255, 255, 255, 0.55);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    backdrop-filter: blur(20px) saturate(1.6);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1;
+    color: #1F1D2B;
   }
 
-  .site-title {
-    font-family: var(--font-serif);
-    font-size: var(--text-2xl);
-    font-weight: 700;
-    letter-spacing: var(--tracking-tight);
-    color: var(--text);
-    text-decoration: none;
-  }
-
-  .site-title:hover {
-    color: var(--accent);
-  }
-
-  .nav-links {
-    display: flex;
-    gap: var(--space-sm);
-  }
-
-  .nav-links a {
-    color: var(--text-muted);
-    text-decoration: none;
-    font-size: var(--text-sm);
-    font-weight: 500;
-    transition: color 0.2s ease, background-color 0.2s ease;
-    padding: var(--space-sm) var(--space-md);
-    border-radius: 8px;
-    min-height: 44px;
+  .menu-left,
+  .menu-right,
+  nav {
     display: flex;
     align-items: center;
+    gap: 4px;
+    min-width: 0;
   }
 
-  .nav-links a:hover {
-    color: var(--accent);
-    background: var(--accent-50);
+  .menubar a {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: 5px;
+    color: inherit;
+    text-decoration: none;
+    white-space: nowrap;
   }
 
-  .nav-links a.active {
-    color: var(--accent);
-    background: var(--accent-50);
+  .menubar a:hover,
+  .menubar a.active {
+    background: rgba(0, 0, 0, 0.08);
+    color: inherit;
   }
 
-  .nav-links a:active {
-    transform: scale(0.98);
+  .menubar a:active {
+    transform: none;
   }
 
-  @media (max-width: 480px) {
-    header {
-      padding: var(--space-md);
+  .menu-logo {
+    font-size: 15px;
+  }
+
+  .menu-brand {
+    font-weight: 700;
+  }
+
+  .menubar .menu-now {
+    gap: 6px;
+    color: #15803D;
+    font-weight: 500;
+  }
+
+  .menu-now-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #22C55E;
+  }
+
+  .menu-clock {
+    padding: 0 4px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 720px) {
+    .menu-now {
+      display: none !important;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .menubar {
+      padding: 0 6px;
     }
 
-    .site-title {
-      font-size: var(--text-xl);
+    .menu-brand,
+    .menu-clock {
+      display: none;
     }
 
-    nav {
-      flex-wrap: wrap;
-      gap: var(--space-xs);
-    }
-
-    .nav-links {
-      gap: 0;
-    }
-
-    .nav-links a {
-      font-size: var(--text-sm);
-      padding: var(--space-sm);
+    .menubar a {
+      padding: 0 7px;
     }
   }
 </style>
