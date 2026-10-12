@@ -45,7 +45,7 @@
   --shadow-colored-lg: 0 8px 30px rgba(139, 92, 246, 0.2);
 
   /* Typography - fonts */
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
   --font-hand: 'Caveat', cursive;
   --font-mono: 'JetBrains Mono', monospace;
 
@@ -150,6 +150,36 @@ body {
   font-size: var(--text-lg);
   line-height: 1.7;
   min-height: 100vh;
+}
+
+/*
+  Cross-page transitions. Supporting browsers (Chrome, Edge, Safari 18.2+)
+  keep the current page on screen until the next one is ready, then
+  crossfade, so navigating never shows a blank or half-built page. The menu
+  bar and dock carry their own names so they stay put, and the app window
+  morphs between pages. Other browsers navigate normally.
+*/
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-group(root),
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 180ms;
+}
+
+::view-transition-group(app-window) {
+  animation-duration: 260ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }
 
 /* Fixed wallpaper only on wide screens; mobile browsers repaint it badly. */

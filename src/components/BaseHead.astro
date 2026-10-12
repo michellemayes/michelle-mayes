@@ -1,6 +1,9 @@
 ---
-// Import the global.css file here so that it is included on
-// all pages through the use of the <BaseHead /> component.
+// Fonts first, then the global styles, so every page through <BaseHead />
+// gets both bundled (and inlined; see astro.config.mjs).
+import '@fontsource-variable/inter/wght.css';
+import '@fontsource/jetbrains-mono/latin-400.css';
+import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 import '../styles/global.css';
 import type { ImageMetadata } from 'astro';
 import { SITE_TITLE } from '../consts';
@@ -40,26 +43,11 @@ const ogImageURL = image ? new URL(image.src, Astro.site) : new URL('/avatar.jpg
 />
 <meta name="generator" content={Astro.generator} />
 
-<!-- Font loading — preconnect + preload critical, async load rest -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link
-	rel="preload"
-	as="style"
-	href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400&family=Caveat:wght@600&display=swap"
-/>
-<link
-	href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400&family=Caveat:wght@600&display=swap"
-	rel="stylesheet"
-	media="print"
-	onload="this.media='all'"
-/>
-<noscript>
-	<link
-		href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400&family=Caveat:wght@600&display=swap"
-		rel="stylesheet"
-	/>
-</noscript>
+<!--
+	Fonts are self-hosted (Fontsource) and the Latin Inter file is preloaded,
+	so text renders in Inter on first paint instead of swapping in later.
+-->
+<link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin />
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />

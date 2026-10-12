@@ -44,6 +44,11 @@ const { title, description, jsonLd, windowTitle, meta, size = 'l' } = Astro.prop
     margin: 28px auto 0;
   }
 
+  /* Lets the app window morph between pages during view transitions. */
+  .stage :global(.page-window) {
+    view-transition-name: app-window;
+  }
+
   /* The dock is pinned to the bottom on wide screens, so leave room for it. */
   @media (min-width: 1100px) {
     .stage {

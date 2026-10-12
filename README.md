@@ -48,6 +48,7 @@ This is the source code for my personal website, built with [Astro](https://astr
 ### Typography
 - **Font**: Inter (Google Fonts)
 - **Headings**: Inter throughout, with Caveat for the sticky note and JetBrains Mono for code
+- **Loading**: fonts are self-hosted with Fontsource (Inter is preloaded), CSS is inlined into each page, and links are prefetched on hover
 - **Hierarchy**: Clear heading structure with proper contrast
 
 ### Desktop OS theme
@@ -58,6 +59,7 @@ The whole site is styled as a Mac-style desktop ("Michelle OS"):
 - **Page shell** (`layouts/OsPage.astro`): menu bar, a single app window, and the dock, for every page except the homepage
 - **UI kit** (`global.css`): shared `.mac-btn`, `.win-toolbar`, `.os-sidebar`, `.os-pill`, `.app-icon`, and `.os-group` classes
 - **Apps**: the homepage is the desktop, with draggable windows. About is a contact card, Projects a Finder window with sidebar filters, Blog a Notes-style list, posts a document window, Resume a Preview window, and 404 an alert dialog
+- **Page transitions**: cross-document View Transitions crossfade between pages, keep the menu bar and dock in place, and morph the app window (`global.css`)
 
 ## 🔧 Development
 

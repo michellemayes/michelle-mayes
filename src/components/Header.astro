@@ -41,23 +41,27 @@ const navLinks = [
       </a>
     )}
     <time class="menu-clock" data-clock></time>
+    <script is:inline>
+      // Runs during parsing (not after load) so the clock is already filled
+      // in on the page's first paint instead of popping in afterwards.
+      (function () {
+        var clock = document.querySelector('[data-clock]');
+        if (!clock) return;
+        var render = function () {
+          var now = new Date();
+          clock.textContent = now.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+          clock.dateTime = now.toISOString();
+        };
+        render();
+        setInterval(render, 30000);
+      })();
+    </script>
   </div>
 </header>
 
-<script>
-  const clock = document.querySelector<HTMLTimeElement>('[data-clock]');
-  const renderClock = () => {
-    if (!clock) return;
-    const now = new Date();
-    clock.textContent = now.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
-    clock.dateTime = now.toISOString();
-  };
-  renderClock();
-  setInterval(renderClock, 30_000);
-</script>
-
 <style>
   .menubar {
+    view-transition-name: menubar;
     position: sticky;
     top: 0;
     z-index: 1000;
