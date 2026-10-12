@@ -1,30 +1,20 @@
 ---
 import { SOCIAL_LINKS } from '../consts';
 
-interface DockApp {
-  /** data-window id of the window this icon reopens on the homepage. */
-  window: string;
-  label: string;
-  color: string;
-  glyph: string;
-}
-
-interface Props {
-  /** Window launchers shown before the page links (homepage only). */
-  apps?: DockApp[];
-  /** Pin the dock to the bottom of the viewport on wide screens. */
-  floating?: boolean;
-}
-
-const { apps = [], floating = false } = Astro.props;
-const currentPath = Astro.url.pathname;
+/**
+ * The dock. App launchers open (or bring forward) their window; a dot marks
+ * apps with a window open, and minimized windows collect at the end, like
+ * macOS. The window manager keeps the dots and the minimized section current.
+ */
+const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 const currentYear = new Date().getFullYear();
 
-const links = [
-  { href: '/', label: 'Home', color: 'linear-gradient(160deg, #C4B5FD, #7C3AED)', glyph: 'M4 11l8-7 8 7M6 9.5V20h12V9.5M10 20v-5h4v5' },
-  { href: '/projects', label: 'Projects', color: 'linear-gradient(160deg, #86EFAC, #16A34A)', glyph: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z' },
-  { href: '/blog', label: 'Blog', color: 'linear-gradient(160deg, #FDA4AF, #E11D48)', glyph: 'M5 19l3-1 10-10-2-2L6 16zM14 6l2 2' },
-  { href: '/resume', label: 'Resume', color: 'linear-gradient(160deg, #FDE68A, #F59E0B)', glyph: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6' },
+const apps = [
+  { href: '/', label: 'Desktop', color: 'linear-gradient(160deg, #C4B5FD, #7C3AED)', glyph: 'M4 11l8-7 8 7M6 9.5V20h12V9.5M10 20v-5h4v5' },
+  { href: '/projects', label: 'Projects', color: 'linear-gradient(160deg, #7DD3FC, #2563EB)', glyph: 'M4 6h6l2 2h8v10H4z' },
+  { href: '/about', label: 'About', color: 'linear-gradient(160deg, #F0ABFC, #A21CAF)', glyph: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0' },
+  { href: '/blog', label: 'Blog', color: 'linear-gradient(160deg, #FDE68A, #F59E0B)', glyph: 'M7 4h10v16H7zM9.5 8h5M9.5 12h5M9.5 16h3' },
+  { href: '/resume', label: 'Resume', color: 'linear-gradient(160deg, #FDA4AF, #E11D48)', glyph: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6' },
 ];
 
 const externals = [
@@ -34,31 +24,22 @@ const externals = [
   { href: SOCIAL_LINKS.email, label: 'Email', color: 'linear-gradient(160deg, #93C5FD, #2563EB)', glyph: 'M4 6h16v12H4zM4 7l8 6 8-6' },
 ];
 
-const isActive = (href: string) => (href === '/' ? currentPath === '/' : currentPath.startsWith(href));
+const isRunning = (href: string) => (href === '/' ? currentPath === '/' : currentPath.startsWith(href));
 ---
 
-<footer class:list={['dock-area', { floating }]}>
+<footer class="dock-area">
   <nav class="dock" aria-label="Dock">
     {apps.map((app) => (
-      <button type="button" class="dock-item" data-open={app.window} aria-label={`Open ${app.label}`}>
+      <a
+        class:list={['dock-item', { running: isRunning(app.href) }]}
+        href={app.href}
+        data-dock-route={app.href}
+        aria-label={app.label}
+      >
         <span class="dock-icon" style={`background: ${app.color}`}>
           <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={app.glyph} /></svg>
         </span>
         <span class="dock-tip">{app.label}</span>
-      </button>
-    ))}
-    {apps.length > 0 && <span class="dock-sep" aria-hidden="true"></span>}
-    {links.map((link) => (
-      <a
-        class:list={['dock-item', { running: isActive(link.href) }]}
-        href={link.href}
-        aria-label={link.label}
-        aria-current={isActive(link.href) ? 'page' : undefined}
-      >
-        <span class="dock-icon" style={`background: ${link.color}`}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={link.glyph} /></svg>
-        </span>
-        <span class="dock-tip">{link.label}</span>
       </a>
     ))}
     <span class="dock-sep" aria-hidden="true"></span>
@@ -76,6 +57,9 @@ const isActive = (href: string) => (href === '/' ? currentPath === '/' : current
         <span class="dock-tip">{link.label}</span>
       </a>
     ))}
+    <span class="dock-minimized" data-dock-minimized hidden>
+      <span class="dock-sep" aria-hidden="true"></span>
+    </span>
   </nav>
   <p class="dock-note">&copy; {currentYear} Michelle Mayes · Made in Austin with Astro, coffee, and too many side projects.</p>
 </footer>
@@ -86,7 +70,7 @@ const isActive = (href: string) => (href === '/' ? currentPath === '/' : current
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    padding: 48px 16px 24px;
+    padding: 32px 16px 24px;
   }
 
   .dock {
@@ -104,7 +88,17 @@ const isActive = (href: string) => (href === '/' ? currentPath === '/' : current
     box-shadow: 0 10px 30px rgba(31, 29, 43, 0.18);
   }
 
-  .dock-item {
+  .dock-minimized {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+  }
+
+  .dock-minimized[hidden] {
+    display: none;
+  }
+
+  .dock :global(.dock-item) {
     position: relative;
     display: block;
     min-width: 0;
@@ -116,17 +110,17 @@ const isActive = (href: string) => (href === '/' ? currentPath === '/' : current
     font: inherit;
   }
 
-  .dock-item:active {
+  .dock :global(.dock-item:active) {
     transform: none;
   }
 
-  .dock-item:focus-visible {
+  .dock :global(.dock-item:focus-visible) {
     outline: 2px solid var(--os-blue);
     outline-offset: 3px;
     border-radius: 14px;
   }
 
-  .dock-icon {
+  .dock :global(.dock-icon) {
     display: grid;
     place-items: center;
     width: 52px;
@@ -137,18 +131,23 @@ const isActive = (href: string) => (href === '/' ? currentPath === '/' : current
     transform-origin: bottom center;
   }
 
-  .dock-icon svg {
+  .dock :global(.dock-icon svg) {
     width: 26px;
     height: 26px;
   }
 
-  .dock-item:hover .dock-icon,
-  .dock-item:focus-visible .dock-icon {
+  .dock :global(.dock-item:hover .dock-icon),
+  .dock :global(.dock-item:focus-visible .dock-icon) {
     transform: scale(1.3) translateY(-6px);
   }
 
-  /* Running-app dot under the current page */
-  .running::after {
+  /* A minimized window: a small framed tile, like the right side of the macOS dock. */
+  .dock :global(.dock-min .dock-icon) {
+    border: 2px solid rgba(255, 255, 255, 0.9);
+  }
+
+  /* Running-app dot */
+  .dock :global(.running::after) {
     content: '';
     position: absolute;
     left: 50%;
@@ -160,7 +159,7 @@ const isActive = (href: string) => (href === '/' ? currentPath === '/' : current
     background: #1F1D2B;
   }
 
-  .dock-tip {
+  .dock :global(.dock-tip) {
     position: absolute;
     left: 50%;
     bottom: calc(100% + 20px);
@@ -178,8 +177,8 @@ const isActive = (href: string) => (href === '/' ? currentPath === '/' : current
     transition: opacity 0.15s ease;
   }
 
-  .dock-item:hover .dock-tip,
-  .dock-item:focus-visible .dock-tip {
+  .dock :global(.dock-item:hover .dock-tip),
+  .dock :global(.dock-item:focus-visible .dock-tip) {
     opacity: 1;
   }
 
@@ -196,8 +195,9 @@ const isActive = (href: string) => (href === '/' ? currentPath === '/' : current
     text-align: center;
   }
 
+  /* Wide screens: the dock floats over the desktop. */
   @media (min-width: 1100px) {
-    .floating {
+    .dock-area {
       position: fixed;
       left: 50%;
       bottom: 12px;
@@ -206,7 +206,7 @@ const isActive = (href: string) => (href === '/' ? currentPath === '/' : current
       padding: 0;
     }
 
-    .floating .dock-note {
+    .dock-note {
       display: none;
     }
   }
@@ -217,16 +217,16 @@ const isActive = (href: string) => (href === '/' ? currentPath === '/' : current
       gap: 6px;
     }
 
-    .dock-icon {
+    .dock :global(.dock-icon) {
       width: 44px;
       height: 44px;
     }
 
-    .dock-tip {
+    .dock :global(.dock-tip) {
       display: none;
     }
 
-    .dock-item:hover .dock-icon {
+    .dock :global(.dock-item:hover .dock-icon) {
       transform: none;
     }
   }
@@ -242,25 +242,25 @@ const isActive = (href: string) => (href === '/' ? currentPath === '/' : current
       display: none;
     }
 
-    .dock-icon {
+    .dock :global(.dock-icon) {
       width: 40px;
       height: 40px;
       border-radius: 11px;
     }
 
-    .dock-icon svg {
+    .dock :global(.dock-icon svg) {
       width: 20px;
       height: 20px;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .dock-icon {
+    .dock :global(.dock-icon) {
       transition: none;
     }
 
-    .dock-item:hover .dock-icon,
-    .dock-item:focus-visible .dock-icon {
+    .dock :global(.dock-item:hover .dock-icon),
+    .dock :global(.dock-item:focus-visible .dock-icon) {
       transform: none;
     }
   }

@@ -1,0 +1,253 @@
+/* Projects (Finder). Global so the window keeps its styles when opened from any page. */
+
+.app-projects .browser {
+  flex: 1;
+  min-height: 0;
+}
+
+/* The sidebar stays put while the content pane scrolls, like Finder. */
+.app-projects .os-sidebar,
+.app-projects .pane {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.app-projects .pane {
+  min-width: 0;
+  padding: 28px 28px 32px;
+  background: var(--os-canvas);
+}
+
+.app-projects .pane-head {
+  margin-bottom: 28px;
+}
+
+.app-projects .group + .group {
+  margin-top: 32px;
+}
+
+.app-projects [hidden] {
+  display: none !important;
+}
+
+/* Gallery view */
+
+.app-projects .gallery {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.app-projects .tile {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 18px;
+  border-radius: 12px;
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  color: var(--os-ink);
+  text-decoration: none;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.app-projects .tile:hover {
+  color: var(--os-ink);
+  transform: translateY(-2px);
+  border-color: rgba(37, 99, 235, 0.35);
+  box-shadow: 0 12px 28px rgba(31, 29, 43, 0.12);
+}
+
+.app-projects .tile:focus-visible {
+  outline: 2px solid var(--os-blue);
+  outline-offset: 2px;
+}
+
+.app-projects .tile-icon {
+  width: 52px;
+  height: 52px;
+  margin-bottom: 14px;
+}
+
+.app-projects .tile-name {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.app-projects .tile-tagline {
+  margin-top: 2px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #7C3AED;
+}
+
+.app-projects .tile-pitch {
+  margin-top: 8px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #4B4860;
+}
+
+.app-projects .tile-foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.app-projects .tile-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.app-projects .tile-stats {
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* List view */
+
+.app-projects .list {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.app-projects .list-head,
+.app-projects .list-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 130px 48px 110px;
+  gap: 14px;
+  align-items: center;
+  padding: 0 14px;
+}
+
+.app-projects .list-head {
+  height: 30px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--os-muted);
+}
+
+.app-projects .list-row {
+  min-height: 54px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  color: var(--os-ink);
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.app-projects .list-row:nth-child(odd) {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.app-projects .list-row:hover {
+  background: var(--os-blue);
+  color: #FFFFFF;
+}
+
+.app-projects .list-row:hover small,
+.app-projects .list-row:hover .list-date {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.app-projects .list-row:focus-visible {
+  outline: 2px solid var(--os-blue);
+  outline-offset: -2px;
+}
+
+.app-projects .list-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.app-projects .list-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.app-projects .list-text strong {
+  font-weight: 600;
+}
+
+.app-projects .list-text small {
+  font-size: 12px;
+  color: var(--os-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-projects .list-lang {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.app-projects .list-lang .os-dot {
+  width: 8px;
+  height: 8px;
+}
+
+.app-projects .list-stars,
+.app-projects .list-head span:nth-child(3) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.app-projects .list-date {
+  color: var(--os-subtle);
+  white-space: nowrap;
+}
+
+.app-projects .empty,
+.app-projects .empty-state {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--os-subtle);
+}
+
+@media (max-width: 760px) {
+  .app-projects .browser {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .app-projects .pane {
+    padding: 20px 14px 24px;
+  }
+
+  .app-projects .list-head,
+  .app-projects .list-row {
+    grid-template-columns: minmax(0, 1fr) 40px;
+  }
+
+  .app-projects .list-head span:nth-child(2),
+  .app-projects .list-head span:nth-child(4),
+  .app-projects .list-lang,
+  .app-projects .list-date {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-projects .tile,
+  .app-projects .tile:hover {
+    transition: none;
+    transform: none;
+  }
+}

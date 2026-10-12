@@ -1,5 +1,6 @@
 ---
-import OsPage from '../layouts/OsPage.astro';
+import Desktop from '../layouts/Desktop.astro';
+import Window from '../components/Window.astro';
 import { SITE_TITLE, GITHUB_USERNAME, SOCIAL_LINKS } from '../consts';
 import { SHOWCASE_ICONS, buildShowcase } from '../data/showcase';
 import { bucketProjects, getProjectDescription, loadRepositories } from '../lib/projects';
@@ -41,14 +42,26 @@ const formatUpdated = (iso: string) =>
   new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 ---
 
-<OsPage
+<Desktop
   title={`Projects - ${SITE_TITLE}`}
   description="Most-starred open source projects by Michelle Mayes, plus the full GitHub catalog of experiments and prototypes."
-  windowTitle="Projects"
-  meta={`${itemCount} items · ★ ${totalStars}`}
-  size="xl"
+  appName="Finder"
 >
-  <div class="os-split finder" data-filter-root>
+  <Window
+    id="app-projects"
+    title="Projects"
+    titleAs="p"
+    route="/projects"
+    appName="Finder"
+    docTitle={`Projects - ${SITE_TITLE}`}
+    meta={`${itemCount} items · ★ ${totalStars}`}
+    width={1180}
+    height={820}
+    icon={{ color: 'linear-gradient(160deg, #7DD3FC, #2563EB)', glyph: 'M4 6h6l2 2h8v10H4z' }}
+    primary
+    class="app-projects"
+  >
+  <div class="os-split browser" data-filter-root>
     <nav class="os-sidebar" aria-label="Filter projects">
       <p class="os-sidebar-label">Favorites</p>
       <button type="button" class="os-sidebar-item" data-filter="" aria-pressed="true">
@@ -151,252 +164,6 @@ const formatUpdated = (iso: string) =>
       )}
     </div>
   </div>
-</OsPage>
+  </Window>
+</Desktop>
 
-<script>
-  import '../scripts/sidebar-filter';
-</script>
-
-<style>
-  .finder {
-    min-height: 640px;
-  }
-
-  .pane {
-    min-width: 0;
-    padding: 28px 28px 32px;
-    background: var(--os-canvas);
-  }
-
-  .pane-head {
-    margin-bottom: 28px;
-  }
-
-  .group + .group {
-    margin-top: 32px;
-  }
-
-  [hidden] {
-    display: none !important;
-  }
-
-  /* Gallery view */
-  .gallery {
-    list-style: none;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 14px;
-  }
-
-  .tile {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    padding: 18px;
-    border-radius: 12px;
-    background: #FFFFFF;
-    border: 1px solid rgba(0, 0, 0, 0.07);
-    color: var(--os-ink);
-    text-decoration: none;
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, border-color 0.2s ease;
-  }
-
-  .tile:hover {
-    color: var(--os-ink);
-    transform: translateY(-2px);
-    border-color: rgba(37, 99, 235, 0.35);
-    box-shadow: 0 12px 28px rgba(31, 29, 43, 0.12);
-  }
-
-  .tile:focus-visible {
-    outline: 2px solid var(--os-blue);
-    outline-offset: 2px;
-  }
-
-  .tile-icon {
-    width: 52px;
-    height: 52px;
-    margin-bottom: 14px;
-  }
-
-  .tile-name {
-    font-size: 17px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-  }
-
-  .tile-tagline {
-    margin-top: 2px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #7C3AED;
-  }
-
-  .tile-pitch {
-    margin-top: 8px;
-    font-size: 13.5px;
-    line-height: 1.55;
-    color: #4B4860;
-  }
-
-  .tile-foot {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 10px;
-    margin-top: auto;
-    padding-top: 16px;
-  }
-
-  .tile-stack {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-
-  .tile-stats {
-    font-size: 13px;
-    font-weight: 700;
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
-  }
-
-  /* List view */
-  .list {
-    background: #FFFFFF;
-    border: 1px solid rgba(0, 0, 0, 0.07);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-
-  .list-head,
-  .list-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 130px 48px 110px;
-    gap: 14px;
-    align-items: center;
-    padding: 0 14px;
-  }
-
-  .list-head {
-    height: 30px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--os-muted);
-  }
-
-  .list-row {
-    min-height: 54px;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    color: var(--os-ink);
-    text-decoration: none;
-    font-size: 13px;
-  }
-
-  .list-row:nth-child(odd) {
-    background: rgba(0, 0, 0, 0.02);
-  }
-
-  .list-row:hover {
-    background: var(--os-blue);
-    color: #FFFFFF;
-  }
-
-  .list-row:hover small,
-  .list-row:hover .list-date {
-    color: rgba(255, 255, 255, 0.8);
-  }
-
-  .list-row:focus-visible {
-    outline: 2px solid var(--os-blue);
-    outline-offset: -2px;
-  }
-
-  .list-name {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-width: 0;
-  }
-
-  .list-text {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-  }
-
-  .list-text strong {
-    font-weight: 600;
-  }
-
-  .list-text small {
-    font-size: 12px;
-    color: var(--os-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .list-lang {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    white-space: nowrap;
-  }
-
-  .list-lang .os-dot {
-    width: 8px;
-    height: 8px;
-  }
-
-  .list-stars,
-  .list-head span:nth-child(3) {
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .list-date {
-    color: var(--os-subtle);
-    white-space: nowrap;
-  }
-
-  .empty,
-  .empty-state {
-    padding: 40px 20px;
-    text-align: center;
-    color: var(--os-subtle);
-  }
-
-  @media (max-width: 760px) {
-    .finder {
-      min-height: 0;
-    }
-
-    .pane {
-      padding: 20px 14px 24px;
-    }
-
-    .list-head,
-    .list-row {
-      grid-template-columns: minmax(0, 1fr) 40px;
-    }
-
-    .list-head span:nth-child(2),
-    .list-head span:nth-child(4),
-    .list-lang,
-    .list-date {
-      display: none;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .tile,
-    .tile:hover {
-      transition: none;
-      transform: none;
-    }
-  }
-</style>

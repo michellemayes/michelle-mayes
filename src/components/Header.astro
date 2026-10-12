@@ -2,11 +2,13 @@
 import { SITE_TITLE } from '../consts';
 
 interface Props {
+  /** Name of the focused app, shown bold like macOS. The window manager updates it. */
+  appName?: string;
   /** The project shown in the menu bar's status item. */
   now?: { name: string; url: string } | null;
 }
 
-const { now = null } = Astro.props;
+const { appName = 'Michelle OS', now = null } = Astro.props;
 const currentPath = Astro.url.pathname;
 
 const navLinks = [
@@ -21,11 +23,12 @@ const navLinks = [
 <header class="menubar">
   <div class="menu-left">
     <a href="/" class="menu-logo" aria-label={`${SITE_TITLE} home`}>✦</a>
-    <a href="/" class="menu-brand">Michelle OS</a>
+    <span class="menu-brand" data-app-name>{appName}</span>
     <nav aria-label="Main navigation">
       {navLinks.map(({ href, label }) => (
         <a
           href={href}
+          data-nav-route={href}
           class:list={{ active: currentPath.startsWith(href) }}
           aria-current={currentPath.startsWith(href) ? 'page' : undefined}
         >
@@ -115,6 +118,7 @@ const navLinks = [
   }
 
   .menu-brand {
+    padding: 0 8px;
     font-weight: 700;
   }
 

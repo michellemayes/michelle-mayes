@@ -1,16 +1,29 @@
 ---
-import OsPage from '../layouts/OsPage.astro';
+import Desktop from '../layouts/Desktop.astro';
+import Window from '../components/Window.astro';
 import { SITE_TITLE } from '../consts';
 
 export const prerender = true;
 ---
 
-<OsPage
+<Desktop
   title={`Page not found | ${SITE_TITLE}`}
   description="That page couldn't be found on michellemayes.me."
-  windowTitle="Finder"
-  size="dialog"
+  appName="Finder"
 >
+  <Window
+    id="dialog-404"
+    title="Finder"
+    titleAs="p"
+    route="/404"
+    appName="Finder"
+    docTitle={`Page not found | ${SITE_TITLE}`}
+    width={460}
+    height={360}
+    icon={{ color: 'linear-gradient(160deg, #7DD3FC, #2563EB)', glyph: 'M4 6h6l2 2h8v10H4z' }}
+    primary
+    class="app-dialog"
+  >
   <div class="dialog" role="alert">
     <span class="dialog-icon" aria-hidden="true">
       <svg viewBox="0 0 64 64">
@@ -32,49 +45,5 @@ export const prerender = true;
       <a class="mac-btn primary" href="/">Go to the desktop</a>
     </div>
   </div>
-</OsPage>
-
-<style>
-  .dialog {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 28px 28px 24px;
-    text-align: center;
-  }
-
-  .dialog-icon svg {
-    width: 72px;
-    height: 72px;
-    filter: drop-shadow(0 6px 10px rgba(31, 29, 43, 0.18));
-  }
-
-  h1 {
-    margin-top: 14px;
-    font-size: 17px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    color: var(--os-ink);
-  }
-
-  p {
-    margin-top: 6px;
-    font-size: 13.5px;
-    line-height: 1.55;
-    color: var(--os-subtle);
-  }
-
-  .dialog-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    width: 100%;
-    margin-top: 22px;
-  }
-
-  @media (max-width: 420px) {
-    .dialog-actions {
-      flex-direction: column-reverse;
-    }
-  }
-</style>
+  </Window>
+</Desktop>

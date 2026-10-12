@@ -1,16 +1,29 @@
 ---
-import OsPage from '../layouts/OsPage.astro';
+import Desktop from '../layouts/Desktop.astro';
+import Window from '../components/Window.astro';
 import { SITE_TITLE } from '../consts';
 
 export const prerender = true;
 ---
 
-<OsPage
+<Desktop
   title={`Resume | ${SITE_TITLE}`}
   description="Resume for Michelle Mayes — data scientist and AI product engineer building intelligent systems with RAG, LLMs, and modern web stacks."
-  windowTitle="Resume.pdf"
-  size="m"
+  appName="Preview"
 >
+  <Window
+    id="app-resume"
+    title="Resume.pdf"
+    titleAs="p"
+    route="/resume"
+    appName="Preview"
+    docTitle={`Resume | ${SITE_TITLE}`}
+    width={860}
+    height={940}
+    icon={{ color: 'linear-gradient(160deg, #FDA4AF, #E11D48)', glyph: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6' }}
+    primary
+    class="app-resume"
+  >
   <div class="win-toolbar" slot="toolbar">
     <h1 class="doc-title">Resume <span>Michelle Mayes</span></h1>
     <span class="spacer"></span>
@@ -32,57 +45,5 @@ export const prerender = true;
       Phones only preview the first page. <a href="/resume.pdf" target="_blank" rel="noopener">Open the full PDF</a>.
     </p>
   </div>
-</OsPage>
-
-<style>
-  .doc-title {
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0;
-    color: var(--os-ink);
-  }
-
-  .doc-title span {
-    margin-left: 6px;
-    font-weight: 500;
-    color: var(--os-muted);
-  }
-
-  /* Gray canvas with the page floating on it, like Preview. */
-  .canvas {
-    padding: 24px;
-    background: #E4E2EA;
-  }
-
-  iframe {
-    display: block;
-    width: 100%;
-    height: max(70vh, 640px);
-    border: 0;
-    border-radius: 4px;
-    background: #FFFFFF;
-    box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.1), 0 10px 30px rgba(31, 29, 43, 0.18);
-  }
-
-  .mobile-note {
-    display: none;
-    margin-top: 12px;
-    font-size: 13px;
-    text-align: center;
-    color: var(--os-subtle);
-  }
-
-  @media (max-width: 760px) {
-    .canvas {
-      padding: 12px;
-    }
-
-    iframe {
-      height: 70vh;
-    }
-
-    .mobile-note {
-      display: block;
-    }
-  }
-</style>
+  </Window>
+</Desktop>

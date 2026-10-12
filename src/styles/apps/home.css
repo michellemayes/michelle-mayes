@@ -1,0 +1,359 @@
+/*
+  The desktop at "/": Welcome, Open Source, and shipping-log windows plus the
+  GitHub widget and sticky note. Global (not page-scoped) so these windows
+  keep their styles when opened from any other page.
+*/
+
+/* Placement on wide screens. Heights follow the viewport so nothing hides
+   behind the dock on shorter laptops. */
+@media (min-width: 1100px) {
+  .os .desktop > .home-welcome {
+    left: 3vw;
+    top: 24px;
+    width: 400px;
+  }
+
+  .os .desktop > .home-finder {
+    left: calc(3vw + 430px);
+    top: 52px;
+    width: min(580px, calc(100% - 3vw - 430px - 140px));
+    height: clamp(300px, calc(100% - 420px), 410px);
+  }
+
+  .os .desktop > .home-log {
+    left: calc(3vw + 480px);
+    top: clamp(360px, 55%, 500px);
+    width: min(520px, calc(100% - 3vw - 480px - 130px));
+    height: min(330px, calc(100% - clamp(360px, 55%, 500px) - 104px));
+  }
+
+  .os .desktop > .widget {
+    left: 3vw;
+    bottom: 112px;
+  }
+
+  .os .desktop > .sticky {
+    left: calc(3vw + 222px);
+    bottom: 128px;
+  }
+}
+
+@media (min-width: 1100px) and (max-height: 820px) {
+  .welcome img {
+    width: 84px;
+    height: 84px;
+  }
+
+  .welcome-sub {
+    font-size: 13.5px;
+  }
+}
+
+/* Welcome */
+.welcome {
+  padding: 24px 28px 26px;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.welcome img {
+  width: 112px;
+  height: 112px;
+  margin: 0 auto;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 4px #FFFFFF, 0 0 0 5px rgba(0, 0, 0, 0.08);
+}
+
+.welcome h1 {
+  margin-top: 14px;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--os-ink);
+}
+
+.welcome-role {
+  margin-bottom: 12px;
+  color: var(--os-subtle);
+}
+
+.welcome-tagline {
+  margin-bottom: 6px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #7C3AED;
+}
+
+.welcome-sub {
+  margin-bottom: 20px;
+  color: #4B4860;
+}
+
+.welcome-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Open Source (Finder) */
+.finder {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.finder-side {
+  padding: 12px 8px;
+}
+
+.finder-main {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.finder-head,
+.finder-list a {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px 40px;
+  gap: 12px;
+  align-items: center;
+}
+
+.finder-head {
+  padding: 6px 14px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--os-muted);
+}
+
+.finder-list {
+  list-style: none;
+  margin: 0;
+  padding: 4px 6px;
+  overflow-y: auto;
+}
+
+.finder-list li:nth-child(even) a {
+  background: rgba(0, 0, 0, 0.025);
+}
+
+.finder-list a {
+  padding: 7px 8px;
+  border-radius: 6px;
+  color: var(--os-ink);
+  text-decoration: none;
+}
+
+.finder-list a:hover,
+.finder-list li:nth-child(even) a:hover {
+  background: var(--os-blue);
+  color: #FFFFFF;
+}
+
+.finder-list a:active {
+  transform: none;
+}
+
+.finder-list a:hover small,
+.finder-list a:hover .f-kind {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.f-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.f-name > span:last-child {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.f-name small {
+  font-size: 12px;
+  color: var(--os-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.f-kind {
+  font-size: 12px;
+  color: var(--os-subtle);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.f-stars {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+/* shipping-log.txt (TextEdit) */
+.log {
+  flex: 1;
+  margin: 0;
+  padding: 16px 22px;
+  list-style: none;
+  overflow-y: auto;
+  background: #FFFFFF;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.log li {
+  margin-bottom: 14px;
+}
+
+.log-date {
+  margin-right: 8px;
+  color: var(--os-muted);
+}
+
+.log a {
+  font-weight: 700;
+  color: #7C3AED;
+}
+
+.log a:hover {
+  color: #7C3AED;
+  text-decoration: underline;
+}
+
+.log p {
+  margin-top: 2px;
+  color: #4B4860;
+}
+
+/* GitHub widget */
+.widget {
+  width: 200px;
+  padding: 14px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 10px 30px rgba(31, 29, 43, 0.12);
+  font-family: var(--font-sans);
+  color: var(--os-ink);
+}
+
+.widget-label {
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #7C3AED;
+}
+
+.widget-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.widget-grid div {
+  display: flex;
+  flex-direction: column;
+}
+
+.widget-grid b {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.widget-grid span {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--os-subtle);
+}
+
+/* Sticky note */
+.sticky {
+  width: 210px;
+  padding: 16px 18px 20px;
+  background: #FEF08A;
+  box-shadow: 0 12px 24px rgba(31, 29, 43, 0.18);
+  transform: rotate(-3deg);
+  font-family: var(--font-hand);
+  font-size: 22px;
+  line-height: 1.25;
+  color: #3F3A1D;
+}
+
+.sticky p {
+  margin-bottom: 6px;
+}
+
+.sticky ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.sticky .done {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.sticky a {
+  color: inherit;
+}
+
+.sticky a:hover {
+  color: inherit;
+  text-decoration: underline;
+}
+
+/* Phones and tablets: the desktop becomes a scrolling home screen. */
+@media (max-width: 1099px) {
+  .finder {
+    grid-template-columns: 1fr;
+  }
+
+  .finder-side {
+    display: none;
+  }
+
+  .os .desktop > .home-finder .finder-list {
+    overflow: visible;
+  }
+
+  .os .desktop > .home-log {
+    max-height: 420px;
+  }
+
+  .os .desktop > .widget,
+  .os .desktop > .sticky {
+    width: 100%;
+  }
+
+  .sticky {
+    transform: rotate(-1deg);
+  }
+}
+
+@media (max-width: 520px) {
+  .finder-head,
+  .finder-list a {
+    grid-template-columns: minmax(0, 1fr) 32px;
+  }
+
+  .f-kind,
+  .finder-head span:nth-child(2) {
+    display: none;
+  }
+}

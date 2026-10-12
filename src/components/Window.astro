@@ -1,53 +1,93 @@
 ---
 /**
  * A Mac-style window. Every window on the site renders through this
- * component, so titlebars, traffic lights, and shadows stay identical.
+ * component, and scripts/window-manager.ts drives them all the same way:
+ * drag by the titlebar, click to focus, and real traffic lights (close,
+ * minimize to the dock, zoom).
  *
- * - On the homepage, windows are draggable (`windowId`) and the red light is
- *   a button that hides the window until the dock reopens it.
- * - On every other page, the red light is a link back to the desktop
- *   (`closeHref`).
+ * Each window belongs to a route. Opening a link to another route fetches
+ * that page and adds its windows to the current desktop instead of
+ * reloading, so the desktop persists like a real OS. Without JavaScript the
+ * same markup still works as an ordinary page.
  *
- * Callers position or size a window from outside with :global selectors on
- * `class`, since Astro scopes styles per component.
+ * - kind "home": the windows that make up the desktop at `/`.
+ * - kind "app": a page's app window. On wide screens it floats centered on
+ *   the desktop; on phones it opens full screen.
  */
 interface Props {
+  /** Unique id across the whole site, e.g. "app-projects" or "post-career-path". */
+  id: string;
   title: string;
+  route: string;
+  appName: string;
+  /** document.title while this window is focused. */
+  docTitle: string;
+  kind?: 'home' | 'app';
   titleId?: string;
-  /** Element used for the titlebar text. Pages put their own <h1> in the body. */
+  /** Element used for the titlebar text. App windows put their own <h1> in the body. */
   titleAs?: 'h1' | 'h2' | 'p';
   meta?: string;
-  windowId?: string;
-  closeHref?: string;
+  /** Preferred size on wide screens, in px (clamped to the desktop). */
+  width?: number;
+  height?: number;
+  /** Icon shown in the dock while minimized. */
+  icon?: { color: string; glyph: string };
+  /** The window focused when its route opens. */
+  primary?: boolean;
   class?: string;
 }
 
-const { title, titleId, titleAs = 'h2', meta, windowId, closeHref, class: className } = Astro.props;
+const {
+  id,
+  title,
+  route,
+  appName,
+  docTitle,
+  kind = 'app',
+  titleId,
+  titleAs = 'h2',
+  meta,
+  width = 900,
+  height = 640,
+  icon = { color: 'linear-gradient(160deg, #C4B5FD, #7C3AED)', glyph: 'M4 5h16v14H4zM4 9h16' },
+  primary = false,
+  class: className,
+} = Astro.props;
 const TitleTag = titleAs;
-const draggable = Boolean(windowId);
 ---
 
 <section
-  class:list={['window', className]}
-  data-window={windowId}
+  class:list={['window', `window-${kind}`, className]}
+  id={`window-${id}`}
+  data-window={id}
+  data-route={route}
+  data-app={appName}
+  data-doc-title={docTitle}
+  data-kind={kind}
+  data-primary={primary ? '' : undefined}
+  data-icon-color={icon.color}
+  data-icon-glyph={icon.glyph}
+  style={`--w: ${width}px; --h: ${height}px;`}
   aria-labelledby={titleId}
   aria-label={titleId ? undefined : title}
 >
-  <div class="titlebar" data-drag={draggable ? '' : undefined}>
+  <div class="titlebar" data-drag>
     <span class="lights">
-      {closeHref ? (
-        <a class="light close" href={closeHref} aria-label="Close window and go back to the desktop" title="Back to the desktop"></a>
+      {kind === 'app' ? (
+        <a class="light close" href="/" data-close aria-label={`Close ${title}`} title="Close"></a>
       ) : (
-        <button type="button" class="light close" data-close aria-label={`Close ${title}`}></button>
+        <button type="button" class="light close" data-close aria-label={`Close ${title}`} title="Close"></button>
       )}
-      <i class="light minimize" aria-hidden="true"></i>
-      <i class="light zoom" aria-hidden="true"></i>
+      <button type="button" class="light minimize" data-minimize aria-label={`Minimize ${title}`} title="Minimize"></button>
+      <button type="button" class="light zoom" data-zoom aria-label={`Zoom ${title}`} title="Zoom"></button>
     </span>
     <TitleTag class="win-title" id={titleId}>{title}</TitleTag>
     {meta && <span class="win-meta">{meta}</span>}
   </div>
   <slot name="toolbar" />
-  <slot />
+  <div class="window-body">
+    <slot />
+  </div>
 </section>
 
 <style>
@@ -67,19 +107,30 @@ const draggable = Boolean(windowId);
     font-size: 15px;
     line-height: 1.55;
     color: var(--os-ink);
-    transition: box-shadow 0.2s ease;
+  }
+
+  /* Focus moves to a window when it opens (for screen readers); the
+     titlebar state shows focus, so the window itself draws no ring. */
+  .window:focus,
+  .window:focus-visible {
+    outline: none;
   }
 
   .window:global(.is-focused) {
     box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.2), 0 30px 70px rgba(31, 29, 43, 0.32);
   }
 
+  /* Unfocused windows dim their titlebar, like macOS. */
+  .window:not(:global(.is-focused)) .win-title {
+    color: #9A97A8;
+  }
+
   .window:global(.is-dragging) {
-    transition: none;
     user-select: none;
   }
 
-  .window:global(.is-closed) {
+  .window:global(.is-closed),
+  .window:global(.is-minimized) {
     display: none;
   }
 
@@ -93,20 +144,26 @@ const draggable = Boolean(windowId);
     flex-shrink: 0;
     border-bottom: 1px solid var(--window-line);
     background: var(--window-bar);
-  }
-
-  .titlebar[data-drag] {
     touch-action: none;
   }
 
   @media (min-width: 1100px) {
-    .titlebar[data-drag] {
-      cursor: grab;
+    .titlebar {
+      cursor: default;
     }
 
     .window:global(.is-dragging) .titlebar {
       cursor: grabbing;
     }
+  }
+
+  .window-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
   }
 
   .lights {
@@ -117,6 +174,7 @@ const draggable = Boolean(windowId);
   }
 
   .light {
+    position: relative;
     display: block;
     width: 12px;
     height: 12px;
@@ -126,49 +184,42 @@ const draggable = Boolean(windowId);
     border: 0;
     border-radius: 50%;
     box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.12);
-  }
-
-  .light.close {
-    position: relative;
-    background: var(--os-red);
     cursor: pointer;
   }
 
-  /* The x glyph shows on hover, like macOS. */
-  .light.close::after {
-    content: '×';
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    font-size: 11px;
-    font-weight: 700;
-    line-height: 1;
-    color: rgba(77, 0, 0, 0.75);
-    opacity: 0;
-  }
-
-  .light.close:hover::after,
-  .light.close:focus-visible::after {
-    opacity: 1;
-  }
-
-  .light.close:active {
+  .light:active {
     transform: none;
-    filter: brightness(0.9);
+    filter: brightness(0.88);
   }
 
-  .light.close:focus-visible {
+  .light:focus-visible {
     outline: 2px solid var(--os-blue);
     outline-offset: 2px;
   }
 
-  .minimize {
-    background: var(--os-yellow);
+  .close { background: var(--os-red); }
+  .minimize { background: var(--os-yellow); }
+  .zoom { background: var(--os-green); }
+
+  /* Glyphs appear when hovering the group, like macOS. */
+  .light::after {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1;
+    opacity: 0;
   }
 
-  .zoom {
-    background: var(--os-green);
+  .close::after { content: '×'; font-size: 11px; color: rgba(77, 0, 0, 0.75); }
+  .minimize::after { content: '−'; color: rgba(90, 50, 0, 0.75); }
+  .zoom::after { content: '+'; color: rgba(0, 70, 0, 0.75); }
+
+  .lights:hover .light::after,
+  .light:focus-visible::after {
+    opacity: 1;
   }
 
   .win-title {
@@ -182,6 +233,7 @@ const draggable = Boolean(windowId);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    pointer-events: none;
   }
 
   .win-meta {
@@ -190,22 +242,23 @@ const draggable = Boolean(windowId);
     font-size: 12px;
     color: var(--os-muted);
     white-space: nowrap;
+    pointer-events: none;
+  }
+
+  @media (max-width: 1099px) {
+    .zoom {
+      display: none;
+    }
   }
 
   @media (max-width: 560px) {
     .titlebar {
-      padding: 0 72px 0 76px;
+      padding: 0 72px 0 60px;
       justify-content: flex-start;
     }
 
     .win-meta {
       display: none;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .window {
-      transition: none;
     }
   }
 </style>

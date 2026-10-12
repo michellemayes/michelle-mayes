@@ -1,0 +1,250 @@
+/* Blog posts (document window). Markdown content needs these rules unscoped, which global CSS gives it. */
+
+.app-post .toolbar-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* A white page on a gray canvas, like a document in Pages. */
+
+.app-post .canvas {
+  flex: 1 0 auto;
+  padding: 32px;
+  background: var(--os-canvas);
+}
+
+.app-post .blog-post {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 48px 56px;
+  background: #FFFFFF;
+  border-radius: 6px;
+  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(31, 29, 43, 0.08);
+}
+
+.app-post .blog-post-header {
+  padding-bottom: 28px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.app-post .blog-post-meta {
+  display: flex;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--os-muted);
+}
+
+.app-post .blog-post-header h1 {
+  margin-top: 10px;
+  font-size: clamp(1.9rem, 1.5rem + 1.6vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  color: var(--os-ink);
+}
+
+.app-post .blog-post-description {
+  margin-top: 14px;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--os-subtle);
+}
+
+.app-post .blog-post-content {
+  font-size: 17px;
+  line-height: 1.8;
+  color: #2A2838;
+}
+
+.app-post .blog-post-content h2 {
+  margin-top: 2.2em;
+  margin-bottom: 0.6em;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--os-ink);
+}
+
+.app-post .blog-post-content h3 {
+  margin-top: 1.8em;
+  margin-bottom: 0.5em;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--os-ink);
+}
+
+.app-post .blog-post-content p {
+  margin-bottom: 1.4em;
+}
+
+.app-post .blog-post-content ul,
+.app-post .blog-post-content ol {
+  margin-bottom: 1.4em;
+  padding-left: 1.4em;
+}
+
+.app-post .blog-post-content li {
+  margin-bottom: 0.45em;
+}
+
+.app-post .blog-post-content li::marker {
+  color: #7C3AED;
+}
+
+.app-post .blog-post-content code {
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: rgba(124, 58, 237, 0.08);
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  color: #6D28D9;
+}
+
+/* Code blocks look like a little Terminal window. */
+
+.app-post .blog-post-content pre {
+  position: relative;
+  margin-bottom: 1.4em;
+  padding: 38px 18px 16px;
+  border-radius: 10px;
+  background: #1C1A27;
+  color: #E6E1F5;
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-x: auto;
+  box-shadow: 0 10px 24px rgba(31, 29, 43, 0.18);
+}
+
+.app-post .blog-post-content pre::before {
+  content: '';
+  position: absolute;
+  top: 13px;
+  left: 14px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--os-red);
+  box-shadow: 16px 0 0 var(--os-yellow), 32px 0 0 var(--os-green);
+}
+
+.app-post .blog-post-content pre code {
+  padding: 0;
+  background: none;
+  color: inherit;
+  font-size: inherit;
+}
+
+.app-post .blog-post-content blockquote {
+  margin: 1.6em 0;
+  padding: 14px 18px;
+  border-left: 3px solid #7C3AED;
+  border-radius: 0 8px 8px 0;
+  background: rgba(124, 58, 237, 0.06);
+  font-style: normal;
+  color: #4B4860;
+}
+
+.app-post .blog-post-content blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+.app-post .blog-post-content hr {
+  margin: 2.4em 0;
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.app-post .blog-post-content img {
+  margin: 1.6em 0;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(31, 29, 43, 0.12);
+}
+
+.app-post .blog-post-content table {
+  width: 100%;
+  margin-bottom: 1.4em;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.app-post .blog-post-content th,
+.app-post .blog-post-content td {
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  text-align: left;
+}
+
+.app-post .blog-post-content th {
+  font-weight: 700;
+  color: var(--os-ink);
+}
+
+.app-post .blog-post-content a {
+  color: var(--os-blue);
+  text-decoration: underline;
+  text-decoration-color: rgba(37, 99, 235, 0.3);
+  text-underline-offset: 2px;
+  transition: text-decoration-color 0.2s ease;
+}
+
+.app-post .blog-post-content a:hover {
+  color: var(--os-blue);
+  text-decoration-color: var(--os-blue);
+}
+
+.app-post .author-bio {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin-top: 40px;
+  padding: 18px;
+  border-radius: 12px;
+  background: var(--os-canvas);
+}
+
+.app-post .author-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px #FFFFFF;
+}
+
+.app-post .author-info {
+  flex: 1;
+  min-width: 200px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.app-post .author-info p {
+  color: var(--os-subtle);
+}
+
+.app-post .author-actions {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 760px) {
+  .app-post .canvas {
+    padding: 12px;
+  }
+
+  .app-post .blog-post {
+    padding: 28px 20px;
+  }
+
+  .app-post .blog-post-content {
+    font-size: 16.5px;
+  }
+
+  .app-post .toolbar-tags {
+    display: none;
+  }
+}

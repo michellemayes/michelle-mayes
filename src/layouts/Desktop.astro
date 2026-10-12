@@ -1,0 +1,41 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import DesktopIcons from '../components/DesktopIcons.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+
+/**
+ * Every page renders the same desktop: menu bar, wallpaper, desktop icons,
+ * and dock, with that page's windows on top. The window manager then keeps
+ * the desktop alive across navigation, opening other pages as windows.
+ */
+interface Props {
+  title: string;
+  description: string;
+  jsonLd?: Record<string, unknown>;
+  /** App name shown in the menu bar on first paint. */
+  appName: string;
+  now?: { name: string; url: string } | null;
+}
+
+const { title, description, jsonLd, appName, now = null } = Astro.props;
+const route = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} jsonLd={jsonLd} />
+  </head>
+  <body class="os">
+    <Header appName={appName} now={now} />
+    <main id="main-content" class="desktop" data-desktop data-route={route}>
+      <DesktopIcons />
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import '../scripts/window-manager';
+    </script>
+  </body>
+</html>

@@ -1,9 +1,6 @@
 ---
-import '@fontsource/caveat/latin-600.css';
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
 import Window from '../components/Window.astro';
+import Desktop from '../layouts/Desktop.astro';
 import { GITHUB_USERNAME, SITE_DESCRIPTION, SITE_TITLE_FULL, SOCIAL_LINKS } from '../consts';
 import { SHOWCASE_ICONS, buildShowcase } from '../data/showcase';
 import { getHomeData } from '../lib/home-data';
@@ -28,20 +25,6 @@ const CALENDAR_URL = 'https://calendar.app.google/yYSHV4KQ4zJsxkdt5';
 const formatDate = (iso: string) =>
 	new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 
-const desktopIcons = [
-	{ href: '/resume.pdf', label: 'Resume.pdf', kind: 'file' },
-	{ href: '/blog', label: 'Blog', kind: 'folder' },
-	{ href: '/about', label: 'About', kind: 'folder' },
-	{ href: SOCIAL_LINKS.linkedin, label: 'LinkedIn', kind: 'link' },
-	{ href: SOCIAL_LINKS.email, label: 'Say hi', kind: 'mail' },
-];
-
-const dockApps = [
-	{ window: 'about', label: 'About Me', color: 'linear-gradient(160deg, #F0ABFC, #A21CAF)', glyph: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0' },
-	{ window: 'finder', label: 'Open Source', color: 'linear-gradient(160deg, #7DD3FC, #2563EB)', glyph: 'M4 6h6l2 2h8v10H4z' },
-	{ window: 'log', label: 'Shipping Log', color: 'linear-gradient(160deg, #FDBA74, #EA580C)', glyph: 'M7 4h10v16H7zM9.5 8h5M9.5 12h5M9.5 16h3' },
-];
-
 const personSchema = {
 	"@context": "https://schema.org",
 	"@type": "Person",
@@ -56,673 +39,144 @@ const personSchema = {
 		SOCIAL_LINKS.twitter,
 	],
 };
+
+const windowDefaults = { route: '/', docTitle: SITE_TITLE_FULL, kind: 'home' as const };
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE_FULL} description={SITE_DESCRIPTION} jsonLd={personSchema} />
-	</head>
-	<body>
-		<Header now={currentlyBuilding} />
+<Desktop
+	title={SITE_TITLE_FULL}
+	description={SITE_DESCRIPTION}
+	jsonLd={personSchema}
+	appName="Michelle OS"
+	now={currentlyBuilding}
+>
+	<Window
+		{...windowDefaults}
+		id="home-welcome"
+		title="Welcome"
+		titleId="welcome-title"
+		appName="Michelle OS"
+		primary
+		icon={{ color: 'linear-gradient(160deg, #F0ABFC, #A21CAF)', glyph: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0' }}
+		class="home-welcome"
+	>
+		<div class="welcome">
+			<img src="/avatar.jpg" alt="Michelle Mayes" width="112" height="112" loading="eager" decoding="async" fetchpriority="high" />
+			<h1>Michelle Mayes</h1>
+			<p class="welcome-role">Full-Stack Builder &amp; AI Product Engineer</p>
+			<p class="welcome-tagline">I ship fast. AI keeps up.</p>
+			<p class="welcome-sub">
+				Product-minded full-stack builder making practical AI tools, cozy Mac apps, and the occasional grocery
+				robot. Always with measurable outcomes.
+			</p>
+			<div class="welcome-actions">
+				<a class="mac-btn primary" href={CALENDAR_URL} target="_blank" rel="noopener noreferrer">Schedule a chat</a>
+				<a class="mac-btn" href="/about">About me</a>
+			</div>
+		</div>
+	</Window>
 
-		<main id="main-content" class="desktop">
-			<ul class="icons" aria-label="Desktop shortcuts">
-				{desktopIcons.map((icon) => (
-					<li>
-						<a href={icon.href} class={`icon icon-${icon.kind}`}>
-							<span class="icon-art" aria-hidden="true"></span>
-							<span class="icon-label">{icon.label}</span>
-						</a>
-					</li>
-				))}
-			</ul>
-
-			<Window title="About Me" titleId="about-title" windowId="about" class="win-about">
-				<div class="about-body">
-					<img src="/avatar.jpg" alt="Michelle Mayes" width="112" height="112" loading="eager" decoding="async" fetchpriority="high" />
-					<h1>Michelle Mayes</h1>
-					<p class="about-role">Full-Stack Builder &amp; AI Product Engineer</p>
-					<p class="about-tagline">I ship fast. AI keeps up.</p>
-					<p class="about-sub">
-						Product-minded full-stack builder making practical AI tools, cozy Mac apps, and the occasional grocery
-						robot. Always with measurable outcomes.
-					</p>
-					<div class="about-actions">
-						<a class="mac-btn primary" href={CALENDAR_URL} target="_blank" rel="noopener noreferrer">Schedule a chat</a>
-						<a class="mac-btn" href="/resume">Resume</a>
-					</div>
-				</div>
-			</Window>
-
-			<Window title="Open Source" titleId="finder-title" windowId="finder" meta={`${showcase.length} items · ★ ${totalStars}`} class="win-finder">
-				<div class="finder">
-					<nav class="os-sidebar finder-side" aria-label="Places">
-						<p class="os-sidebar-label">Favorites</p>
-						<a class="os-sidebar-item is-active" href="#finder-title">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" /></svg>
-							Open Source
-						</a>
-						<a class="os-sidebar-item" href="#log-title">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v16H7zM9.5 8h5M9.5 12h5M9.5 16h3" /></svg>
-							Shipping Log
-						</a>
-						<a class="os-sidebar-item" href="/projects">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" /></svg>
-							All Projects
-						</a>
-						<a class="os-sidebar-item" href="/blog">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19l3-1 10-10-2-2L6 16zM14 6l2 2" /></svg>
-							Blog
-						</a>
-					</nav>
-					<div class="finder-main">
-						<div class="finder-head" aria-hidden="true"><span>Name</span><span>Kind</span><span>★</span></div>
-						<ul class="finder-list">
-							{showcase.map((project) => (
-								<li>
-									<a href={project.url} target="_blank" rel="noopener noreferrer" title={project.pitch}>
-										<span class="f-name">
-											<span class={`app-icon hue-${project.hue}`} aria-hidden="true">
-												<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={SHOWCASE_ICONS[project.icon]} />
-											</span>
-											<span>
-												<strong>{project.name}</strong>
-												<small>{project.tagline}</small>
-											</span>
-										</span>
-										<span class="f-kind">{project.stack[0]}</span>
-										<span class="f-stars">{project.stars}</span>
-									</a>
-								</li>
-							))}
-						</ul>
-					</div>
-				</div>
-			</Window>
-
-			<Window title="shipping-log.txt" titleId="log-title" windowId="log" meta="Edited" class="win-log">
-				<ol class="log-body">
-					{timeline.map((item) => (
+	<Window
+		{...windowDefaults}
+		id="home-finder"
+		title="Open Source"
+		titleId="finder-title"
+		appName="Finder"
+		meta={`${showcase.length} items · ★ ${totalStars}`}
+		icon={{ color: 'linear-gradient(160deg, #7DD3FC, #2563EB)', glyph: 'M4 6h6l2 2h8v10H4z' }}
+		class="home-finder"
+	>
+		<div class="finder">
+			<nav class="os-sidebar finder-side" aria-label="Places">
+				<p class="os-sidebar-label">Favorites</p>
+				<span class="os-sidebar-item is-active">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" /></svg>
+					Open Source
+				</span>
+				<a class="os-sidebar-item" href="/projects">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" /></svg>
+					All Projects
+				</a>
+				<a class="os-sidebar-item" href="/blog">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19l3-1 10-10-2-2L6 16zM14 6l2 2" /></svg>
+					Blog
+				</a>
+				<a class="os-sidebar-item" href="/resume">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6" /></svg>
+					Resume
+				</a>
+			</nav>
+			<div class="finder-main">
+				<div class="finder-head" aria-hidden="true"><span>Name</span><span>Kind</span><span>★</span></div>
+				<ul class="finder-list">
+					{showcase.map((project) => (
 						<li>
-							<span class="log-date">{formatDate(item.date)}</span>
-							<a href={item.repoUrl} target="_blank" rel="noopener noreferrer">{item.title}</a>
-							<p>{item.description}</p>
+							<a href={project.url} target="_blank" rel="noopener noreferrer" title={project.pitch}>
+								<span class="f-name">
+									<span class={`app-icon hue-${project.hue}`} aria-hidden="true">
+										<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={SHOWCASE_ICONS[project.icon]} />
+									</span>
+									<span>
+										<strong>{project.name}</strong>
+										<small>{project.tagline}</small>
+									</span>
+								</span>
+								<span class="f-kind">{project.stack[0]}</span>
+								<span class="f-stars">{project.stars}</span>
+							</a>
 						</li>
 					))}
-				</ol>
-			</Window>
-
-			<aside class="widget" aria-label="GitHub stats">
-				<p class="widget-label">GitHub</p>
-				<div class="widget-grid">
-					<div><b>{stats.totalRepos}</b><span>repos</span></div>
-					<div><b>{stats.recentActivity}</b><span>active this month</span></div>
-					<div><b>{totalStars}</b><span>stars</span></div>
-					<div><b>{stats.primaryLanguagePercent}%</b><span>{stats.primaryLanguage}</span></div>
-				</div>
-			</aside>
-
-			<aside class="sticky" aria-label="To-do note">
-				<p>To do:</p>
-				<ul>
-					{previous && <li class="done">ship {previous.title.toLowerCase()}</li>}
-					{latest && <li>finish {latest.title.toLowerCase()}</li>}
-					<li><a href={CALENDAR_URL} target="_blank" rel="noopener noreferrer">grab coffee w/ you?</a></li>
 				</ul>
-			</aside>
-		</main>
-
-		<Footer apps={dockApps} floating />
-
-		<script>
-			// Window management: focus, drag (wide screens only), close, and reopen from the dock.
-			const wide = window.matchMedia('(min-width: 1100px)');
-			const windows = Array.from(document.querySelectorAll<HTMLElement>('[data-window]'));
-			let topZ = 10;
-
-			const focusWindow = (win: HTMLElement) => {
-				windows.forEach((w) => w.classList.remove('is-focused'));
-				win.classList.add('is-focused');
-				win.style.zIndex = String(++topZ);
-			};
-
-			windows.forEach((win) => {
-				win.addEventListener('pointerdown', () => focusWindow(win));
-
-				win.querySelector('[data-close]')?.addEventListener('click', (event) => {
-					event.stopPropagation();
-					win.classList.add('is-closed');
-				});
-
-				const handle = win.querySelector<HTMLElement>('[data-drag]');
-				if (!handle) return;
-
-				handle.addEventListener('pointerdown', (event) => {
-					if (!wide.matches || (event.target as HTMLElement).closest('button')) return;
-					const desktop = win.offsetParent as HTMLElement;
-					const startX = event.clientX - win.offsetLeft;
-					const startY = event.clientY - win.offsetTop;
-					handle.setPointerCapture(event.pointerId);
-					win.classList.add('is-dragging');
-
-					const move = (e: PointerEvent) => {
-						const maxX = desktop.clientWidth - 80;
-						const maxY = desktop.clientHeight - 40;
-						win.style.left = `${Math.min(Math.max(e.clientX - startX, -win.offsetWidth + 80), maxX)}px`;
-						win.style.top = `${Math.min(Math.max(e.clientY - startY, 0), maxY)}px`;
-					};
-					const stop = () => {
-						win.classList.remove('is-dragging');
-						handle.removeEventListener('pointermove', move);
-						handle.removeEventListener('pointerup', stop);
-						handle.removeEventListener('pointercancel', stop);
-					};
-					handle.addEventListener('pointermove', move);
-					handle.addEventListener('pointerup', stop);
-					handle.addEventListener('pointercancel', stop);
-				});
-			});
-
-			document.querySelectorAll<HTMLButtonElement>('[data-open]').forEach((button) => {
-				button.addEventListener('click', () => {
-					const win = document.querySelector<HTMLElement>(`[data-window="${button.dataset.open}"]`);
-					if (!win) return;
-					win.classList.remove('is-closed');
-					focusWindow(win);
-					if (!wide.matches) win.scrollIntoView({ behavior: 'smooth', block: 'start' });
-				});
-			});
-
-			// Console easter egg for developer visitors
-			console.log('%c👋 Hey there, curious dev!', 'font-size: 16px; font-weight: bold; color: #7C3AED;');
-			console.log(
-				'%cThis desktop is built with Astro and pulls live data from GitHub. Try dragging the windows around.\nLike what you see? Let\'s chat → https://calendar.app.google/yYSHV4KQ4zJsxkdt5',
-				'font-size: 12px; color: #6B6876;'
-			);
-		</script>
-	</body>
-</html>
-
-<style>
-	.desktop {
-		position: relative;
-		min-height: max(calc(100vh - var(--menubar-height)), 880px);
-		padding-bottom: 120px;
-		font-size: 14px;
-		line-height: 1.5;
-		color: #1F1D2B;
-	}
-
-	.desktop a {
-		color: inherit;
-	}
-
-	.desktop a:active,
-	.desktop button:active {
-		transform: none;
-		opacity: 1;
-	}
-
-	.desktop a:focus-visible,
-	.desktop button:focus-visible {
-		outline: 2px solid var(--os-blue);
-		outline-offset: 2px;
-		border-radius: 6px;
-	}
-
-	/* Desktop icons */
-	.icons {
-		position: absolute;
-		top: 20px;
-		right: 20px;
-		list-style: none;
-		padding: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 14px;
-	}
-
-	.icon {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 4px;
-		width: 84px;
-		padding: 6px 4px;
-		border-radius: 8px;
-		text-align: center;
-	}
-
-	.icon:hover .icon-label {
-		background: var(--os-blue);
-		color: #FFFFFF;
-	}
-
-	.icon-art {
-		position: relative;
-		width: 52px;
-		height: 52px;
-		filter: drop-shadow(0 4px 6px rgba(31, 29, 43, 0.2));
-	}
-
-	.icon-file .icon-art {
-		width: 42px;
-		background: #FFFFFF;
-		border-radius: 4px;
-		clip-path: polygon(0 0, 70% 0, 100% 22%, 100% 100%, 0 100%);
-	}
-
-	.icon-file .icon-art::after {
-		content: 'PDF';
-		position: absolute;
-		left: 4px;
-		right: 4px;
-		bottom: 8px;
-		padding: 1px 0;
-		background: #DC2626;
-		color: #FFFFFF;
-		font-size: 9px;
-		font-weight: 800;
-		line-height: 1.4;
-		border-radius: 2px;
-	}
-
-	.icon-folder .icon-art {
-		height: 40px;
-		margin-top: 8px;
-		background: linear-gradient(180deg, #7DD3FC, #3B82F6);
-		border-radius: 3px 6px 6px 6px;
-	}
-
-	.icon-folder .icon-art::before {
-		content: '';
-		position: absolute;
-		top: -6px;
-		left: 0;
-		width: 22px;
-		height: 8px;
-		background: #60A5FA;
-		border-radius: 3px 3px 0 0;
-	}
-
-	.icon-link .icon-art,
-	.icon-mail .icon-art {
-		border-radius: 12px;
-	}
-
-	.icon-link .icon-art {
-		background: linear-gradient(160deg, #38BDF8, #0A66C2);
-	}
-
-	.icon-link .icon-art::after {
-		content: 'in';
-		position: absolute;
-		inset: 0;
-		display: grid;
-		place-items: center;
-		color: #FFFFFF;
-		font-weight: 800;
-		font-size: 22px;
-	}
-
-	.icon-mail .icon-art {
-		background: linear-gradient(160deg, #93C5FD, #2563EB);
-	}
-
-	.icon-mail .icon-art::after {
-		content: '';
-		position: absolute;
-		inset: 15px 10px;
-		border: 2px solid #FFFFFF;
-		border-radius: 3px;
-		background:
-			linear-gradient(to bottom right, transparent 48%, #FFFFFF 49%, #FFFFFF 51%, transparent 52%) left / 50% 100% no-repeat,
-			linear-gradient(to bottom left, transparent 48%, #FFFFFF 49%, #FFFFFF 51%, transparent 52%) right / 50% 100% no-repeat;
-	}
-
-	.icon-label {
-		padding: 1px 6px;
-		border-radius: 4px;
-		font-size: 12px;
-		font-weight: 600;
-		text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
-	}
-
-	/* Window placement on the desktop (Window.astro owns the chrome). */
-	.desktop :global(.window) {
-		position: absolute;
-		z-index: 1;
-	}
-
-	.desktop :global(.win-about) {
-		left: 3vw;
-		top: 28px;
-		width: 400px;
-	}
-
-	.about-body {
-		padding: 24px 28px 26px;
-		text-align: center;
-	}
-
-	.about-body img {
-		width: 112px;
-		height: 112px;
-		margin: 0 auto;
-		border-radius: 50%;
-		object-fit: cover;
-		box-shadow: 0 0 0 4px #FFFFFF, 0 0 0 5px rgba(0, 0, 0, 0.08);
-	}
-
-	.about-body h1 {
-		margin-top: 14px;
-		font-family: var(--font-sans);
-		font-size: 26px;
-		font-weight: 800;
-		letter-spacing: -0.02em;
-		color: #1F1D2B;
-	}
-
-	.about-role {
-		margin-bottom: 12px;
-		color: #6B6880;
-	}
-
-	.about-tagline {
-		margin-bottom: 6px;
-		font-size: 17px;
-		font-weight: 700;
-		color: #7C3AED;
-	}
-
-	.about-sub {
-		margin-bottom: 20px;
-		color: #4B4860;
-	}
-
-	.about-actions {
-		display: flex;
-		justify-content: center;
-		gap: 8px;
-	}
-
-	.desktop :global(.win-finder) {
-		left: calc(3vw + 430px);
-		top: 56px;
-		width: min(580px, calc(100vw - 3vw - 430px - 140px));
-		height: 410px;
-	}
-
-	.finder {
-		display: grid;
-		grid-template-columns: 160px minmax(0, 1fr);
-		min-height: 0;
-		flex: 1;
-	}
-
-	.finder-side {
-		padding: 12px 8px;
-	}
-
-	.finder-main {
-		display: flex;
-		flex-direction: column;
-		min-height: 0;
-	}
-
-	.finder-head,
-	.finder-list a {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr) 120px 40px;
-		gap: 12px;
-		align-items: center;
-	}
-
-	.finder-head {
-		padding: 6px 14px;
-		border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-		font-size: 11px;
-		font-weight: 600;
-		color: #8A879A;
-	}
-
-	.finder-list {
-		list-style: none;
-		padding: 4px 6px;
-		overflow-y: auto;
-	}
-
-	.finder-list li:nth-child(even) a {
-		background: rgba(0, 0, 0, 0.025);
-	}
-
-	.finder-list a {
-		padding: 7px 8px;
-		border-radius: 6px;
-	}
-
-	.desktop .finder-list a:hover {
-		background: var(--os-blue);
-		color: #FFFFFF;
-	}
-
-	.finder-list a:hover small,
-	.finder-list a:hover .f-kind {
-		color: rgba(255, 255, 255, 0.8);
-	}
-
-	.f-name {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		min-width: 0;
-	}
-
-	.f-name span {
-		display: flex;
-		flex-direction: column;
-		min-width: 0;
-	}
-
-	.f-name small {
-		color: #8A879A;
-		font-size: 12px;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	.f-kind {
-		font-size: 12px;
-		color: #6B6880;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	.f-stars {
-		text-align: right;
-		font-variant-numeric: tabular-nums;
-		font-weight: 600;
-	}
-
-	.desktop :global(.win-log) {
-		left: calc(3vw + 480px);
-		top: 500px;
-		width: min(520px, calc(100vw - 3vw - 480px - 130px));
-		height: 300px;
-	}
-
-	.log-body {
-		overflow-y: auto;
-		list-style: none;
-		padding: 16px 22px;
-		font-family: var(--font-mono);
-		font-size: 12.5px;
-		background: #FFFFFF;
-		flex: 1;
-	}
-
-	.log-body li {
-		margin-bottom: 14px;
-	}
-
-	.log-date {
-		color: #8A879A;
-		margin-right: 8px;
-	}
-
-	.desktop .log-body a {
-		font-weight: 700;
-		color: #7C3AED;
-	}
-
-	.log-body a:hover {
-		text-decoration: underline;
-	}
-
-	.log-body p {
-		margin-top: 2px;
-		color: #4B4860;
-	}
-
-	/* Widgets */
-	.widget {
-		position: absolute;
-		left: 3vw;
-		top: 500px;
-		width: 200px;
-		padding: 14px;
-		border-radius: 20px;
-		background: rgba(255, 255, 255, 0.6);
-		-webkit-backdrop-filter: blur(20px);
-		backdrop-filter: blur(20px);
-		box-shadow: 0 10px 30px rgba(31, 29, 43, 0.12);
-	}
-
-	.widget-label {
-		margin-bottom: 8px;
-		font-size: 12px;
-		font-weight: 700;
-		color: #7C3AED;
-	}
-
-	.widget-grid {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 10px;
-	}
-
-	.widget-grid div {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.widget-grid b {
-		font-size: 24px;
-		font-weight: 800;
-		line-height: 1.1;
-		letter-spacing: -0.02em;
-	}
-
-	.widget-grid span {
-		font-size: 11px;
-		color: #6B6880;
-	}
-
-	.sticky {
-		position: absolute;
-		left: calc(3vw + 222px);
-		top: 520px;
-		width: 210px;
-		padding: 16px 18px 20px;
-		background: #FEF08A;
-		box-shadow: 0 12px 24px rgba(31, 29, 43, 0.18);
-		transform: rotate(-3deg);
-		font-family: var(--font-hand);
-		font-size: 22px;
-		line-height: 1.25;
-		color: #3F3A1D;
-	}
-
-	.sticky p {
-		margin-bottom: 6px;
-	}
-
-	.sticky ul {
-		padding-left: 20px;
-	}
-
-	.sticky .done {
-		text-decoration: line-through;
-		opacity: 0.6;
-	}
-
-	.sticky a:hover {
-		text-decoration: underline;
-	}
-
-	/* Narrow screens: windows stack like a phone home screen. */
-	@media (max-width: 1099px) {
-		.desktop {
-			display: flex;
-			flex-direction: column;
-			gap: 16px;
-			min-height: 0;
-			padding: 16px 16px 0;
-		}
-
-		.desktop :global(.window),
-		.widget,
-		.sticky,
-		.icons {
-			position: static;
-			width: 100%;
-			height: auto;
-			max-width: 640px;
-			margin: 0 auto;
-		}
-
-		.icons {
-			order: 10;
-			flex-direction: row;
-			flex-wrap: wrap;
-			justify-content: center;
-			gap: 4px;
-		}
-
-		.finder {
-			grid-template-columns: 1fr;
-		}
-
-		.finder-side {
-			display: none;
-		}
-
-		.desktop :global(.win-log) {
-			max-height: 420px;
-		}
-
-		.sticky {
-			transform: rotate(-1deg);
-		}
-	}
-
-	@media (max-width: 520px) {
-		.desktop {
-			padding: 12px 12px 0;
-		}
-
-		.finder-head,
-		.finder-list a {
-			grid-template-columns: minmax(0, 1fr) 32px;
-		}
-
-		.f-kind,
-		.finder-head span:nth-child(2) {
-			display: none;
-		}
-	}
-
-</style>
+			</div>
+		</div>
+	</Window>
+
+	<Window
+		{...windowDefaults}
+		id="home-log"
+		title="shipping-log.txt"
+		titleId="log-title"
+		appName="TextEdit"
+		meta="Edited"
+		icon={{ color: 'linear-gradient(160deg, #FDBA74, #EA580C)', glyph: 'M7 4h10v16H7zM9.5 8h5M9.5 12h5M9.5 16h3' }}
+		class="home-log"
+	>
+		<ol class="log">
+			{timeline.map((item) => (
+				<li>
+					<span class="log-date">{formatDate(item.date)}</span>
+					<a href={item.repoUrl} target="_blank" rel="noopener noreferrer">{item.title}</a>
+					<p>{item.description}</p>
+				</li>
+			))}
+		</ol>
+	</Window>
+
+	<aside class="widget" id="desktop-github" data-desktop-item aria-label="GitHub stats">
+		<p class="widget-label">GitHub</p>
+		<div class="widget-grid">
+			<div><b>{stats.totalRepos}</b><span>repos</span></div>
+			<div><b>{stats.recentActivity}</b><span>active this month</span></div>
+			<div><b>{totalStars}</b><span>stars</span></div>
+			<div><b>{stats.primaryLanguagePercent}%</b><span>{stats.primaryLanguage}</span></div>
+		</div>
+	</aside>
+
+	<aside class="sticky" id="desktop-sticky" data-desktop-item aria-label="To-do note">
+		<p>To do:</p>
+		<ul>
+			{previous && <li class="done">ship {previous.title.toLowerCase()}</li>}
+			{latest && <li>finish {latest.title.toLowerCase()}</li>}
+			<li><a href={CALENDAR_URL} target="_blank" rel="noopener noreferrer">grab coffee w/ you?</a></li>
+		</ul>
+	</aside>
+</Desktop>
+
+<script>
+	// Console easter egg for developer visitors
+	console.log('%c👋 Hey there, curious dev!', 'font-size: 16px; font-weight: bold; color: #7C3AED;');
+	console.log(
+		'%cThis desktop is built with Astro and pulls live data from GitHub. Drag the windows, minimize them to the dock, or open a few apps at once.\nLike what you see? Let\'s chat → https://calendar.app.google/yYSHV4KQ4zJsxkdt5',
+		'font-size: 12px; color: #6B6876;'
+	);
+</script>

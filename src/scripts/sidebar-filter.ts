@@ -8,7 +8,14 @@
  * - Optional `data-filter-section` wrappers hide when none of their items match.
  * - An optional `data-filter-empty` element shows when nothing matches.
  */
+export function initFilters(scope: ParentNode) {
+  scope.querySelectorAll<HTMLElement>('[data-filter-root]').forEach(setupFilter);
+}
+
 function setupFilter(root: HTMLElement) {
+  if (root.dataset.filterReady) return;
+  root.dataset.filterReady = 'true';
+
   const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-filter]'));
   const items = Array.from(root.querySelectorAll<HTMLElement>('[data-filter-tags]'));
   const sections = Array.from(root.querySelectorAll<HTMLElement>('[data-filter-section]'));
@@ -36,5 +43,3 @@ function setupFilter(root: HTMLElement) {
     button.addEventListener('click', () => apply(button.dataset.filter ?? ''));
   });
 }
-
-document.querySelectorAll<HTMLElement>('[data-filter-root]').forEach(setupFilter);

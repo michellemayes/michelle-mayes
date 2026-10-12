@@ -1,0 +1,106 @@
+/*
+  The desktop: how windows sit on the wallpaper.
+
+  Wide screens (1100px and up) behave like a real desktop. The page never
+  scrolls, windows float and scroll inside themselves, and the dock floats
+  over everything. Narrower screens behave like a phone: the desktop is a
+  scrolling home screen, and app windows open full screen over it.
+*/
+
+.desktop {
+  position: relative;
+}
+
+@media (min-width: 1100px) {
+  html:has(body.os),
+  body.os {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .desktop {
+    position: fixed;
+    top: var(--menubar-height);
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+  }
+
+  .os .desktop > .window {
+    position: absolute;
+    z-index: 1;
+    max-height: calc(100% - 104px);
+  }
+
+  /* App windows open centered above the dock, clamped to the desktop. */
+  .os .desktop > .window-app {
+    width: min(var(--w), calc(100% - 48px));
+    height: min(var(--h), calc(100% - 120px));
+    left: calc((100% - min(var(--w), calc(100% - 48px))) / 2);
+    top: max(16px, calc((100% - 96px - min(var(--h), calc(100% - 120px))) / 2));
+  }
+
+  .os .desktop > .window.is-zoomed {
+    top: 8px !important;
+    left: 8px !important;
+    width: calc(100% - 16px) !important;
+    height: calc(100% - 104px) !important;
+    max-height: none;
+  }
+
+  .os .desktop > .window.is-animating {
+    transition: top 0.24s ease, left 0.24s ease, width 0.24s ease, height 0.24s ease;
+  }
+
+  /* Desktop furniture sits beneath every window. */
+  .os .desktop > [data-desktop-item] {
+    position: absolute;
+    z-index: 0;
+  }
+}
+
+@media (max-width: 1099px) {
+  .desktop {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px 16px 0;
+  }
+
+  .os .desktop > .window-home,
+  .os .desktop > [data-desktop-item] {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  /* Apps take over the screen below the menu bar, like a phone. */
+  .os .desktop > .window-app {
+    position: fixed;
+    top: var(--menubar-height);
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 800;
+    border: 0;
+    border-radius: 0;
+  }
+
+  body.os.app-open,
+  body.os:has(.desktop > .window-app:not(.is-minimized)) {
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 560px) {
+  .desktop {
+    padding: 12px 12px 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .os .desktop > .window.is-animating {
+    transition: none;
+  }
+}

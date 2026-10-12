@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
-import OsPage from '../layouts/OsPage.astro';
+import Desktop from '../layouts/Desktop.astro';
+import Window from '../components/Window.astro';
 import { SITE_TITLE, SOCIAL_LINKS } from '../consts';
 import aboutPhoto from '../../public/about-photo.jpg';
 
@@ -24,12 +25,24 @@ const socials = [
 ];
 ---
 
-<OsPage
-	title={`About - ${SITE_TITLE}`}
-	description="Full-stack builder at the intersection of AI and product development, based in Austin, TX."
-	windowTitle="About Me"
-	size="l"
+<Desktop
+  title={`About - ${SITE_TITLE}`}
+  description="Full-stack builder at the intersection of AI and product development, based in Austin, TX."
+  appName="Contacts"
 >
+  <Window
+    id="app-about"
+    title="About Me"
+    titleAs="p"
+    route="/about"
+    appName="Contacts"
+    docTitle={`About - ${SITE_TITLE}`}
+    width={1000}
+    height={760}
+    icon={{ color: 'linear-gradient(160deg, #F0ABFC, #A21CAF)', glyph: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0' }}
+    primary
+    class="app-about"
+  >
 	<div class="card">
 		<aside class="profile">
 			<Image src={aboutPhoto} alt="Michelle Mayes" class="photo" width={160} height={160} loading="eager" />
@@ -98,132 +111,5 @@ const socials = [
 			</section>
 		</div>
 	</div>
-</OsPage>
-
-<style>
-	.card {
-		display: grid;
-		grid-template-columns: 280px minmax(0, 1fr);
-		min-height: 0;
-	}
-
-	.profile {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		padding: 36px 24px;
-		text-align: center;
-		background: rgba(240, 238, 248, 0.75);
-		border-right: 1px solid rgba(0, 0, 0, 0.06);
-	}
-
-	.profile :global(.photo) {
-		width: 160px;
-		height: 160px;
-		border-radius: 50%;
-		object-fit: cover;
-		box-shadow: 0 0 0 4px #FFFFFF, 0 0 0 5px rgba(0, 0, 0, 0.08), 0 12px 30px rgba(31, 29, 43, 0.18);
-	}
-
-	.name {
-		margin-top: 20px;
-		font-size: 24px;
-		font-weight: 800;
-		letter-spacing: -0.02em;
-	}
-
-	.role {
-		margin-top: 4px;
-		font-size: 14px;
-		color: var(--os-subtle);
-	}
-
-	.actions {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		gap: 8px;
-		margin-top: 20px;
-	}
-
-	.socials {
-		display: flex;
-		gap: 6px;
-		margin-top: 18px;
-		padding: 0;
-		list-style: none;
-	}
-
-	.socials a {
-		display: grid;
-		place-items: center;
-		width: 34px;
-		height: 34px;
-		border-radius: 50%;
-		background: #FFFFFF;
-		border: 1px solid rgba(0, 0, 0, 0.08);
-		color: #4B4860;
-		transition: background-color 0.15s ease, color 0.15s ease;
-	}
-
-	.socials a:hover {
-		background: var(--os-blue);
-		border-color: var(--os-blue);
-		color: #FFFFFF;
-	}
-
-	.socials svg {
-		width: 16px;
-		height: 16px;
-	}
-
-	.content {
-		min-width: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 26px;
-		padding: 32px;
-		background: var(--os-canvas);
-	}
-
-	.bio {
-		padding: 18px 20px;
-		font-size: 15.5px;
-		line-height: 1.7;
-	}
-
-	.bio p + p {
-		margin-top: 12px;
-	}
-
-	.activity {
-		padding: 16px;
-		overflow-x: auto;
-	}
-
-	.activity img {
-		min-width: 640px;
-		width: 100%;
-	}
-
-	@media (max-width: 760px) {
-		.card {
-			grid-template-columns: minmax(0, 1fr);
-		}
-
-		.profile {
-			padding: 28px 20px;
-			border-right: 0;
-			border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-		}
-
-		.profile :global(.photo) {
-			width: 120px;
-			height: 120px;
-		}
-
-		.content {
-			padding: 20px 16px;
-		}
-	}
-</style>
+  </Window>
+</Desktop>

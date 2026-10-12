@@ -14,7 +14,5 @@ export default defineConfig({
   // Inline all CSS so each page paints as soon as its HTML arrives, with no
   // render-blocking stylesheet request between page navigations.
   build: { inlineStylesheets: 'always' },
-  // Fetch pages on hover so clicking the menu bar or dock feels instant.
-  prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
   output: 'server', // Enables SSR for dynamic pages
 });
