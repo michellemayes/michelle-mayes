@@ -1,122 +1,88 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
+import OsPage from '../layouts/OsPage.astro';
 import { SITE_TITLE } from '../consts';
 
 export const prerender = true;
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <BaseHead title={`Resume | ${SITE_TITLE}`} description="Resume for Michelle Mayes — data scientist and AI product engineer building intelligent systems with RAG, LLMs, and modern web stacks." />
-  </head>
-  <body>
-    <Header />
-    <main id="main-content" data-window-title="Resume.pdf">
-      <div class="resume-header">
-        <h1>Resume</h1>
-        <div class="resume-actions">
-          <a href="#viewer" class="action-link active">View</a>
-          <a href="/resume.pdf" download class="action-link">Download PDF</a>
-        </div>
-      </div>
-      <div id="viewer" class="resume-viewer">
-        <iframe src="/resume.pdf" title="Michelle Mayes Resume">
-          <p>Unable to display PDF. <a href="/resume.pdf" download>Download the resume</a>.</p>
-        </iframe>
-      </div>
-    </main>
-    <Footer />
-  </body>
-</html>
+<OsPage
+  title={`Resume | ${SITE_TITLE}`}
+  description="Resume for Michelle Mayes — data scientist and AI product engineer building intelligent systems with RAG, LLMs, and modern web stacks."
+  windowTitle="Resume.pdf"
+  size="m"
+>
+  <div class="win-toolbar" slot="toolbar">
+    <h1 class="doc-title">Resume <span>Michelle Mayes</span></h1>
+    <span class="spacer"></span>
+    <a class="mac-btn" href="/resume.pdf" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6" /></svg>
+      Open
+    </a>
+    <a class="mac-btn primary" href="/resume.pdf" download>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" /></svg>
+      Download PDF
+    </a>
+  </div>
+
+  <div class="canvas">
+    <iframe src="/resume.pdf#view=FitH" title="Michelle Mayes Resume">
+      <p>Unable to display the PDF here. <a href="/resume.pdf" download>Download the resume</a>.</p>
+    </iframe>
+    <p class="mobile-note">
+      Phones only preview the first page. <a href="/resume.pdf" target="_blank" rel="noopener">Open the full PDF</a>.
+    </p>
+  </div>
+</OsPage>
 
 <style>
-  main {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: var(--space-xl);
+  .doc-title {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0;
+    color: var(--os-ink);
   }
 
-  .resume-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-2xl);
-  }
-
-  h1 {
-    font-family: var(--font-serif);
-    font-size: 2.5rem;
-    font-weight: 600;
-    color: var(--text);
-    margin: 0;
-  }
-
-  .resume-actions {
-    display: flex;
-    gap: var(--space-md);
-  }
-
-  .action-link {
-    padding: var(--space-sm) var(--space-lg);
-    font-size: var(--text-sm);
+  .doc-title span {
+    margin-left: 6px;
     font-weight: 500;
-    text-decoration: none;
-    border-radius: 6px;
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-    color: var(--text-muted);
-    border: 1px solid var(--accent-100);
+    color: var(--os-muted);
   }
 
-  .action-link:hover,
-  .action-link.active {
-    background: var(--accent);
-    color: white;
-    border-color: var(--accent);
-  }
-
-  .resume-viewer {
-    background: var(--bg-card);
-    border-radius: 12px;
-    box-shadow: var(--shadow-md);
-    overflow: hidden;
+  /* Gray canvas with the page floating on it, like Preview. */
+  .canvas {
+    padding: 24px;
+    background: #E4E2EA;
   }
 
   iframe {
+    display: block;
     width: 100%;
-    height: 80vh;
-    border: none;
+    height: max(70vh, 640px);
+    border: 0;
+    border-radius: 4px;
+    background: #FFFFFF;
+    box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.1), 0 10px 30px rgba(31, 29, 43, 0.18);
   }
 
-  @media (max-width: 768px) {
-    main {
-      padding: var(--space-lg);
-    }
+  .mobile-note {
+    display: none;
+    margin-top: 12px;
+    font-size: 13px;
+    text-align: center;
+    color: var(--os-subtle);
+  }
 
-    .resume-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: var(--space-md);
-    }
-
-    h1 {
-      font-size: 2rem;
+  @media (max-width: 760px) {
+    .canvas {
+      padding: 12px;
     }
 
     iframe {
-      height: 60vh;
-    }
-  }
-
-  @media (max-width: 480px) {
-    main {
-      padding: var(--space-md);
+      height: 70vh;
     }
 
-    h1 {
-      font-size: 1.75rem;
+    .mobile-note {
+      display: block;
     }
   }
 </style>

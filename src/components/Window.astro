@@ -1,0 +1,211 @@
+---
+/**
+ * A Mac-style window. Every window on the site renders through this
+ * component, so titlebars, traffic lights, and shadows stay identical.
+ *
+ * - On the homepage, windows are draggable (`windowId`) and the red light is
+ *   a button that hides the window until the dock reopens it.
+ * - On every other page, the red light is a link back to the desktop
+ *   (`closeHref`).
+ *
+ * Callers position or size a window from outside with :global selectors on
+ * `class`, since Astro scopes styles per component.
+ */
+interface Props {
+  title: string;
+  titleId?: string;
+  /** Element used for the titlebar text. Pages put their own <h1> in the body. */
+  titleAs?: 'h1' | 'h2' | 'p';
+  meta?: string;
+  windowId?: string;
+  closeHref?: string;
+  class?: string;
+}
+
+const { title, titleId, titleAs = 'h2', meta, windowId, closeHref, class: className } = Astro.props;
+const TitleTag = titleAs;
+const draggable = Boolean(windowId);
+---
+
+<section
+  class:list={['window', className]}
+  data-window={windowId}
+  aria-labelledby={titleId}
+  aria-label={titleId ? undefined : title}
+>
+  <div class="titlebar" data-drag={draggable ? '' : undefined}>
+    <span class="lights">
+      {closeHref ? (
+        <a class="light close" href={closeHref} aria-label="Close window and go back to the desktop" title="Back to the desktop"></a>
+      ) : (
+        <button type="button" class="light close" data-close aria-label={`Close ${title}`}></button>
+      )}
+      <i class="light minimize" aria-hidden="true"></i>
+      <i class="light zoom" aria-hidden="true"></i>
+    </span>
+    <TitleTag class="win-title" id={titleId}>{title}</TitleTag>
+    {meta && <span class="win-meta">{meta}</span>}
+  </div>
+  <slot name="toolbar" />
+  <slot />
+</section>
+
+<style>
+  .window {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: var(--window-bg);
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 12px;
+    box-shadow: var(--window-shadow);
+    overflow: hidden;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--os-ink);
+    transition: box-shadow 0.2s ease;
+  }
+
+  .window:global(.is-focused) {
+    box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.2), 0 30px 70px rgba(31, 29, 43, 0.32);
+  }
+
+  .window:global(.is-dragging) {
+    transition: none;
+    user-select: none;
+  }
+
+  .window:global(.is-closed) {
+    display: none;
+  }
+
+  .titlebar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--window-titlebar);
+    padding: 0 84px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--window-line);
+    background: var(--window-bar);
+  }
+
+  .titlebar[data-drag] {
+    touch-action: none;
+  }
+
+  @media (min-width: 1100px) {
+    .titlebar[data-drag] {
+      cursor: grab;
+    }
+
+    .window:global(.is-dragging) .titlebar {
+      cursor: grabbing;
+    }
+  }
+
+  .lights {
+    position: absolute;
+    left: 12px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .light {
+    display: block;
+    width: 12px;
+    height: 12px;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.12);
+  }
+
+  .light.close {
+    position: relative;
+    background: var(--os-red);
+    cursor: pointer;
+  }
+
+  /* The x glyph shows on hover, like macOS. */
+  .light.close::after {
+    content: '×';
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    color: rgba(77, 0, 0, 0.75);
+    opacity: 0;
+  }
+
+  .light.close:hover::after,
+  .light.close:focus-visible::after {
+    opacity: 1;
+  }
+
+  .light.close:active {
+    transform: none;
+    filter: brightness(0.9);
+  }
+
+  .light.close:focus-visible {
+    outline: 2px solid var(--os-blue);
+    outline-offset: 2px;
+  }
+
+  .minimize {
+    background: var(--os-yellow);
+  }
+
+  .zoom {
+    background: var(--os-green);
+  }
+
+  .win-title {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0;
+    color: #4B4860;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .win-meta {
+    position: absolute;
+    right: 12px;
+    font-size: 12px;
+    color: var(--os-muted);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 560px) {
+    .titlebar {
+      padding: 0 72px 0 76px;
+      justify-content: flex-start;
+    }
+
+    .win-meta {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .window {
+      transition: none;
+    }
+  }
+</style>

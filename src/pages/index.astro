@@ -2,8 +2,9 @@
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
+import Window from '../components/Window.astro';
 import { GITHUB_USERNAME, SITE_DESCRIPTION, SITE_TITLE_FULL, SOCIAL_LINKS } from '../consts';
-import { buildShowcase } from '../data/showcase';
+import { SHOWCASE_ICONS, buildShowcase } from '../data/showcase';
 import { getHomeData } from '../lib/home-data';
 import { loadRepositories } from '../lib/projects';
 
@@ -76,12 +77,8 @@ const personSchema = {
 				))}
 			</ul>
 
-			<section class="window win-about" data-window="about" aria-labelledby="about-title">
-				<div class="titlebar" data-drag>
-					<span class="lights"><button type="button" class="light close" data-close aria-label="Close About Me"></button><i></i><i></i></span>
-					<h2 class="win-title" id="about-title">About Me</h2>
-				</div>
-				<div class="win-body about-body">
+			<Window title="About Me" titleId="about-title" windowId="about" class="win-about">
+				<div class="about-body">
 					<img src="/avatar.jpg" alt="Michelle Mayes" width="112" height="112" loading="eager" decoding="async" fetchpriority="high" />
 					<h1>Michelle Mayes</h1>
 					<p class="about-role">Full-Stack Builder &amp; AI Product Engineer</p>
@@ -95,25 +92,29 @@ const personSchema = {
 						<a class="mac-btn" href="/resume">Resume</a>
 					</div>
 				</div>
-			</section>
+			</Window>
 
-			<section class="window win-finder" data-window="finder" aria-labelledby="finder-title">
-				<div class="titlebar" data-drag>
-					<span class="lights"><button type="button" class="light close" data-close aria-label="Close Open Source"></button><i></i><i></i></span>
-					<h2 class="win-title" id="finder-title">Open Source</h2>
-					<span class="win-meta">{showcase.length} items · ★ {totalStars}</span>
-				</div>
+			<Window title="Open Source" titleId="finder-title" windowId="finder" meta={`${showcase.length} items · ★ ${totalStars}`} class="win-finder">
 				<div class="finder">
-					<aside class="finder-side">
-						<p>Favorites</p>
-						<a href="#finder-title" class="active">Open Source</a>
-						<a href="#log-title">Shipping Log</a>
-						<a href="/projects">All Projects</a>
-						<p>Tags</p>
-						<span><i class="dot violet"></i>AI tools</span>
-						<span><i class="dot amber"></i>Mac apps</span>
-						<span><i class="dot leaf"></i>Dev tools</span>
-					</aside>
+					<nav class="os-sidebar finder-side" aria-label="Places">
+						<p class="os-sidebar-label">Favorites</p>
+						<a class="os-sidebar-item is-active" href="#finder-title">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" /></svg>
+							Open Source
+						</a>
+						<a class="os-sidebar-item" href="#log-title">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v16H7zM9.5 8h5M9.5 12h5M9.5 16h3" /></svg>
+							Shipping Log
+						</a>
+						<a class="os-sidebar-item" href="/projects">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" /></svg>
+							All Projects
+						</a>
+						<a class="os-sidebar-item" href="/blog">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19l3-1 10-10-2-2L6 16zM14 6l2 2" /></svg>
+							Blog
+						</a>
+					</nav>
 					<div class="finder-main">
 						<div class="finder-head" aria-hidden="true"><span>Name</span><span>Kind</span><span>★</span></div>
 						<ul class="finder-list">
@@ -121,7 +122,9 @@ const personSchema = {
 								<li>
 									<a href={project.url} target="_blank" rel="noopener noreferrer" title={project.pitch}>
 										<span class="f-name">
-											<i class={`f-icon hue-${project.hue}`} aria-hidden="true"></i>
+											<span class={`app-icon hue-${project.hue}`} aria-hidden="true">
+												<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={SHOWCASE_ICONS[project.icon]} />
+											</span>
 											<span>
 												<strong>{project.name}</strong>
 												<small>{project.tagline}</small>
@@ -135,15 +138,10 @@ const personSchema = {
 						</ul>
 					</div>
 				</div>
-			</section>
+			</Window>
 
-			<section class="window win-log" data-window="log" aria-labelledby="log-title">
-				<div class="titlebar" data-drag>
-					<span class="lights"><button type="button" class="light close" data-close aria-label="Close Shipping Log"></button><i></i><i></i></span>
-					<h2 class="win-title" id="log-title">shipping-log.txt</h2>
-					<span class="win-meta">Edited</span>
-				</div>
-				<ol class="win-body log-body">
+			<Window title="shipping-log.txt" titleId="log-title" windowId="log" meta="Edited" class="win-log">
+				<ol class="log-body">
 					{timeline.map((item) => (
 						<li>
 							<span class="log-date">{formatDate(item.date)}</span>
@@ -152,7 +150,7 @@ const personSchema = {
 						</li>
 					))}
 				</ol>
-			</section>
+			</Window>
 
 			<aside class="widget" aria-label="GitHub stats">
 				<p class="widget-label">GitHub</p>
@@ -390,107 +388,13 @@ const personSchema = {
 		text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
 	}
 
-	/* Windows */
-	.window {
+	/* Window placement on the desktop (Window.astro owns the chrome). */
+	.desktop :global(.window) {
 		position: absolute;
-		display: flex;
-		flex-direction: column;
-		background: var(--window-bg);
-		-webkit-backdrop-filter: blur(24px);
-		backdrop-filter: blur(24px);
-		border: 1px solid rgba(255, 255, 255, 0.6);
-		border-radius: 12px;
-		box-shadow: var(--window-shadow);
-		overflow: hidden;
 		z-index: 1;
-		transition: box-shadow 0.2s ease;
 	}
 
-	.window.is-focused {
-		box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.2), 0 30px 70px rgba(31, 29, 43, 0.32);
-	}
-
-	.window.is-dragging {
-		transition: none;
-		user-select: none;
-	}
-
-	.window.is-closed {
-		display: none;
-	}
-
-	.titlebar {
-		position: relative;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 8px;
-		height: var(--window-titlebar);
-		padding: 0 12px;
-		flex-shrink: 0;
-		border-bottom: 1px solid var(--window-line);
-		background: var(--window-bar);
-		touch-action: none;
-	}
-
-	@media (min-width: 1100px) {
-		.titlebar {
-			cursor: grab;
-		}
-
-		.is-dragging .titlebar {
-			cursor: grabbing;
-		}
-	}
-
-	.lights {
-		position: absolute;
-		left: 12px;
-		display: flex;
-		gap: 8px;
-	}
-
-	.lights i,
-	.light {
-		width: 12px;
-		height: 12px;
-		min-width: 0;
-		min-height: 0;
-		border-radius: 50%;
-		border: 0;
-		padding: 0;
-		background: var(--os-yellow);
-	}
-
-	.lights i:last-child {
-		background: var(--os-green);
-	}
-
-	.light.close {
-		background: var(--os-red);
-		cursor: pointer;
-	}
-
-	.win-title {
-		font-family: var(--font-sans);
-		font-size: 13px;
-		font-weight: 600;
-		letter-spacing: 0;
-		color: #4B4860;
-	}
-
-	.win-meta {
-		position: absolute;
-		right: 12px;
-		font-size: 12px;
-		color: #8A879A;
-	}
-
-	.win-body {
-		overflow-y: auto;
-	}
-
-	.win-about {
+	.desktop :global(.win-about) {
 		left: 3vw;
 		top: 28px;
 		width: 400px;
@@ -542,29 +446,7 @@ const personSchema = {
 		gap: 8px;
 	}
 
-	.mac-btn {
-		display: inline-flex;
-		align-items: center;
-		min-height: 32px;
-		padding: 0 14px;
-		border-radius: 7px;
-		background: #FFFFFF;
-		border: 1px solid rgba(0, 0, 0, 0.12);
-		box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-		font-weight: 500;
-	}
-
-	.desktop .mac-btn.primary {
-		background: linear-gradient(180deg, #4F8BFF, var(--os-blue));
-		border-color: #1D4ED8;
-		color: #FFFFFF;
-	}
-
-	.mac-btn:hover {
-		filter: brightness(0.97);
-	}
-
-	.win-finder {
+	.desktop :global(.win-finder) {
 		left: calc(3vw + 430px);
 		top: 56px;
 		width: min(580px, calc(100vw - 3vw - 430px - 140px));
@@ -573,60 +455,14 @@ const personSchema = {
 
 	.finder {
 		display: grid;
-		grid-template-columns: 150px minmax(0, 1fr);
+		grid-template-columns: 160px minmax(0, 1fr);
 		min-height: 0;
 		flex: 1;
 	}
 
 	.finder-side {
-		display: flex;
-		flex-direction: column;
-		gap: 2px;
 		padding: 12px 8px;
-		background: rgba(240, 238, 248, 0.7);
-		border-right: 1px solid rgba(0, 0, 0, 0.06);
-		font-size: 13px;
 	}
-
-	.finder-side p {
-		margin: 8px 8px 4px;
-		font-size: 11px;
-		font-weight: 700;
-		color: #8A879A;
-	}
-
-	.finder-side p:first-child {
-		margin-top: 0;
-	}
-
-	.finder-side a,
-	.finder-side span {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		padding: 4px 8px;
-		border-radius: 6px;
-	}
-
-	.finder-side a:hover {
-		background: rgba(0, 0, 0, 0.05);
-	}
-
-	.desktop .finder-side a.active {
-		background: rgba(37, 99, 235, 0.12);
-		color: #1D4ED8;
-		font-weight: 600;
-	}
-
-	.dot {
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
-	}
-
-	.dot.violet { background: #8B5CF6; }
-	.dot.amber { background: #F59E0B; }
-	.dot.leaf { background: #22C55E; }
 
 	.finder-main {
 		display: flex;
@@ -696,19 +532,6 @@ const personSchema = {
 		text-overflow: ellipsis;
 	}
 
-	.f-icon {
-		flex-shrink: 0;
-		width: 28px;
-		height: 28px;
-		border-radius: 7px;
-	}
-
-	.hue-violet { background: linear-gradient(160deg, #C4B5FD, #7C3AED); }
-	.hue-leaf { background: linear-gradient(160deg, #86EFAC, #16A34A); }
-	.hue-amber { background: linear-gradient(160deg, #FDE68A, #D97706); }
-	.hue-rose { background: linear-gradient(160deg, #FDA4AF, #E11D48); }
-	.hue-sky { background: linear-gradient(160deg, #7DD3FC, #0284C7); }
-
 	.f-kind {
 		font-size: 12px;
 		color: #6B6880;
@@ -723,7 +546,7 @@ const personSchema = {
 		font-weight: 600;
 	}
 
-	.win-log {
+	.desktop :global(.win-log) {
 		left: calc(3vw + 480px);
 		top: 500px;
 		width: min(520px, calc(100vw - 3vw - 480px - 130px));
@@ -731,6 +554,7 @@ const personSchema = {
 	}
 
 	.log-body {
+		overflow-y: auto;
 		list-style: none;
 		padding: 16px 22px;
 		font-family: var(--font-mono);
@@ -848,7 +672,7 @@ const personSchema = {
 			padding: 16px 16px 0;
 		}
 
-		.window,
+		.desktop :global(.window),
 		.widget,
 		.sticky,
 		.icons {
@@ -875,7 +699,7 @@ const personSchema = {
 			display: none;
 		}
 
-		.win-log {
+		.desktop :global(.win-log) {
 			max-height: 420px;
 		}
 
@@ -900,9 +724,4 @@ const personSchema = {
 		}
 	}
 
-	@media (prefers-reduced-motion: reduce) {
-		.window {
-			transition: none;
-		}
-	}
 </style>

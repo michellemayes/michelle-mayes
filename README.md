@@ -47,15 +47,17 @@ This is the source code for my personal website, built with [Astro](https://astr
 
 ### Typography
 - **Font**: Inter (Google Fonts)
-- **Headings**: Fraunces for page content, Inter for the OS chrome
+- **Headings**: Inter throughout, with Caveat for the sticky note and JetBrains Mono for code
 - **Hierarchy**: Clear heading structure with proper contrast
 
 ### Desktop OS theme
 The whole site is styled as a Mac-style desktop ("Michelle OS"):
 - **Menu bar** (`Header.astro`): navigation, a live clock, and the project currently being built
-- **Dock** (`Footer.astro`): page links and contact shortcuts; on the homepage it also reopens closed windows
-- **Windows**: every page's `<main id="main-content" data-window-title="...">` is drawn as a window by `global.css`
-- **Homepage** (`index.astro`): draggable About, Open Source, and Shipping Log windows, plus desktop icons, a stats widget, and a sticky note. Below 1100px wide, the windows stack in a single column
+- **Dock** (`Footer.astro`): page links and contact shortcuts, pinned to the bottom on wide screens; on the homepage it also reopens closed windows
+- **Window** (`Window.astro`): the one window component every page uses, so titlebars and traffic lights match everywhere. On inner pages the red light goes back to the desktop
+- **Page shell** (`layouts/OsPage.astro`): menu bar, a single app window, and the dock, for every page except the homepage
+- **UI kit** (`global.css`): shared `.mac-btn`, `.win-toolbar`, `.os-sidebar`, `.os-pill`, `.app-icon`, and `.os-group` classes
+- **Apps**: the homepage is the desktop, with draggable windows. About is a contact card, Projects a Finder window with sidebar filters, Blog a Notes-style list, posts a document window, Resume a Preview window, and 404 an alert dialog
 
 ## 🔧 Development
 
