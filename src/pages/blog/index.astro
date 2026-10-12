@@ -1,9 +1,9 @@
 ---
-import BaseHead from '../../components/BaseHead.astro';
-import Footer from '../../components/Footer.astro';
-import Header from '../../components/Header.astro';
-import { SITE_TITLE } from '../../consts';
 import { getCollection } from 'astro:content';
+import Desktop from '../../layouts/Desktop.astro';
+import Window from '../../components/Window.astro';
+import { SITE_TITLE } from '../../consts';
+import { formatPostDate, readingTime } from '../../lib/reading-time';
 
 export const prerender = true;
 
@@ -11,252 +11,81 @@ const posts = (await getCollection('blog')).sort(
   (a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf()
 );
 
-function calculateReadingTime(content: string): number {
-  const wordsPerMinute = 200;
-  const wordCount = content.split(/\s+/).length;
-  return Math.ceil(wordCount / wordsPerMinute);
+const tagCounts = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.data.tags ?? []) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
 }
+const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <BaseHead title={`Blog | ${SITE_TITLE}`} description="Thoughts on shipping fast, AI-assisted development, and building in public from Michelle Mayes." />
-  </head>
-  <body>
-    <Header />
-    <main id="main-content">
-      <header class="page-header">
-        <h1>Blog</h1>
-        <p class="page-description">Thoughts on shipping fast, AI-assisted development, and building in public.</p>
+<Desktop
+  title={`Blog | ${SITE_TITLE}`}
+  description="Thoughts on shipping fast, AI-assisted development, and building in public from Michelle Mayes."
+  appName="Notes"
+>
+  <Window
+    id="app-blog"
+    title="Blog"
+    titleAs="p"
+    route="/blog"
+    appName="Notes"
+    docTitle={`Blog | ${SITE_TITLE}`}
+    meta={`${posts.length} posts`}
+    width={1000}
+    height={700}
+    icon={{ color: 'linear-gradient(160deg, #FDE68A, #F59E0B)', glyph: 'M7 4h10v16H7zM9.5 8h5M9.5 12h5M9.5 16h3' }}
+    primary
+    class="app-blog"
+  >
+  <div class="os-split notes" data-filter-root>
+    <nav class="os-sidebar" aria-label="Filter posts">
+      <p class="os-sidebar-label">Library</p>
+      <button type="button" class="os-sidebar-item" data-filter="" aria-pressed="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h6l2 2h8v10H4z" /></svg>
+        All Posts<span class="count">{posts.length}</span>
+      </button>
+
+      {tags.length > 0 && <p class="os-sidebar-label">Tags</p>}
+      {tags.map(([tag, count]) => (
+        <button type="button" class="os-sidebar-item" data-filter={tag} aria-pressed="false">
+          <span class="hash" aria-hidden="true">#</span>{tag}<span class="count">{count}</span>
+        </button>
+      ))}
+
+      <p class="os-sidebar-label">Subscribe</p>
+      <a class="os-sidebar-item" href="/rss.xml">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19h.01M5 12a7 7 0 0 1 7 7M5 5a14 14 0 0 1 14 14" /></svg>
+        RSS feed
+      </a>
+    </nav>
+
+    <div class="pane">
+      <header class="pane-head">
+        <h1 class="os-heading">Blog</h1>
+        <p class="os-subtitle">Thoughts on shipping fast, AI-assisted development, and building in public.</p>
       </header>
 
       <ul class="post-list">
-        {posts.map((post, index) => {
-          const readingTime = calculateReadingTime(post.body);
-          return (
-            <li class="post-card" style={`--card-index: ${index}`}>
-              <a href={`/blog/${post.slug}/`} class="post-link">
-                <div class="post-content">
-                  <h2 class="post-title">{post.data.title}</h2>
-                  {post.data.description && (
-                    <p class="post-description">{post.data.description}</p>
-                  )}
-                  {post.data.tags && post.data.tags.length > 0 && (
-                    <div class="post-tags">
-                      {post.data.tags.slice(0, 3).map((tag: string) => (
-                        <span class="post-tag">{tag}</span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <div class="post-meta">
-                  <time datetime={post.data.pubDate.toISOString()}>
-                    {new Date(post.data.pubDate).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric'
-                    })}
-                  </time>
-                  <span class="reading-time">{readingTime} min read</span>
-                </div>
-              </a>
-            </li>
-          );
-        })}
+        {posts.map((post) => (
+          <li data-filter-tags={(post.data.tags ?? []).join('|')}>
+            <a href={`/blog/${post.slug}/`} class="post">
+              <span class="post-top">
+                <span class="post-title">{post.data.title}</span>
+                <time datetime={post.data.pubDate.toISOString()}>{formatPostDate(post.data.pubDate)}</time>
+              </span>
+              {post.data.description && <span class="post-desc">{post.data.description}</span>}
+              <span class="post-meta">
+                <span class="read">{readingTime(post.body)} min read</span>
+                {(post.data.tags ?? []).slice(0, 3).map((tag: string) => <span class="os-pill">{tag}</span>)}
+              </span>
+            </a>
+          </li>
+        ))}
       </ul>
-    </main>
-    <Footer />
-  </body>
-</html>
 
-<style>
-  main {
-    max-width: 700px;
-    margin: 0 auto;
-    padding: var(--space-xl);
-  }
+      <p class="empty" data-filter-empty hidden>No posts with that tag yet.</p>
+    </div>
+  </div>
+  </Window>
+</Desktop>
 
-  .page-header {
-    text-align: center;
-    margin-bottom: var(--space-3xl);
-  }
-
-  .page-header h1 {
-    font-family: var(--font-serif);
-    font-size: var(--text-fluid-4xl);
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: var(--space-sm);
-  }
-
-  .page-description {
-    font-size: var(--text-lg);
-    color: var(--text-muted);
-    max-width: 500px;
-    margin: 0 auto;
-  }
-
-  .post-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
-  }
-
-  .post-card {
-    background: var(--bg-card);
-    border-radius: 16px;
-    box-shadow: var(--shadow-md);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fade-up 0.5s ease-out forwards;
-    animation-delay: calc(var(--card-index) * 0.1s);
-    position: relative;
-  }
-
-  @keyframes fade-up {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .post-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-colored-lg);
-  }
-
-  .post-card::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    background: var(--accent);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    border-radius: 16px 0 0 16px;
-  }
-
-  .post-card:hover::before {
-    opacity: 1;
-  }
-
-  .post-link {
-    display: flex;
-    flex-direction: column;
-    padding: var(--space-lg);
-    text-decoration: none;
-    gap: var(--space-md);
-    min-height: 44px;
-  }
-
-  .post-content {
-    flex: 1;
-  }
-
-  .post-title {
-    font-family: var(--font-serif);
-    font-size: var(--text-xl);
-    font-weight: 700;
-    color: var(--text);
-    margin: 0 0 var(--space-sm) 0;
-    transition: color 0.2s ease;
-    line-height: var(--leading-tight);
-  }
-
-  .post-card:hover .post-title {
-    color: var(--accent);
-  }
-
-  .post-description {
-    margin: 0 0 var(--space-sm) 0;
-    font-size: var(--text-base);
-    color: var(--text-muted);
-    line-height: var(--leading-normal);
-  }
-
-  .post-tags {
-    display: flex;
-    gap: var(--space-sm);
-    flex-wrap: wrap;
-  }
-
-  .post-tag {
-    font-size: var(--text-xs);
-    font-weight: 600;
-    color: var(--accent);
-    background: var(--accent-50);
-    padding: 4px 10px;
-    border-radius: 100px;
-  }
-
-  .post-meta {
-    display: flex;
-    gap: var(--space-md);
-    font-size: var(--text-sm);
-    color: var(--text-muted);
-    padding-top: var(--space-sm);
-    border-top: 1px solid var(--accent-50);
-  }
-
-  .reading-time {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--accent);
-  }
-
-  @media (max-width: 768px) {
-    main {
-      padding: var(--space-lg);
-    }
-
-    .page-description {
-      font-size: var(--text-base);
-    }
-
-    .post-title {
-      font-size: var(--text-lg);
-    }
-
-    .post-description {
-      font-size: var(--text-sm);
-    }
-  }
-
-  @media (max-width: 480px) {
-    main {
-      padding: var(--space-md);
-    }
-
-    .post-card {
-      border-radius: 12px;
-    }
-
-    .post-link {
-      padding: var(--space-md);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .post-card {
-      animation: none;
-      opacity: 1;
-      transform: none;
-    }
-
-    .post-card:hover {
-      transform: none;
-    }
-
-    .post-card::before {
-      transition: none;
-    }
-  }
-</style>

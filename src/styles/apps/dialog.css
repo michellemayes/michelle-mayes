@@ -1,0 +1,63 @@
+/* Not-found alert dialog. */
+
+.app-dialog .dialog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 28px 24px;
+  text-align: center;
+}
+
+.app-dialog .dialog-icon svg {
+  width: 72px;
+  height: 72px;
+  filter: drop-shadow(0 6px 10px rgba(31, 29, 43, 0.18));
+}
+
+.app-dialog h1 {
+  margin-top: 14px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--os-ink);
+}
+
+.app-dialog p {
+  margin-top: 6px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--os-subtle);
+}
+
+.app-dialog .dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  width: 100%;
+  margin-top: 22px;
+}
+
+@media (max-width: 420px) {
+  .app-dialog .dialog-actions {
+    flex-direction: column-reverse;
+  }
+}
+
+/* Alerts size to their content and sit high on the desktop. */
+@media (min-width: 1100px) {
+  .os .desktop > .app-dialog {
+    height: auto;
+    top: 14%;
+  }
+}
+
+@media (max-width: 1099px) {
+  .os .desktop > .app-dialog {
+    top: 18vh;
+    bottom: auto;
+    left: 12px;
+    right: 12px;
+    height: auto;
+    border-radius: 14px;
+  }
+}

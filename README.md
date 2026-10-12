@@ -47,12 +47,20 @@ This is the source code for my personal website, built with [Astro](https://astr
 
 ### Typography
 - **Font**: Inter (Google Fonts)
+- **Headings**: Inter throughout, with Caveat for the sticky note and JetBrains Mono for code
+- **Loading**: fonts are self-hosted with Fontsource (Inter is preloaded) and CSS is inlined into each page
 - **Hierarchy**: Clear heading structure with proper contrast
 
-### Components
-- **Cards**: Rounded corners with subtle shadows
-- **Buttons**: Purple primary, outlined secondary
-- **Grid Layouts**: Responsive auto-fit grids
+### Desktop OS theme
+The whole site is a Mac-style desktop ("Michelle OS") that behaves like a real OS:
+- **One persistent desktop** (`layouts/Desktop.astro`): every page renders the menu bar, wallpaper, desktop icons, and dock, plus that page's windows
+- **Window manager** (`scripts/window-manager.ts`): links to other pages fetch them and open their windows on the current desktop instead of reloading. Windows can be dragged, focused, closed, minimized into the dock, and zoomed; the URL, tab title, and menu bar app name follow the focused window, and Back/Forward reopen windows. Pages are prefetched on hover
+- **Window** (`components/Window.astro`): the one window component every page uses, so titlebars and traffic lights match everywhere
+- **Menu bar** (`Header.astro`) shows the focused app; **dock** (`Footer.astro`) marks running apps and holds minimized windows
+- **Styles**: `styles/desktop.css` places windows; each app's styles live in `styles/apps/*.css` and load on every page, since any page can open any window. Shared controls (`.mac-btn`, `.os-sidebar`, `.os-pill`, `.app-icon`, ...) are in `global.css`
+- **Apps**: the desktop at `/` (Welcome, Open Source, shipping log, widgets), About (Contacts), Projects (Finder), Blog and posts (Notes), Resume (Preview), and a 404 alert
+- **Phones**: the desktop becomes a scrolling home screen and apps open full screen
+- **Without JavaScript** every page still renders on its own, so links, search engines, and direct visits work
 
 ## 🔧 Development
 

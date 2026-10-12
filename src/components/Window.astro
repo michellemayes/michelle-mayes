@@ -1,0 +1,264 @@
+---
+/**
+ * A Mac-style window. Every window on the site renders through this
+ * component, and scripts/window-manager.ts drives them all the same way:
+ * drag by the titlebar, click to focus, and real traffic lights (close,
+ * minimize to the dock, zoom).
+ *
+ * Each window belongs to a route. Opening a link to another route fetches
+ * that page and adds its windows to the current desktop instead of
+ * reloading, so the desktop persists like a real OS. Without JavaScript the
+ * same markup still works as an ordinary page.
+ *
+ * - kind "home": the windows that make up the desktop at `/`.
+ * - kind "app": a page's app window. On wide screens it floats centered on
+ *   the desktop; on phones it opens full screen.
+ */
+interface Props {
+  /** Unique id across the whole site, e.g. "app-projects" or "post-career-path". */
+  id: string;
+  title: string;
+  route: string;
+  appName: string;
+  /** document.title while this window is focused. */
+  docTitle: string;
+  kind?: 'home' | 'app';
+  titleId?: string;
+  /** Element used for the titlebar text. App windows put their own <h1> in the body. */
+  titleAs?: 'h1' | 'h2' | 'p';
+  meta?: string;
+  /** Preferred size on wide screens, in px (clamped to the desktop). */
+  width?: number;
+  height?: number;
+  /** Icon shown in the dock while minimized. */
+  icon?: { color: string; glyph: string };
+  /** The window focused when its route opens. */
+  primary?: boolean;
+  class?: string;
+}
+
+const {
+  id,
+  title,
+  route,
+  appName,
+  docTitle,
+  kind = 'app',
+  titleId,
+  titleAs = 'h2',
+  meta,
+  width = 900,
+  height = 640,
+  icon = { color: 'linear-gradient(160deg, #C4B5FD, #7C3AED)', glyph: 'M4 5h16v14H4zM4 9h16' },
+  primary = false,
+  class: className,
+} = Astro.props;
+const TitleTag = titleAs;
+---
+
+<section
+  class:list={['window', `window-${kind}`, className]}
+  id={`window-${id}`}
+  data-window={id}
+  data-route={route}
+  data-app={appName}
+  data-doc-title={docTitle}
+  data-kind={kind}
+  data-primary={primary ? '' : undefined}
+  data-icon-color={icon.color}
+  data-icon-glyph={icon.glyph}
+  style={`--w: ${width}px; --h: ${height}px;`}
+  aria-labelledby={titleId}
+  aria-label={titleId ? undefined : title}
+>
+  <div class="titlebar" data-drag>
+    <span class="lights">
+      {kind === 'app' ? (
+        <a class="light close" href="/" data-close aria-label={`Close ${title}`} title="Close"></a>
+      ) : (
+        <button type="button" class="light close" data-close aria-label={`Close ${title}`} title="Close"></button>
+      )}
+      <button type="button" class="light minimize" data-minimize aria-label={`Minimize ${title}`} title="Minimize"></button>
+      <button type="button" class="light zoom" data-zoom aria-label={`Zoom ${title}`} title="Zoom"></button>
+    </span>
+    <TitleTag class="win-title" id={titleId}>{title}</TitleTag>
+    {meta && <span class="win-meta">{meta}</span>}
+  </div>
+  <slot name="toolbar" />
+  <div class="window-body">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .window {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: var(--window-bg);
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 12px;
+    box-shadow: var(--window-shadow);
+    overflow: hidden;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--os-ink);
+  }
+
+  /* Focus moves to a window when it opens (for screen readers); the
+     titlebar state shows focus, so the window itself draws no ring. */
+  .window:focus,
+  .window:focus-visible {
+    outline: none;
+  }
+
+  .window:global(.is-focused) {
+    box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.2), 0 30px 70px rgba(31, 29, 43, 0.32);
+  }
+
+  /* Unfocused windows dim their titlebar, like macOS. */
+  .window:not(:global(.is-focused)) .win-title {
+    color: #9A97A8;
+  }
+
+  .window:global(.is-dragging) {
+    user-select: none;
+  }
+
+  .window:global(.is-closed),
+  .window:global(.is-minimized) {
+    display: none;
+  }
+
+  .titlebar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--window-titlebar);
+    padding: 0 84px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--window-line);
+    background: var(--window-bar);
+    touch-action: none;
+  }
+
+  @media (min-width: 1100px) {
+    .titlebar {
+      cursor: default;
+    }
+
+    .window:global(.is-dragging) .titlebar {
+      cursor: grabbing;
+    }
+  }
+
+  .window-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+
+  .lights {
+    position: absolute;
+    left: 12px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .light {
+    position: relative;
+    display: block;
+    width: 12px;
+    height: 12px;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+  }
+
+  .light:active {
+    transform: none;
+    filter: brightness(0.88);
+  }
+
+  .light:focus-visible {
+    outline: 2px solid var(--os-blue);
+    outline-offset: 2px;
+  }
+
+  .close { background: var(--os-red); }
+  .minimize { background: var(--os-yellow); }
+  .zoom { background: var(--os-green); }
+
+  /* Glyphs appear when hovering the group, like macOS. */
+  .light::after {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1;
+    opacity: 0;
+  }
+
+  .close::after { content: '×'; font-size: 11px; color: rgba(77, 0, 0, 0.75); }
+  .minimize::after { content: '−'; color: rgba(90, 50, 0, 0.75); }
+  .zoom::after { content: '+'; color: rgba(0, 70, 0, 0.75); }
+
+  .lights:hover .light::after,
+  .light:focus-visible::after {
+    opacity: 1;
+  }
+
+  .win-title {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0;
+    color: #4B4860;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+  }
+
+  .win-meta {
+    position: absolute;
+    right: 12px;
+    font-size: 12px;
+    color: var(--os-muted);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  @media (max-width: 1099px) {
+    .zoom {
+      display: none;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .titlebar {
+      padding: 0 72px 0 60px;
+      justify-content: flex-start;
+    }
+
+    .win-meta {
+      display: none;
+    }
+  }
+</style>

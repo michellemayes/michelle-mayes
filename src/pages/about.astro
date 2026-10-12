@@ -1,237 +1,115 @@
 ---
 import { Image } from 'astro:assets';
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
-import { SITE_TITLE } from '../consts';
+import Desktop from '../layouts/Desktop.astro';
+import Window from '../components/Window.astro';
+import { SITE_TITLE, SOCIAL_LINKS } from '../consts';
 import aboutPhoto from '../../public/about-photo.jpg';
 
 // Prerender this page as static
 export const prerender = true;
+
+const CALENDAR_URL = 'https://calendar.app.google/yYSHV4KQ4zJsxkdt5';
+
+const details = [
+	{ label: 'Based in', value: 'Austin, TX' },
+	{ label: 'Background', value: 'Data Science, Policy, AdTech' },
+	{ label: 'Builds', value: 'AI tools, web apps, Mac apps' },
+	{ label: 'Works best with', value: 'High-velocity teams' },
+];
+
+const socials = [
+	{ href: SOCIAL_LINKS.github, label: 'GitHub', glyph: 'M9 19c-4 1-4-2-6-2m12 4v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1-.3-3.4 1.3a11.6 11.6 0 0 0-6 0C6.8 2.8 5.8 3.1 5.8 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4.4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21' },
+	{ href: SOCIAL_LINKS.linkedin, label: 'LinkedIn', glyph: 'M7 10v8M7 6.5v.01M11 18v-4.5a2.5 2.5 0 0 1 5 0V18M11 10v8' },
+	{ href: SOCIAL_LINKS.twitter, label: 'X', glyph: 'M4 4l16 16M20 4L4 20' },
+	{ href: SOCIAL_LINKS.email, label: 'Email', glyph: 'M4 6h16v12H4zM4 7l8 6 8-6' },
+];
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={`About - ${SITE_TITLE}`} description="Full-stack builder at the intersection of AI and product development, based in Austin, TX." />
-	</head>
-	<body>
-		<Header />
-		<main id="main-content">
-			<div class="section-header">
-				<h1>About Me</h1>
+<Desktop
+  title={`About - ${SITE_TITLE}`}
+  description="Full-stack builder at the intersection of AI and product development, based in Austin, TX."
+  appName="Contacts"
+>
+  <Window
+    id="app-about"
+    title="About Me"
+    titleAs="p"
+    route="/about"
+    appName="Contacts"
+    docTitle={`About - ${SITE_TITLE}`}
+    width={1000}
+    height={760}
+    icon={{ color: 'linear-gradient(160deg, #F0ABFC, #A21CAF)', glyph: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0' }}
+    primary
+    class="app-about"
+  >
+	<div class="card">
+		<aside class="profile">
+			<Image src={aboutPhoto} alt="Michelle Mayes" class="photo" width={160} height={160} loading="eager" />
+			<h1 class="name">Michelle Mayes</h1>
+			<p class="role">Full-Stack Builder &amp; AI Product Engineer</p>
+			<div class="actions">
+				<a class="mac-btn primary" href={CALENDAR_URL} target="_blank" rel="noopener noreferrer">Schedule a chat</a>
+				<a class="mac-btn" href="/resume">Resume</a>
 			</div>
+			<ul class="socials" aria-label="Elsewhere">
+				{socials.map((social) => (
+					<li>
+						<a
+							href={social.href}
+							aria-label={social.label}
+							title={social.label}
+							target={social.href.startsWith('http') ? '_blank' : undefined}
+							rel={social.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+						>
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={social.glyph} /></svg>
+						</a>
+					</li>
+				))}
+			</ul>
+		</aside>
 
-			<div class="about-card">
-				<div class="about-card-header">
-					<Image src={aboutPhoto} alt="Michelle Mayes" class="about-photo" width={120} height={120} loading="lazy" />
-					<div class="about-info">
-						<p>
-							I build practical products at the intersection of AI and web development, with a strong bias toward shipping quickly and learning in public.
-						</p>
-						<p>
-							My background spans Data Science, Policy, and AdTech, and I bring that product perspective into modern full-stack work: clear problem framing, fast iteration, and outcome-focused decisions.
-						</p>
-						<p>
-							Right now I am focused on opportunities where I can build with high-velocity teams, improve developer workflows with AI, and share what works through writing and talks.
-						</p>
-						<p>
-							Based in Austin, TX.
-						</p>
-					</div>
+		<div class="content">
+			<section aria-labelledby="bio-title">
+				<h2 class="os-section-title" id="bio-title">Bio</h2>
+				<div class="os-group bio">
+					<p>
+						I build practical products at the intersection of AI and web development, with a strong bias toward shipping quickly and learning in public.
+					</p>
+					<p>
+						My background spans Data Science, Policy, and AdTech, and I bring that product perspective into modern full-stack work: clear problem framing, fast iteration, and outcome-focused decisions.
+					</p>
+					<p>
+						Right now I am focused on opportunities where I can build with high-velocity teams, improve developer workflows with AI, and share what works through writing and talks.
+					</p>
 				</div>
-			</div>
+			</section>
 
-			<div class="github-activity-section">
-				<h3>My GitHub Activity</h3>
-				<div class="github-calendar-container">
+			<section aria-labelledby="details-title">
+				<h2 class="os-section-title" id="details-title">Details</h2>
+				<dl class="os-group">
+					{details.map((detail) => (
+						<div class="os-group-row">
+							<dt>{detail.label}</dt>
+							<dd>{detail.value}</dd>
+						</div>
+					))}
+				</dl>
+			</section>
+
+			<section aria-labelledby="activity-title">
+				<h2 class="os-section-title" id="activity-title">GitHub activity</h2>
+				<div class="os-group activity">
 					<img
-						src="https://ghchart.rshah.org/michellemayes"
-						alt="Michelle Mayes GitHub Activity"
-						class="github-calendar"
+						src="https://ghchart.rshah.org/7C3AED/michellemayes"
+						alt="Michelle Mayes's GitHub contribution calendar for the past year"
 						loading="lazy"
 						decoding="async"
 						referrerpolicy="no-referrer"
 					/>
 				</div>
-			</div>
-		</main>
-		<Footer />
-	</body>
-</html>
-
-<style>
-	main {
-		width: 100%;
-		max-width: 1200px;
-		margin: 0 auto;
-		padding: var(--space-xl);
-	}
-
-	.section-header {
-		text-align: center;
-		margin-bottom: var(--space-2xl);
-	}
-
-	.section-header h1 {
-		font-size: var(--text-fluid-4xl);
-		margin-bottom: var(--space-md);
-		color: var(--accent);
-	}
-
-	.section-header p {
-		font-size: var(--text-lg);
-		color: var(--text-muted);
-		max-width: 500px;
-		margin: 0 auto;
-	}
-
-	.about-card {
-		max-width: 800px;
-		margin: 0 auto var(--space-2xl) auto;
-		background: var(--bg-card);
-		border: 1px solid var(--accent-100);
-		border-radius: var(--radius-xl);
-		padding: var(--space-xl);
-		box-shadow: var(--shadow-lg);
-	}
-
-	.about-card-header {
-		display: flex;
-		align-items: flex-start;
-		gap: var(--space-lg);
-	}
-
-	.about-photo {
-		width: 120px;
-		height: 120px;
-		border-radius: 50%;
-		object-fit: cover;
-		border: 3px solid var(--accent);
-		flex-shrink: 0;
-	}
-
-	.about-info {
-		flex: 1;
-	}
-
-	.about-info h2 {
-		margin: 0 0 var(--space-md) 0;
-		font-size: var(--text-fluid-2xl);
-		color: var(--text);
-	}
-
-	.about-info p {
-		margin-bottom: var(--space-md);
-		color: var(--text-muted);
-		line-height: var(--leading-relaxed);
-	}
-
-	.about-info p:last-child {
-		margin-bottom: 0;
-	}
-
-	.github-activity-section {
-		margin: var(--space-2xl) 0;
-		text-align: center;
-	}
-
-	.github-activity-section h3 {
-		font-size: var(--text-fluid-2xl);
-		color: var(--warm);
-		margin-bottom: var(--space-xl);
-	}
-
-	.github-calendar-container {
-		background: var(--bg-card);
-		border: 1px solid var(--accent-100);
-		border-radius: var(--radius-lg);
-		padding: var(--space-lg);
-		box-shadow: var(--shadow-lg);
-		display: inline-block;
-	}
-
-	.github-calendar {
-		width: 100%;
-		max-width: 800px;
-		height: auto;
-		border-radius: var(--radius-md);
-	}
-
-	@media (max-width: 768px) {
-		main {
-			padding: var(--space-md);
-		}
-
-		.section-header p {
-			font-size: var(--text-base);
-		}
-
-		.about-card {
-			padding: var(--space-lg);
-		}
-
-		.about-card-header {
-			flex-direction: column;
-			align-items: center;
-			text-align: center;
-			gap: var(--space-md);
-		}
-
-		.about-photo {
-			width: 100px;
-			height: 100px;
-			align-self: center;
-		}
-
-		.about-info h2 {
-			font-size: var(--text-xl);
-		}
-
-		.about-info p {
-			font-size: var(--text-sm);
-		}
-
-		.github-calendar-container {
-			padding: var(--space-md);
-		}
-
-		.github-calendar {
-			max-width: 100%;
-		}
-	}
-
-	@media (max-width: 480px) {
-		main {
-			padding: var(--space-sm);
-		}
-
-		.about-card {
-			padding: var(--space-md);
-		}
-
-		.about-photo {
-			width: 80px;
-			height: 80px;
-			align-self: center;
-		}
-
-		.about-info h2 {
-			font-size: var(--text-xl);
-		}
-
-		.about-info p {
-			font-size: var(--text-sm);
-		}
-
-		.github-calendar-container {
-			padding: var(--space-sm);
-		}
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.about-card {
-			transition: none;
-		}
-	}
-</style>
+			</section>
+		</div>
+	</div>
+  </Window>
+</Desktop>

@@ -1,6 +1,7 @@
 /*
-  Ship Speed Portfolio - Global Styles
-  Clean, minimal base styles with CSS custom properties
+  Michelle OS - Global Styles
+  The site is a Mac-style desktop: a wallpaper behind every page, a menu bar
+  (Header), a dock (Footer), and each page's <main> drawn as a window.
 */
 
 :root {
@@ -44,8 +45,8 @@
   --shadow-colored-lg: 0 8px 30px rgba(139, 92, 246, 0.2);
 
   /* Typography - fonts */
-  --font-serif: 'Fraunces', Georgia, serif;
-  --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-hand: 'Caveat', cursive;
   --font-mono: 'JetBrains Mono', monospace;
 
   /* Typography - scale (1.25 ratio) */
@@ -91,6 +92,30 @@
   --radius-lg: 12px;
   --radius-xl: 16px;
   --radius-full: 9999px;
+
+  /* Desktop OS chrome */
+  --wallpaper:
+    radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.55), transparent 35%),
+    radial-gradient(circle at 85% 15%, #FBCFE8 0%, transparent 40%),
+    radial-gradient(circle at 70% 85%, #FDE68A 0%, transparent 45%),
+    radial-gradient(circle at 10% 90%, #A5B4FC 0%, transparent 45%),
+    linear-gradient(160deg, #C9B8F5, #E9D5FF 50%, #FBD5C0);
+  --window-bg: rgba(255, 255, 255, 0.94);
+  --window-bar: rgba(246, 245, 250, 0.96);
+  --window-line: rgba(0, 0, 0, 0.07);
+  --window-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.15), 0 20px 50px rgba(31, 29, 43, 0.22);
+  --window-titlebar: 38px;
+  --menubar-height: 30px;
+  --os-blue: #2563EB;
+  --os-red: #FF5F57;
+  --os-yellow: #FEBC2E;
+  --os-green: #28C840;
+  --os-ink: #1F1D2B;
+  --os-muted: #8A879A;
+  --os-subtle: #6B6880;
+  --os-select: rgba(37, 99, 235, 0.12);
+  --os-select-ink: #1D4ED8;
+  --os-canvas: #F3F2F7;
 }
 
 /* Reset */
@@ -119,11 +144,43 @@ html {
 
 body {
   font-family: var(--font-sans);
-  background: var(--bg);
+  background: var(--wallpaper);
+  background-color: #D9CCF6;
   color: var(--text);
   font-size: var(--text-lg);
   line-height: 1.7;
   min-height: 100vh;
+}
+
+/*
+  Cross-page transitions for full page loads (the window manager handles
+  in-site links without reloading). Supporting browsers keep the current
+  page on screen until the next one is ready, then crossfade, with the menu
+  bar and dock held in place.
+*/
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-group(root),
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 180ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* Fixed wallpaper only on wide screens; mobile browsers repaint it badly. */
+@media (min-width: 1100px) {
+  body {
+    background-attachment: fixed;
+  }
 }
 
 ::selection {
@@ -133,7 +190,7 @@ body {
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-weight: 700;
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-tight);
@@ -310,5 +367,293 @@ a,
 button,
 [role="button"] {
   transition: transform 0.1s ease, opacity 0.1s ease, color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/*
+  OS UI kit: the controls every window shares. Pages compose these classes
+  instead of styling their own buttons, sidebars, and toolbars, so the whole
+  site reads as one desktop.
+*/
+
+/* Push buttons */
+.mac-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  min-height: 30px;
+  padding: 0 14px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 7px;
+  background: #FFFFFF;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--os-ink);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.mac-btn:hover {
+  color: var(--os-ink);
+  filter: brightness(0.97);
+}
+
+.mac-btn.primary {
+  background: linear-gradient(180deg, #4F8BFF, var(--os-blue));
+  border-color: #1D4ED8;
+  color: #FFFFFF;
+}
+
+.mac-btn.primary:hover {
+  color: #FFFFFF;
+}
+
+.mac-btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* Toolbar row under a window's titlebar */
+.win-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--window-line);
+  background: var(--window-bar);
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.win-toolbar .spacer {
+  flex: 1;
+}
+
+/* Source-list sidebar (Finder, Notes, Mail) */
+.os-split {
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+  min-height: 0;
+}
+
+.os-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 10px;
+  background: rgba(240, 238, 248, 0.75);
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.os-sidebar-label {
+  margin: 14px 8px 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--os-muted);
+}
+
+.os-sidebar-label:first-child {
+  margin-top: 0;
+}
+
+.os-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  min-height: 28px;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  font: inherit;
+  color: var(--os-ink);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.os-sidebar-item:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--os-ink);
+}
+
+.os-sidebar-item:active {
+  transform: none;
+}
+
+.os-sidebar-item.is-active,
+.os-sidebar-item[aria-pressed="true"] {
+  background: var(--os-select);
+  color: var(--os-select-ink);
+  font-weight: 600;
+}
+
+.os-sidebar-item svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  color: var(--os-blue);
+}
+
+.os-sidebar-item .count {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--os-muted);
+}
+
+.os-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Below tablet width the sidebar becomes a scrollable chip row. */
+@media (max-width: 760px) {
+  .os-split {
+    grid-template-columns: 1fr;
+  }
+
+  .os-sidebar {
+    flex-direction: row;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 10px 12px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    scrollbar-width: none;
+  }
+
+  .os-sidebar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .os-sidebar-label {
+    display: none;
+  }
+
+  .os-sidebar-item {
+    width: auto;
+    flex-shrink: 0;
+    white-space: nowrap;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 999px;
+  }
+}
+
+/* Headings inside app content */
+.os-heading {
+  font-family: var(--font-sans);
+  font-size: clamp(1.6rem, 1.3rem + 1vw, 2rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: var(--os-ink);
+}
+
+.os-subtitle {
+  margin-top: 6px;
+  font-size: 15px;
+  color: var(--os-subtle);
+}
+
+.os-section-title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: #4B4860;
+}
+
+.os-section-title .count {
+  font-weight: 500;
+  color: var(--os-muted);
+}
+
+/* Small rounded tag */
+.os-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(124, 58, 237, 0.1);
+  color: #6D28D9;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+/* Rounded-square app icons tinted by project hue */
+.app-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 22%;
+  color: #FFFFFF;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(31, 29, 43, 0.15);
+}
+
+.app-icon svg {
+  width: 58%;
+  height: 58%;
+}
+
+.app-icon.hue-violet { background: linear-gradient(160deg, #C4B5FD, #7C3AED); }
+.app-icon.hue-leaf { background: linear-gradient(160deg, #86EFAC, #16A34A); }
+.app-icon.hue-amber { background: linear-gradient(160deg, #FDE68A, #D97706); }
+.app-icon.hue-rose { background: linear-gradient(160deg, #FDA4AF, #E11D48); }
+.app-icon.hue-sky { background: linear-gradient(160deg, #7DD3FC, #0284C7); }
+.app-icon.hue-slate { background: linear-gradient(160deg, #CBD5E1, #64748B); }
+
+/* Grouped settings-style list */
+.os-group {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.os-group-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 11px 14px;
+  font-size: 14px;
+}
+
+.os-group-row + .os-group-row {
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.os-group-row dt {
+  color: var(--os-subtle);
+  white-space: nowrap;
+}
+
+.os-group-row dd {
+  margin: 0;
+  text-align: right;
+  font-weight: 500;
 }
 

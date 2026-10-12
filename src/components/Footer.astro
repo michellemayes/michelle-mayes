@@ -1,106 +1,267 @@
 ---
 import { SOCIAL_LINKS } from '../consts';
 
+/**
+ * The dock. App launchers open (or bring forward) their window; a dot marks
+ * apps with a window open, and minimized windows collect at the end, like
+ * macOS. The window manager keeps the dots and the minimized section current.
+ */
+const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 const currentYear = new Date().getFullYear();
+
+const apps = [
+  { href: '/', label: 'Desktop', color: 'linear-gradient(160deg, #C4B5FD, #7C3AED)', glyph: 'M4 11l8-7 8 7M6 9.5V20h12V9.5M10 20v-5h4v5' },
+  { href: '/projects', label: 'Projects', color: 'linear-gradient(160deg, #7DD3FC, #2563EB)', glyph: 'M4 6h6l2 2h8v10H4z' },
+  { href: '/about', label: 'About', color: 'linear-gradient(160deg, #F0ABFC, #A21CAF)', glyph: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0' },
+  { href: '/blog', label: 'Blog', color: 'linear-gradient(160deg, #FDE68A, #F59E0B)', glyph: 'M7 4h10v16H7zM9.5 8h5M9.5 12h5M9.5 16h3' },
+  { href: '/resume', label: 'Resume', color: 'linear-gradient(160deg, #FDA4AF, #E11D48)', glyph: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6' },
+];
+
+const externals = [
+  { href: 'https://calendar.app.google/yYSHV4KQ4zJsxkdt5', label: 'Schedule a chat', color: 'linear-gradient(160deg, #FFFFFF, #E5E7EB)', glyph: 'M5 6h14v13H5zM5 10h14M9 4v4M15 4v4', dark: true },
+  { href: SOCIAL_LINKS.github, label: 'GitHub', color: 'linear-gradient(160deg, #4B5563, #111827)', glyph: 'M9 19c-4 1-4-2-6-2m12 4v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1-.3-3.4 1.3a11.6 11.6 0 0 0-6 0C6.8 2.8 5.8 3.1 5.8 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4.4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21' },
+  { href: SOCIAL_LINKS.linkedin, label: 'LinkedIn', color: 'linear-gradient(160deg, #38BDF8, #0A66C2)', glyph: 'M7 10v8M7 6.5v.01M11 18v-4.5a2.5 2.5 0 0 1 5 0V18M11 10v8' },
+  { href: SOCIAL_LINKS.email, label: 'Email', color: 'linear-gradient(160deg, #93C5FD, #2563EB)', glyph: 'M4 6h16v12H4zM4 7l8 6 8-6' },
+];
+
+const isRunning = (href: string) => (href === '/' ? currentPath === '/' : currentPath.startsWith(href));
 ---
 
-<footer>
-  <div class="footer-content">
-    <div class="footer-note">
-      <p class="copyright">&copy; {currentYear} Michelle Mayes</p>
-      <p class="made-with">Made in Austin with Astro, coffee, and too many side projects.</p>
-    </div>
-    <div class="social-links">
-      <a href={SOCIAL_LINKS.github} target="_blank" rel="noopener" aria-label="GitHub">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-        </svg>
+<footer class="dock-area">
+  <nav class="dock" aria-label="Dock">
+    {apps.map((app) => (
+      <a
+        class:list={['dock-item', { running: isRunning(app.href) }]}
+        href={app.href}
+        data-dock-route={app.href}
+        aria-label={app.label}
+      >
+        <span class="dock-icon" style={`background: ${app.color}`}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={app.glyph} /></svg>
+        </span>
+        <span class="dock-tip">{app.label}</span>
       </a>
-      <a href={SOCIAL_LINKS.linkedin} target="_blank" rel="noopener" aria-label="LinkedIn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-        </svg>
+    ))}
+    <span class="dock-sep" aria-hidden="true"></span>
+    {externals.map((link) => (
+      <a
+        class="dock-item"
+        href={link.href}
+        aria-label={link.label}
+        target={link.href.startsWith('http') ? '_blank' : undefined}
+        rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+      >
+        <span class="dock-icon" style={`background: ${link.color}`}>
+          <svg viewBox="0 0 24 24" fill="none" stroke={link.dark ? '#111827' : '#fff'} stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={link.glyph} /></svg>
+        </span>
+        <span class="dock-tip">{link.label}</span>
       </a>
-      <a href={SOCIAL_LINKS.twitter} target="_blank" rel="noopener" aria-label="Twitter">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-        </svg>
-      </a>
-      <a href={SOCIAL_LINKS.email} aria-label="Email">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M0 3v18h24v-18h-24zm21.518 2l-9.518 7.713-9.518-7.713h19.036zm-19.518 14v-11.817l10 8.104 10-8.104v11.817h-20z"/>
-        </svg>
-      </a>
-    </div>
-  </div>
+    ))}
+    <span class="dock-minimized" data-dock-minimized hidden>
+      <span class="dock-sep" aria-hidden="true"></span>
+    </span>
+  </nav>
+  <p class="dock-note">&copy; {currentYear} Michelle Mayes · Made in Austin with Astro, coffee, and too many side projects.</p>
 </footer>
 
 <style>
-  footer {
-    padding: var(--space-2xl) var(--space-xl);
-    margin-top: var(--space-3xl);
-  }
-
-  .footer-content {
-    max-width: 1200px;
-    margin: 0 auto;
+  .dock-area {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
+    gap: 10px;
+    padding: 32px 16px 24px;
   }
 
-  .copyright {
-    font-size: var(--text-sm);
-    color: var(--text-muted);
-  }
-
-  .made-with {
-    font-size: var(--text-xs);
-    color: var(--text-light);
-  }
-
-  .social-links {
+  .dock {
+    view-transition-name: dock;
     display: flex;
-    gap: var(--space-lg);
+    align-items: flex-end;
+    gap: 8px;
+    max-width: 100%;
+    padding: 8px 10px;
+    background: rgba(255, 255, 255, 0.35);
+    -webkit-backdrop-filter: blur(24px) saturate(1.6);
+    backdrop-filter: blur(24px) saturate(1.6);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 22px;
+    box-shadow: 0 10px 30px rgba(31, 29, 43, 0.18);
   }
 
-  .social-links a {
-    color: var(--text-muted);
-    transition: color 0.25s ease, transform 0.25s ease;
+  .dock-minimized {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+  }
+
+  .dock-minimized[hidden] {
+    display: none;
+  }
+
+  .dock :global(.dock-item) {
+    position: relative;
+    display: block;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    font: inherit;
+  }
+
+  .dock :global(.dock-item:active) {
+    transform: none;
+  }
+
+  .dock :global(.dock-item:focus-visible) {
+    outline: 2px solid var(--os-blue);
+    outline-offset: 3px;
+    border-radius: 14px;
+  }
+
+  .dock :global(.dock-icon) {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 13px;
+    box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(31, 29, 43, 0.2);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-origin: bottom center;
+  }
+
+  .dock :global(.dock-icon svg) {
+    width: 26px;
+    height: 26px;
+  }
+
+  .dock :global(.dock-item:hover .dock-icon),
+  .dock :global(.dock-item:focus-visible .dock-icon) {
+    transform: scale(1.3) translateY(-6px);
+  }
+
+  /* A minimized window: a small framed tile, like the right side of the macOS dock. */
+  .dock :global(.dock-min .dock-icon) {
+    border: 2px solid rgba(255, 255, 255, 0.9);
+  }
+
+  /* Running-app dot */
+  .dock :global(.running::after) {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -6px;
+    width: 4px;
+    height: 4px;
+    margin-left: -2px;
+    border-radius: 50%;
+    background: #1F1D2B;
+  }
+
+  .dock :global(.dock-tip) {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 20px);
+    transform: translateX(-50%);
+    padding: 4px 10px;
     border-radius: 6px;
-    padding: 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 44px;
-    min-height: 44px;
+    background: rgba(31, 29, 43, 0.85);
+    color: #FFFFFF;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    line-height: 1.2;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
   }
 
-  .social-links a:hover {
-    color: var(--accent);
-    transform: translateY(-2px);
+  .dock :global(.dock-item:hover .dock-tip),
+  .dock :global(.dock-item:focus-visible .dock-tip) {
+    opacity: 1;
   }
 
-  .social-links a[aria-label="GitHub"]:hover { color: #24292f; }
-  .social-links a[aria-label="LinkedIn"]:hover { color: #0A66C2; }
-  .social-links a[aria-label="Twitter"]:hover { color: #1a1a2e; }
-  .social-links a[aria-label="Email"]:hover { color: var(--warm); }
-
-  .social-links a:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-    color: var(--accent);
+  .dock-sep {
+    align-self: stretch;
+    width: 1px;
+    margin: 4px 2px;
+    background: rgba(31, 29, 43, 0.18);
   }
 
-  @media (max-width: 480px) {
-    footer {
-      padding: var(--space-xl) var(--space-md);
+  .dock-note {
+    font-size: 12px;
+    color: rgba(31, 29, 43, 0.6);
+    text-align: center;
+  }
+
+  /* Wide screens: the dock floats over the desktop. */
+  @media (min-width: 1100px) {
+    .dock-area {
+      position: fixed;
+      left: 50%;
+      bottom: 12px;
+      transform: translateX(-50%);
+      z-index: 900;
+      padding: 0;
     }
 
-    .footer-content {
-      flex-direction: column;
-      gap: var(--space-md);
-      text-align: center;
+    .dock-note {
+      display: none;
+    }
+  }
+
+  @media (max-width: 1099px) {
+    .dock {
+      overflow-x: auto;
+      gap: 6px;
+    }
+
+    .dock :global(.dock-icon) {
+      width: 44px;
+      height: 44px;
+    }
+
+    .dock :global(.dock-tip) {
+      display: none;
+    }
+
+    .dock :global(.dock-item:hover .dock-icon) {
+      transform: none;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .dock {
+      flex-wrap: wrap;
+      justify-content: center;
+      overflow: visible;
+    }
+
+    .dock-sep {
+      display: none;
+    }
+
+    .dock :global(.dock-icon) {
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+    }
+
+    .dock :global(.dock-icon svg) {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dock :global(.dock-icon) {
+      transition: none;
+    }
+
+    .dock :global(.dock-item:hover .dock-icon),
+    .dock :global(.dock-item:focus-visible .dock-icon) {
+      transform: none;
     }
   }
 </style>

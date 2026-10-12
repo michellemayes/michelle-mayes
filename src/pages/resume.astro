@@ -1,122 +1,49 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
+import Desktop from '../layouts/Desktop.astro';
+import Window from '../components/Window.astro';
 import { SITE_TITLE } from '../consts';
 
 export const prerender = true;
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <BaseHead title={`Resume | ${SITE_TITLE}`} description="Resume for Michelle Mayes — data scientist and AI product engineer building intelligent systems with RAG, LLMs, and modern web stacks." />
-  </head>
-  <body>
-    <Header />
-    <main id="main-content">
-      <div class="resume-header">
-        <h1>Resume</h1>
-        <div class="resume-actions">
-          <a href="#viewer" class="action-link active">View</a>
-          <a href="/resume.pdf" download class="action-link">Download PDF</a>
-        </div>
-      </div>
-      <div id="viewer" class="resume-viewer">
-        <iframe src="/resume.pdf" title="Michelle Mayes Resume">
-          <p>Unable to display PDF. <a href="/resume.pdf" download>Download the resume</a>.</p>
-        </iframe>
-      </div>
-    </main>
-    <Footer />
-  </body>
-</html>
+<Desktop
+  title={`Resume | ${SITE_TITLE}`}
+  description="Resume for Michelle Mayes — data scientist and AI product engineer building intelligent systems with RAG, LLMs, and modern web stacks."
+  appName="Preview"
+>
+  <Window
+    id="app-resume"
+    title="Resume.pdf"
+    titleAs="p"
+    route="/resume"
+    appName="Preview"
+    docTitle={`Resume | ${SITE_TITLE}`}
+    width={860}
+    height={940}
+    icon={{ color: 'linear-gradient(160deg, #FDA4AF, #E11D48)', glyph: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6' }}
+    primary
+    class="app-resume"
+  >
+  <div class="win-toolbar" slot="toolbar">
+    <h1 class="doc-title">Resume <span>Michelle Mayes</span></h1>
+    <span class="spacer"></span>
+    <a class="mac-btn" href="/resume.pdf" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6" /></svg>
+      Open
+    </a>
+    <a class="mac-btn primary" href="/resume.pdf" download>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" /></svg>
+      Download PDF
+    </a>
+  </div>
 
-<style>
-  main {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: var(--space-xl);
-  }
-
-  .resume-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-2xl);
-  }
-
-  h1 {
-    font-family: var(--font-serif);
-    font-size: 2.5rem;
-    font-weight: 600;
-    color: var(--text);
-    margin: 0;
-  }
-
-  .resume-actions {
-    display: flex;
-    gap: var(--space-md);
-  }
-
-  .action-link {
-    padding: var(--space-sm) var(--space-lg);
-    font-size: var(--text-sm);
-    font-weight: 500;
-    text-decoration: none;
-    border-radius: 6px;
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-    color: var(--text-muted);
-    border: 1px solid var(--accent-100);
-  }
-
-  .action-link:hover,
-  .action-link.active {
-    background: var(--accent);
-    color: white;
-    border-color: var(--accent);
-  }
-
-  .resume-viewer {
-    background: var(--bg-card);
-    border-radius: 12px;
-    box-shadow: var(--shadow-md);
-    overflow: hidden;
-  }
-
-  iframe {
-    width: 100%;
-    height: 80vh;
-    border: none;
-  }
-
-  @media (max-width: 768px) {
-    main {
-      padding: var(--space-lg);
-    }
-
-    .resume-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: var(--space-md);
-    }
-
-    h1 {
-      font-size: 2rem;
-    }
-
-    iframe {
-      height: 60vh;
-    }
-  }
-
-  @media (max-width: 480px) {
-    main {
-      padding: var(--space-md);
-    }
-
-    h1 {
-      font-size: 1.75rem;
-    }
-  }
-</style>
+  <div class="canvas">
+    <iframe src="/resume.pdf#view=FitH" title="Michelle Mayes Resume">
+      <p>Unable to display the PDF here. <a href="/resume.pdf" download>Download the resume</a>.</p>
+    </iframe>
+    <p class="mobile-note">
+      Phones only preview the first page. <a href="/resume.pdf" target="_blank" rel="noopener">Open the full PDF</a>.
+    </p>
+  </div>
+  </Window>
+</Desktop>

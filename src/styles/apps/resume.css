@@ -1,0 +1,54 @@
+/* Resume (Preview). Global so the window keeps its styles when opened from any page. */
+
+.app-resume .doc-title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: var(--os-ink);
+}
+
+.app-resume .doc-title span {
+  margin-left: 6px;
+  font-weight: 500;
+  color: var(--os-muted);
+}
+
+/* Gray canvas with the page floating on it, like Preview. */
+
+.app-resume .canvas {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding: 24px;
+  background: #E4E2EA;
+}
+
+.app-resume iframe {
+  display: block;
+  flex: 1;
+  width: 100%;
+  min-height: 420px;
+  border: 0;
+  border-radius: 4px;
+  background: #FFFFFF;
+  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.1), 0 10px 30px rgba(31, 29, 43, 0.18);
+}
+
+.app-resume .mobile-note {
+  display: none;
+  margin-top: 12px;
+  font-size: 13px;
+  text-align: center;
+  color: var(--os-subtle);
+}
+
+@media (max-width: 760px) {
+  .app-resume .canvas {
+    padding: 12px;
+  }
+
+  .app-resume .mobile-note {
+    display: block;
+  }
+}

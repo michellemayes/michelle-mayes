@@ -1,0 +1,49 @@
+---
+import Desktop from '../layouts/Desktop.astro';
+import Window from '../components/Window.astro';
+import { SITE_TITLE } from '../consts';
+
+export const prerender = true;
+---
+
+<Desktop
+  title={`Page not found | ${SITE_TITLE}`}
+  description="That page couldn't be found on michellemayes.me."
+  appName="Finder"
+>
+  <Window
+    id="dialog-404"
+    title="Finder"
+    titleAs="p"
+    route="/404"
+    appName="Finder"
+    docTitle={`Page not found | ${SITE_TITLE}`}
+    width={460}
+    height={360}
+    icon={{ color: 'linear-gradient(160deg, #7DD3FC, #2563EB)', glyph: 'M4 6h6l2 2h8v10H4z' }}
+    primary
+    class="app-dialog"
+  >
+  <div class="dialog" role="alert">
+    <span class="dialog-icon" aria-hidden="true">
+      <svg viewBox="0 0 64 64">
+        <path d="M8 18a4 4 0 0 1 4-4h14l5 5h21a4 4 0 0 1 4 4v25a4 4 0 0 1-4 4H12a4 4 0 0 1-4-4z" fill="url(#folder)" />
+        <circle cx="46" cy="44" r="13" fill="#FEBC2E" stroke="#fff" stroke-width="3" />
+        <path d="M46 37v8M46 50v.5" stroke="#5C3B00" stroke-width="3.5" stroke-linecap="round" />
+        <defs>
+          <linearGradient id="folder" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#7DD3FC" />
+            <stop offset="1" stop-color="#3B82F6" />
+          </linearGradient>
+        </defs>
+      </svg>
+    </span>
+    <h1>This page can't be opened.</h1>
+    <p>It may have been moved, renamed, or never existed. Everything that does exist is on the desktop.</p>
+    <div class="dialog-actions">
+      <a class="mac-btn" href="/projects">Browse projects</a>
+      <a class="mac-btn primary" href="/">Go to the desktop</a>
+    </div>
+  </div>
+  </Window>
+</Desktop>

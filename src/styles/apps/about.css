@@ -1,0 +1,135 @@
+/* About (Contacts). Global so the window keeps its styles when opened from any page. */
+
+.app-about .card {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+}
+
+.app-about .profile,
+.app-about .content {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.app-about .profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 36px 24px;
+  text-align: center;
+  background: rgba(240, 238, 248, 0.75);
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.app-about .profile .photo {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 4px #FFFFFF, 0 0 0 5px rgba(0, 0, 0, 0.08), 0 12px 30px rgba(31, 29, 43, 0.18);
+}
+
+.app-about .name {
+  margin-top: 20px;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.app-about .role {
+  margin-top: 4px;
+  font-size: 14px;
+  color: var(--os-subtle);
+}
+
+.app-about .actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.app-about .socials {
+  display: flex;
+  gap: 6px;
+  margin-top: 18px;
+  padding: 0;
+  list-style: none;
+}
+
+.app-about .socials a {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #4B4860;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.app-about .socials a:hover {
+  background: var(--os-blue);
+  border-color: var(--os-blue);
+  color: #FFFFFF;
+}
+
+.app-about .socials svg {
+  width: 16px;
+  height: 16px;
+}
+
+.app-about .content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  padding: 32px;
+  background: var(--os-canvas);
+}
+
+.app-about .bio {
+  padding: 18px 20px;
+  font-size: 15.5px;
+  line-height: 1.7;
+}
+
+.app-about .bio p + p {
+  margin-top: 12px;
+}
+
+.app-about .activity {
+  padding: 16px;
+  overflow-x: auto;
+}
+
+.app-about .activity img {
+  min-width: 640px;
+  width: 100%;
+}
+
+@media (max-width: 760px) {
+  .app-about .card {
+    flex: none;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .app-about .profile {
+    padding: 28px 20px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .app-about .profile .photo {
+    width: 120px;
+    height: 120px;
+  }
+
+  .app-about .content {
+    padding: 20px 16px;
+  }
+}

@@ -11,5 +11,8 @@ export default defineConfig({
   site: 'https://michellemayes.me',
   integrations: [mdx(), sitemap()],
   adapter: vercel(),
+  // Inline all CSS so each page paints as soon as its HTML arrives, with no
+  // render-blocking stylesheet request between page navigations.
+  build: { inlineStylesheets: 'always' },
   output: 'server', // Enables SSR for dynamic pages
 });
